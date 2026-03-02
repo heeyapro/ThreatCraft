@@ -1,0 +1,1324 @@
+{
+  "ok": true,
+  "mode": "local",
+  "target_asset_name": "Door",
+  "boundary_name": "External Vehicle Boundary",
+  "tm7_path": "C:\\Users\\Administrator\\Desktop\\TARA_AUTO-main\\code\\in\\Automotive DFD_B.tm7",
+  "nodes": [
+    {
+      "node_id": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "asset_guid": "6fcd03b4-7101-49f4-8915-c1bb9349e6de",
+      "asset_name": "TCU",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_131",
+      "threat_name": "중거리 무선 통신을 통한 C2 (C2 via Mid Range Wireless Communication)",
+      "phase": "In",
+      "tactic": "Command and Control"
+    },
+    {
+      "node_id": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "asset_guid": "6fcd03b4-7101-49f4-8915-c1bb9349e6de",
+      "asset_name": "TCU",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_132",
+      "threat_name": "광역 무선 통신을 통한 C2 (C2 via Wide Range Wireless Communication)",
+      "phase": "In",
+      "tactic": "Command and Control"
+    },
+    {
+      "node_id": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "asset_guid": "6fcd03b4-7101-49f4-8915-c1bb9349e6de",
+      "asset_name": "TCU",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_140",
+      "threat_name": "비표준 포트 (Non-Standard Port)",
+      "phase": "In",
+      "tactic": "Command and Control"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_115",
+      "threat_name": "차량 내 원격 서비스의 악용 (Exploitation of Remote Services in In-Vehicle Network)",
+      "phase": "Through",
+      "tactic": "Lateral Movement"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_83::In::Defense Evasion",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_83",
+      "threat_name": "방어 체계 약화 (Impair Defenses)",
+      "phase": "In",
+      "tactic": "Defense Evasion"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_108",
+      "threat_name": "차량 네트워크 브리지 (Bridge Vehicle Networks)",
+      "phase": "Through",
+      "tactic": "Lateral Movement"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_98",
+      "threat_name": "네트워크 서비스 스캐닝 (Network Service Scanning)",
+      "phase": "Through",
+      "tactic": "Discovery"
+    },
+    {
+      "node_id": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "asset_guid": "6fcd03b4-7101-49f4-8915-c1bb9349e6de",
+      "asset_name": "TCU",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_126",
+      "threat_name": "셀룰러 통신 (Cellular Communication)",
+      "phase": "In",
+      "tactic": "Command and Control"
+    },
+    {
+      "node_id": "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact",
+      "asset_guid": "a8820ccf-1189-4a07-9f83-eff024c2f212",
+      "asset_name": "Door",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_165",
+      "threat_name": "차량 탈취 (Vehicle Theft)",
+      "phase": "Out",
+      "tactic": "Impact"
+    },
+    {
+      "node_id": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "asset_guid": "dd03bf0c-89d6-423a-84bb-18753c23b416",
+      "asset_name": "Body Control Module (BCM)",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_109",
+      "threat_name": "ECU 악용을 통한 측면 이동 (Exploit ECU for Lateral Movement)",
+      "phase": "Through",
+      "tactic": "Lateral Movement"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_88",
+      "threat_name": "네트워크 스니핑 (Network Sniffing)",
+      "phase": "Through",
+      "tactic": "Discovery"
+    },
+    {
+      "node_id": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "asset_guid": "6fcd03b4-7101-49f4-8915-c1bb9349e6de",
+      "asset_name": "TCU",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_137",
+      "threat_name": "동적 주소 결정(동적 연결 설정) (Dynamic Resolution)",
+      "phase": "In",
+      "tactic": "Command and Control"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_74::In::Defense Evasion",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_74",
+      "threat_name": "네트워크 필터링 우회 (Bypass Network Filtering)",
+      "phase": "In",
+      "tactic": "Defense Evasion"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::In::Defense Evasion",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_62",
+      "threat_name": "권한 제어 메커니즘 악용 (Abuse Elevation Control Mechanism)",
+      "phase": "In",
+      "tactic": "Defense Evasion"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_88",
+      "threat_name": "네트워크 스니핑 (Network Sniffing)",
+      "phase": "Through",
+      "tactic": "Credential Access"
+    },
+    {
+      "node_id": "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function",
+      "asset_guid": "a8820ccf-1189-4a07-9f83-eff024c2f212",
+      "asset_name": "Door",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_153",
+      "threat_name": "문 제어 (Control Doors)",
+      "phase": "Out",
+      "tactic": "Affect Vehicle Function"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_137::In::Command and Control",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_137",
+      "threat_name": "동적 주소 결정(동적 연결 설정) (Dynamic Resolution)",
+      "phase": "In",
+      "tactic": "Command and Control"
+    },
+    {
+      "node_id": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "asset_guid": "6fcd03b4-7101-49f4-8915-c1bb9349e6de",
+      "asset_name": "TCU",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_130",
+      "threat_name": "표준 암호 프로토콜 (Standard Cryptographic Protocol)",
+      "phase": "In",
+      "tactic": "Command and Control"
+    },
+    {
+      "node_id": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "asset_guid": "6fcd03b4-7101-49f4-8915-c1bb9349e6de",
+      "asset_name": "TCU",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_80",
+      "threat_name": "원격 기능 활성화 (Enable Remote Functions)",
+      "phase": "In",
+      "tactic": "Defense Evasion"
+    },
+    {
+      "node_id": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "asset_guid": "6fcd03b4-7101-49f4-8915-c1bb9349e6de",
+      "asset_name": "TCU",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_138",
+      "threat_name": "암호화된 채널 (Encrypted Channel)",
+      "phase": "In",
+      "tactic": "Command and Control"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_63",
+      "threat_name": "공유된 컴퓨팅 장치 악용을 통한 권한 상승 (Exploit Co-Located Computing Device for Privilege Escalation)",
+      "phase": "Through",
+      "tactic": "Privilege Escalation"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_116",
+      "threat_name": "차량 내부 네트워크의 원격 서비스 (Remote services in In-Vehicle Network)",
+      "phase": "Through",
+      "tactic": "Lateral Movement"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_62",
+      "threat_name": "권한 제어 메커니즘 악용 (Abuse Elevation Control Mechanism)",
+      "phase": "Through",
+      "tactic": "Privilege Escalation"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_42::In::Persistence",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_42",
+      "threat_name": "유효한 계정 (Valid Accounts)",
+      "phase": "In",
+      "tactic": "Persistence"
+    },
+    {
+      "node_id": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_139::In::Command and Control",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "asset_name": "Gateway",
+      "stencil_type": "StencilEllipse",
+      "threat_id": "Threat_139",
+      "threat_name": "비애플리케이션 계층 프로토콜 (Non-Application Layer Protocol)",
+      "phase": "In",
+      "tactic": "Command and Control"
+    }
+  ],
+  "edges": [
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_137::In::Command and Control",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_139::In::Command and Control",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_42::In::Persistence",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::In::Defense Evasion",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_74::In::Defense Evasion",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_83::In::Defense Evasion",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "to": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "dfd_flow_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "dfd_flow_label": "DF17. B-CAN data"
+    },
+    {
+      "from": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "to": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dfd_flow_guid": "b61fdc08-11e4-4014-b325-956083b607be",
+      "dfd_flow_label": "Generic Data Flow"
+    },
+    {
+      "from": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "to": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dfd_flow_guid": "b61fdc08-11e4-4014-b325-956083b607be",
+      "dfd_flow_label": "Generic Data Flow"
+    },
+    {
+      "from": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "to": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dfd_flow_guid": "b61fdc08-11e4-4014-b325-956083b607be",
+      "dfd_flow_label": "Generic Data Flow"
+    },
+    {
+      "from": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "to": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dfd_flow_guid": "b61fdc08-11e4-4014-b325-956083b607be",
+      "dfd_flow_label": "Generic Data Flow"
+    },
+    {
+      "from": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "to": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dfd_flow_guid": "b61fdc08-11e4-4014-b325-956083b607be",
+      "dfd_flow_label": "Generic Data Flow"
+    },
+    {
+      "from": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "to": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dfd_flow_guid": "b61fdc08-11e4-4014-b325-956083b607be",
+      "dfd_flow_label": "Generic Data Flow"
+    },
+    {
+      "from": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "to": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dfd_flow_guid": "b61fdc08-11e4-4014-b325-956083b607be",
+      "dfd_flow_label": "Generic Data Flow"
+    },
+    {
+      "from": "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "to": "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dfd_flow_guid": "b61fdc08-11e4-4014-b325-956083b607be",
+      "dfd_flow_label": "Generic Data Flow"
+    },
+    {
+      "from": "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "to": "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function",
+      "dfd_flow_guid": "a21422fc-7dd5-4cb4-89c7-4f1b9b007fca",
+      "dfd_flow_label": "Lock / Unlock operation"
+    }
+  ],
+  "paths": [
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_42::In::Persistence",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_74::In::Defense Evasion",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::In::Defense Evasion",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_83::In::Defense Evasion",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_137::In::Command and Control",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_139::In::Command and Control",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_153::Out::Affect Vehicle Function"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_98::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Discovery",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_63::Through::Privilege Escalation",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_88::Through::Credential Access",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_108::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_115::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_80::In::Defense Evasion",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_126::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_130::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_131::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_132::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_137::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_138::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de::Threat_140::In::Command and Control",
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_116::Through::Lateral Movement",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_42::In::Persistence",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_74::In::Defense Evasion",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_62::In::Defense Evasion",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_83::In::Defense Evasion",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_137::In::Command and Control",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ],
+    [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586::Threat_139::In::Command and Control",
+      "dd03bf0c-89d6-423a-84bb-18753c23b416::Threat_109::Through::Lateral Movement",
+      "a8820ccf-1189-4a07-9f83-eff024c2f212::Threat_165::Out::Impact"
+    ]
+  ],
+  "merged_dfd_subgraph": {
+    "dfd_nodes": [
+      {
+        "guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+        "name": "Gateway",
+        "stencil_type": "StencilEllipse",
+        "left": 387.0,
+        "top": 267.0,
+        "width": 100.0,
+        "height": 100.0
+      },
+      {
+        "guid": "6fcd03b4-7101-49f4-8915-c1bb9349e6de",
+        "name": "TCU",
+        "stencil_type": "StencilEllipse",
+        "left": 888.0,
+        "top": 483.0,
+        "width": 100.0,
+        "height": 100.0
+      },
+      {
+        "guid": "a8820ccf-1189-4a07-9f83-eff024c2f212",
+        "name": "Door",
+        "stencil_type": "StencilEllipse",
+        "left": 703.0,
+        "top": 27.0,
+        "width": 100.0,
+        "height": 100.0
+      },
+      {
+        "guid": "dd03bf0c-89d6-423a-84bb-18753c23b416",
+        "name": "Body Control Module (BCM)",
+        "stencil_type": "StencilEllipse",
+        "left": 306.0,
+        "top": 76.0,
+        "width": 100.0,
+        "height": 100.0
+      }
+    ],
+    "dfd_edges": [
+      {
+        "guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+        "source_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+        "target_guid": "dd03bf0c-89d6-423a-84bb-18753c23b416",
+        "label": "DF17. B-CAN data"
+      },
+      {
+        "guid": "a21422fc-7dd5-4cb4-89c7-4f1b9b007fca",
+        "source_guid": "dd03bf0c-89d6-423a-84bb-18753c23b416",
+        "target_guid": "a8820ccf-1189-4a07-9f83-eff024c2f212",
+        "label": "Lock / Unlock operation"
+      },
+      {
+        "guid": "b61fdc08-11e4-4014-b325-956083b607be",
+        "source_guid": "6fcd03b4-7101-49f4-8915-c1bb9349e6de",
+        "target_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+        "label": "Generic Data Flow"
+      }
+    ],
+    "start_asset_guids": [
+      "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "6fcd03b4-7101-49f4-8915-c1bb9349e6de"
+    ],
+    "end_asset_guids": [
+      "a8820ccf-1189-4a07-9f83-eff024c2f212"
+    ],
+    "node_count": 4,
+    "edge_count": 3
+  },
+  "phase_order": [
+    "In",
+    "Through",
+    "Out"
+  ],
+  "path_constraint": "In==1 & Through>=1 & Out==1",
+  "in_phase_policy": {
+    "attack_vector_mode": "local",
+    "attack_vector_map": "C:\\Users\\Administrator\\Desktop\\TARA_AUTO-main\\code\\backend\\threat_library\\attack_vector_feasibility.json",
+    "note": "Only threats with matching attack_vector are allowed as In."
+  },
+  "dependency_policy": {
+    "dependency_map": "C:\\Users\\Administrator\\Desktop\\TARA_AUTO-main\\code\\backend\\threat_library\\dependency.json",
+    "note": "All mandatory dependency rules must be satisfied for each path; otherwise the path is filtered out."
+  },
+  "out_phase_policy": "Out phase is allowed only on the target asset in this search.",
+  "note": "Local/Physical now includes In and searches In->Through->Out paths (no Entry). In-node asset must be boundary outside.",
+  "boundary_policy": {
+    "boundary_rect": {
+      "left": 815.0,
+      "top": 675.0,
+      "width": 667.0,
+      "height": 391.0
+    },
+    "note": "For Local/Physical, In-node asset is restricted to boundary 'outside' side (treated as vehicle internal in this TM7)."
+  }
+}
