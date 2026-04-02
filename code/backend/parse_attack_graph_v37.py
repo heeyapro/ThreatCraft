@@ -1165,10 +1165,10 @@ def generate_html_report(
     <table>
         <thead>
             <tr>
-                <th>Threat ID</th>
-                <th>Threat Name</th>
-                <th>Tactic</th>
-                <th>Damage Scenario</th>
+                <th style="width:10%;">Threat ID</th>
+                <th style="width:20%;">Threat Name</th>
+                <th style="width:18%;">Tactic</th>
+                <th style="width:52%;">Damage Scenario</th>
             </tr>
         </thead>
         <tbody>
@@ -1182,10 +1182,10 @@ def generate_html_report(
     <table>
         <thead>
             <tr>
-                <th>Threat ID</th>
-                <th>Threat Name</th>
-                <th>Tactic</th>
-                <th>Threat Scenario</th>
+                <th style="width:10%;">Threat ID</th>
+                <th style="width:20%;">Threat Name</th>
+                <th style="width:18%;">Tactic</th>
+                <th style="width:52%;">Threat Scenario</th>
             </tr>
         </thead>
         <tbody>
@@ -1242,12 +1242,12 @@ def generate_html_report(
     <table>
         <thead>
             <tr>
-                <th>Threat ID</th>
-                <th>Threat Name</th>
-                <th>Feasibility</th>
-                <th>Risk Level</th>
-                <th>CAL</th>
-                <th>Risk Treatment Decision</th>
+                <th style="width:10%;">Threat ID</th>
+                <th style="width:20%;">Threat Name</th>
+                <th style="width:12%;">Feasibility</th>
+                <th style="width:12%;">Risk Level</th>
+                <th style="width:10%;">CAL</th>
+                <th style="width:36%;">Risk Treatment Decision</th>
             </tr>
         </thead>
         <tbody>
