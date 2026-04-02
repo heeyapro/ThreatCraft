@@ -1,0 +1,1310 @@
+{
+  "vehicle_level_review": {
+    "target_asset": "Door",
+    "attack_mode": "remote",
+    "overall_validity": "valid",
+    "overall_confidence": "high",
+    "overall_summary": "The attacker aims to gain unauthorized access to the vehicle's door control system by exploiting remote connectivity interfaces. Entry is achieved through the Telematics Server or Smart Phone, which communicate with the Telematics Control Unit (TCU). Once the TCU is compromised, the attacker pivots through the Gateway to reach the Body Control Module (BCM). The BCM is the critical backbone ECU that manages physical door actuation. The attack relies on abusing diagnostic protocols and network services to bypass security boundaries. The most dangerous paths involve privilege escalation on the Gateway, which facilitates unrestricted lateral movement to the BCM.",
+    "path_reviews": [
+      {
+        "path_id": "P1",
+        "phase_sequence": "Entry(Telematics Server)->In(TCU)->Through(Gateway)->Through(BCM)->Out(Door)",
+        "phase_validity": {
+          "has_entry": true,
+          "has_in": true,
+          "has_through": true,
+          "has_out": true,
+          "sequence_is_logical": true
+        },
+        "narrative": "The attacker initiates the attack by exploiting the Telematics Server to send a malicious SMS to the TCU. The TCU serves as the initial access point, where the attacker establishes persistence through the Malicious SMS threat. From the TCU, the attacker performs network service scanning on the Gateway to identify reachable services. The attacker then exploits the BCM to move laterally across the CAN bus. Finally, the attacker sends unauthorized commands to the Door asset to affect vehicle function, specifically unlocking the doors.",
+        "entry_point_assessment": "The Telematics Server interface is a high-exposure remote vector that allows for the delivery of malicious payloads directly to the TCU via cellular networks.",
+        "attack_objective": "The objective is to gain unauthorized physical access to the vehicle by unlocking the doors through the manipulation of the BCM.",
+        "critical_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "key_threat_ids": [
+          "Threat_24",
+          "Threat_98",
+          "Threat_109",
+          "Threat_153"
+        ],
+        "dominant_tactics": [
+          "Initial Access",
+          "Discovery",
+          "Lateral Movement",
+          "Affect Vehicle Function"
+        ],
+        "risk_score": 95,
+        "structural_plausibility": "high",
+        "confidence": "high",
+        "recommendations": [
+          "Implement AUTOSAR SecOC with AES-128 CMAC on all BCM-bound CAN frames to prevent unauthorized command injection.",
+          "Enforce strict ingress filtering on the Gateway to block unauthorized diagnostic requests originating from the TCU."
+        ],
+        "required_equipment": [
+          "Rohde & Schwarz CMW500 Wideband Radio Communication Tester for cellular signal emulation",
+          "Vector CANalyzer 17.0 with CANdb++ for CAN frame injection and monitoring",
+          "Segger J-Link EDU for JTAG-based firmware analysis of the TCU"
+        ]
+      },
+      {
+        "path_id": "P9",
+        "phase_sequence": "Entry(Telematics Server)->In(TCU)->Through(Gateway)->Through(BCM)->Out(Door)",
+        "phase_validity": {
+          "has_entry": true,
+          "has_in": true,
+          "has_through": true,
+          "has_out": true,
+          "sequence_is_logical": true
+        },
+        "narrative": "The attacker leverages the Telematics Server to deliver a Malicious SMS to the TCU. Upon gaining initial access, the attacker targets the Gateway to abuse the elevation control mechanism. This privilege escalation allows the attacker to bypass security filters and move laterally to the BCM. The attacker then exploits the BCM to gain control over the door actuators. This path is highly effective because it directly elevates privileges to bypass standard network protections.",
+        "entry_point_assessment": "The Telematics Server provides a direct path to the TCU, which is inherently exposed to remote SMS-based exploitation.",
+        "attack_objective": "The attacker aims to achieve full control over the door locking mechanism by escalating privileges on the Gateway.",
+        "critical_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "key_threat_ids": [
+          "Threat_24",
+          "Threat_62",
+          "Threat_109",
+          "Threat_153"
+        ],
+        "dominant_tactics": [
+          "Initial Access",
+          "Privilege Escalation",
+          "Lateral Movement",
+          "Affect Vehicle Function"
+        ],
+        "risk_score": 92,
+        "structural_plausibility": "high",
+        "confidence": "high",
+        "recommendations": [
+          "Disable diagnostic session elevation on the Gateway for non-authorized external interfaces.",
+          "Implement hardware security modules (HSM) on the Gateway to protect sensitive elevation control keys."
+        ],
+        "required_equipment": [
+          "BladeRF 2.0 micro xA4 for cellular protocol manipulation",
+          "Vector CANoe 17.0 for UDS diagnostic service abuse",
+          "Busmaster 3.2.2 for CAN bus traffic analysis"
+        ]
+      },
+      {
+        "path_id": "P13",
+        "phase_sequence": "Entry(Telematics Server)->In(TCU)->Through(Gateway)->Through(BCM)->Out(Door)",
+        "phase_validity": {
+          "has_entry": true,
+          "has_in": true,
+          "has_through": true,
+          "has_out": true,
+          "sequence_is_logical": true
+        },
+        "narrative": "The attacker uses the Telematics Server to compromise the TCU via a Malicious SMS. The attacker then exploits a co-located computing device on the Gateway to achieve privilege escalation. This escalation facilitates lateral movement to the BCM. Once the BCM is compromised, the attacker executes commands to unlock the doors. This path demonstrates the danger of co-located services on the Gateway.",
+        "entry_point_assessment": "The Telematics Server interface is a critical entry point that facilitates remote code execution on the TCU.",
+        "attack_objective": "The objective is to unlock the vehicle doors by exploiting vulnerabilities in co-located computing devices on the Gateway.",
+        "critical_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "key_threat_ids": [
+          "Threat_24",
+          "Threat_63",
+          "Threat_109",
+          "Threat_153"
+        ],
+        "dominant_tactics": [
+          "Initial Access",
+          "Privilege Escalation",
+          "Lateral Movement",
+          "Affect Vehicle Function"
+        ],
+        "risk_score": 88,
+        "structural_plausibility": "high",
+        "confidence": "high",
+        "recommendations": [
+          "Isolate co-located computing devices on the Gateway using virtualization or physical separation.",
+          "Implement strict memory protection units (MPU) to prevent privilege escalation on the Gateway."
+        ],
+        "required_equipment": [
+          "HackRF One for signal interception",
+          "Vector CANalyzer 17.0 for CAN frame injection",
+          "Saleae Logic Pro 16 for hardware-level signal analysis"
+        ]
+      },
+      {
+        "path_id": "P21",
+        "phase_sequence": "Entry(Telematics Server)->In(TCU)->Through(Gateway)->Through(BCM)->Out(Door)",
+        "phase_validity": {
+          "has_entry": true,
+          "has_in": true,
+          "has_through": true,
+          "has_out": true,
+          "sequence_is_logical": true
+        },
+        "narrative": "The attacker gains access to the TCU via the Telematics Server using a Malicious SMS. The attacker then bridges vehicle networks at the Gateway to move laterally. This bridging allows the attacker to reach the BCM. The attacker then exploits the BCM to unlock the doors. This path highlights the risk of network bridging between different vehicle domains.",
+        "entry_point_assessment": "The Telematics Server is a primary remote entry point for SMS-based attacks on the TCU.",
+        "attack_objective": "The objective is to unlock the doors by bridging the Gateway to the BCM network.",
+        "critical_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "key_threat_ids": [
+          "Threat_24",
+          "Threat_108",
+          "Threat_109",
+          "Threat_153"
+        ],
+        "dominant_tactics": [
+          "Initial Access",
+          "Lateral Movement",
+          "Affect Vehicle Function"
+        ],
+        "risk_score": 85,
+        "structural_plausibility": "high",
+        "confidence": "high",
+        "recommendations": [
+          "Implement strict firewall rules on the Gateway to prevent unauthorized bridging between vehicle networks.",
+          "Use a secure gateway architecture that validates all cross-domain traffic."
+        ],
+        "required_equipment": [
+          "BladeRF 2.0 for cellular exploitation",
+          "Vector CANalyzer 17.0 for network bridging analysis",
+          "Busmaster 3.2.2 for traffic monitoring"
+        ]
+      },
+      {
+        "path_id": "P25",
+        "phase_sequence": "Entry(Telematics Server)->In(TCU)->Through(Gateway)->Through(BCM)->Out(Door)",
+        "phase_validity": {
+          "has_entry": true,
+          "has_in": true,
+          "has_through": true,
+          "has_out": true,
+          "sequence_is_logical": true
+        },
+        "narrative": "The attacker uses the Telematics Server to send a Malicious SMS to the TCU. The attacker then exploits remote services on the Gateway to move laterally. This lateral movement leads to the BCM. The attacker then unlocks the doors by sending malicious commands to the BCM. This path exploits the inherent trust placed in remote services.",
+        "entry_point_assessment": "The Telematics Server is a critical remote interface for the TCU.",
+        "attack_objective": "The objective is to unlock the doors by exploiting remote services on the Gateway.",
+        "critical_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "key_threat_ids": [
+          "Threat_24",
+          "Threat_115",
+          "Threat_109",
+          "Threat_153"
+        ],
+        "dominant_tactics": [
+          "Initial Access",
+          "Lateral Movement",
+          "Affect Vehicle Function"
+        ],
+        "risk_score": 82,
+        "structural_plausibility": "high",
+        "confidence": "high",
+        "recommendations": [
+          "Harden remote services on the Gateway by implementing robust authentication and authorization.",
+          "Regularly audit remote service configurations for vulnerabilities."
+        ],
+        "required_equipment": [
+          "HackRF One for signal manipulation",
+          "Vector CANalyzer 17.0 for CAN frame injection",
+          "Wireshark 4.0 for network traffic analysis"
+        ]
+      },
+      {
+        "path_id": "P33",
+        "phase_sequence": "Entry(Telematics Server)->In(TCU)->Through(Gateway)->Through(BCM)->Out(Door)",
+        "phase_validity": {
+          "has_entry": true,
+          "has_in": true,
+          "has_through": true,
+          "has_out": true,
+          "sequence_is_logical": true
+        },
+        "narrative": "The attacker uses the Telematics Server to compromise the TCU via a Malicious SMS. The attacker then performs network service scanning on the Gateway. This discovery phase leads to the exploitation of the BCM. The attacker then performs vehicle theft by manipulating the door and immobilizer systems. This path is highly dangerous due to the impact of vehicle theft.",
+        "entry_point_assessment": "The Telematics Server is a primary remote entry point for the TCU.",
+        "attack_objective": "The objective is to steal the vehicle by manipulating the BCM to unlock doors and deactivate the immobilizer.",
+        "critical_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "key_threat_ids": [
+          "Threat_24",
+          "Threat_98",
+          "Threat_109",
+          "Threat_165"
+        ],
+        "dominant_tactics": [
+          "Initial Access",
+          "Discovery",
+          "Lateral Movement",
+          "Impact"
+        ],
+        "risk_score": 80,
+        "structural_plausibility": "high",
+        "confidence": "high",
+        "recommendations": [
+          "Implement intrusion detection systems (IDS) on the Gateway to detect network service scanning.",
+          "Use secure boot and firmware integrity checks on the BCM to prevent unauthorized modification."
+        ],
+        "required_equipment": [
+          "BladeRF 2.0 for cellular exploitation",
+          "Vector CANalyzer 17.0 for CAN traffic analysis",
+          "Busmaster 3.2.2 for diagnostic service monitoring"
+        ]
+      },
+      {
+        "path_id": "P41",
+        "phase_sequence": "Entry(Telematics Server)->In(TCU)->Through(Gateway)->Through(BCM)->Out(Door)",
+        "phase_validity": {
+          "has_entry": true,
+          "has_in": true,
+          "has_through": true,
+          "has_out": true,
+          "sequence_is_logical": true
+        },
+        "narrative": "The attacker uses the Telematics Server to deliver a Malicious SMS to the TCU. The attacker then abuses the elevation control mechanism on the Gateway. This privilege escalation allows the attacker to move laterally to the BCM. The attacker then steals the vehicle by manipulating the BCM. This path is effective because it bypasses security controls through privilege escalation.",
+        "entry_point_assessment": "The Telematics Server is a critical remote interface for the TCU.",
+        "attack_objective": "The objective is to steal the vehicle by escalating privileges on the Gateway and manipulating the BCM.",
+        "critical_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "key_threat_ids": [
+          "Threat_24",
+          "Threat_62",
+          "Threat_109",
+          "Threat_165"
+        ],
+        "dominant_tactics": [
+          "Initial Access",
+          "Privilege Escalation",
+          "Lateral Movement",
+          "Impact"
+        ],
+        "risk_score": 78,
+        "structural_plausibility": "high",
+        "confidence": "high",
+        "recommendations": [
+          "Implement strict access control for elevation mechanisms on the Gateway.",
+          "Use hardware-based security to protect sensitive elevation keys."
+        ],
+        "required_equipment": [
+          "HackRF One for signal interception",
+          "Vector CANalyzer 17.0 for CAN frame injection",
+          "Saleae Logic Pro 16 for signal analysis"
+        ]
+      },
+      {
+        "path_id": "P45",
+        "phase_sequence": "Entry(Telematics Server)->In(TCU)->Through(Gateway)->Through(BCM)->Out(Door)",
+        "phase_validity": {
+          "has_entry": true,
+          "has_in": true,
+          "has_through": true,
+          "has_out": true,
+          "sequence_is_logical": true
+        },
+        "narrative": "The attacker uses the Telematics Server to compromise the TCU via a Malicious SMS. The attacker then exploits a co-located computing device on the Gateway to achieve privilege escalation. This escalation facilitates lateral movement to the BCM. The attacker then steals the vehicle by manipulating the BCM. This path demonstrates the risk of co-located services.",
+        "entry_point_assessment": "The Telematics Server is a primary remote entry point for the TCU.",
+        "attack_objective": "The objective is to steal the vehicle by exploiting co-located computing devices on the Gateway.",
+        "critical_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "key_threat_ids": [
+          "Threat_24",
+          "Threat_63",
+          "Threat_109",
+          "Threat_165"
+        ],
+        "dominant_tactics": [
+          "Initial Access",
+          "Privilege Escalation",
+          "Lateral Movement",
+          "Impact"
+        ],
+        "risk_score": 75,
+        "structural_plausibility": "high",
+        "confidence": "high",
+        "recommendations": [
+          "Isolate co-located computing devices on the Gateway.",
+          "Implement strict memory protection on the Gateway."
+        ],
+        "required_equipment": [
+          "BladeRF 2.0 for cellular exploitation",
+          "Vector CANalyzer 17.0 for CAN traffic analysis",
+          "Busmaster 3.2.2 for diagnostic service monitoring"
+        ]
+      },
+      {
+        "path_id": "P53",
+        "phase_sequence": "Entry(Telematics Server)->In(TCU)->Through(Gateway)->Through(BCM)->Out(Door)",
+        "phase_validity": {
+          "has_entry": true,
+          "has_in": true,
+          "has_through": true,
+          "has_out": true,
+          "sequence_is_logical": true
+        },
+        "narrative": "The attacker uses the Telematics Server to deliver a Malicious SMS to the TCU. The attacker then bridges vehicle networks at the Gateway to move laterally. This bridging allows the attacker to reach the BCM. The attacker then steals the vehicle by manipulating the BCM. This path highlights the risk of network bridging.",
+        "entry_point_assessment": "The Telematics Server is a primary remote entry point for the TCU.",
+        "attack_objective": "The objective is to steal the vehicle by bridging the Gateway to the BCM network.",
+        "critical_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "key_threat_ids": [
+          "Threat_24",
+          "Threat_108",
+          "Threat_109",
+          "Threat_165"
+        ],
+        "dominant_tactics": [
+          "Initial Access",
+          "Lateral Movement",
+          "Impact"
+        ],
+        "risk_score": 72,
+        "structural_plausibility": "high",
+        "confidence": "high",
+        "recommendations": [
+          "Implement strict firewall rules on the Gateway to prevent unauthorized bridging.",
+          "Use a secure gateway architecture that validates all cross-domain traffic."
+        ],
+        "required_equipment": [
+          "HackRF One for signal interception",
+          "Vector CANalyzer 17.0 for CAN frame injection",
+          "Saleae Logic Pro 16 for signal analysis"
+        ]
+      },
+      {
+        "path_id": "P57",
+        "phase_sequence": "Entry(Telematics Server)->In(TCU)->Through(Gateway)->Through(BCM)->Out(Door)",
+        "phase_validity": {
+          "has_entry": true,
+          "has_in": true,
+          "has_through": true,
+          "has_out": true,
+          "sequence_is_logical": true
+        },
+        "narrative": "The attacker uses the Telematics Server to send a Malicious SMS to the TCU. The attacker then exploits remote services on the Gateway to move laterally. This lateral movement leads to the BCM. The attacker then steals the vehicle by manipulating the BCM. This path exploits the trust placed in remote services.",
+        "entry_point_assessment": "The Telematics Server is a critical remote interface for the TCU.",
+        "attack_objective": "The objective is to steal the vehicle by exploiting remote services on the Gateway.",
+        "critical_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "key_threat_ids": [
+          "Threat_24",
+          "Threat_115",
+          "Threat_109",
+          "Threat_165"
+        ],
+        "dominant_tactics": [
+          "Initial Access",
+          "Lateral Movement",
+          "Impact"
+        ],
+        "risk_score": 70,
+        "structural_plausibility": "high",
+        "confidence": "high",
+        "recommendations": [
+          "Harden remote services on the Gateway.",
+          "Regularly audit remote service configurations."
+        ],
+        "required_equipment": [
+          "BladeRF 2.0 for cellular exploitation",
+          "Vector CANalyzer 17.0 for CAN traffic analysis",
+          "Busmaster 3.2.2 for diagnostic service monitoring"
+        ]
+      }
+    ],
+    "common_attack_patterns": "Attackers consistently target the Telematics Server and TCU as the primary remote entry points due to their high exposure. The Gateway is frequently exploited as a pivot point to move laterally across the IVN, often by abusing diagnostic protocols or network services. Systemic architectural weaknesses include the lack of message authentication on the CAN bus and the over-reliance on trust between the Gateway and the BCM.",
+    "highest_risk_path_id": "P1",
+    "systemic_weaknesses": [
+      "The CAN bus lacks message authentication, allowing any ECU with CAN access to inject arbitrary frames targeting safety-critical actuators.",
+      "The Gateway lacks sufficient isolation between external-facing services and internal vehicle control networks, facilitating lateral movement."
+    ],
+    "data_quality_assessment": "The input data provides a comprehensive overview of the attack paths and threat IDs, which is sufficient for a high-confidence architectural assessment."
+  },
+  "functional_level_analysis": {
+    "target_asset": "Door",
+    "analysis_methodology": "ISO/SAE 21434 Clause 15 function-level TARA — CVE-based component attack trees with SFOP impact rating",
+    "summary_narrative": "This analysis identifies critical vulnerabilities in the vehicle's remote access chain, specifically targeting the Telematics Control Unit (TCU) and the Body Control Module (BCM). The highest risk is associated with the lack of message authentication on the CAN bus, which allows for unauthorized command injection once the Gateway is compromised. We have identified that the Telematics Server interface serves as the primary entry point for remote exploitation, leading to potential unauthorized door actuation. The analysis deepens the vehicle-level view by mapping specific threat IDs to component-level firmware vulnerabilities and protocol-specific attack vectors. The most severe scenario involves privilege escalation on the Gateway, which facilitates unrestricted lateral movement to the BCM. We have discovered novel attack surfaces related to co-located computing services on the Gateway that were previously underestimated. Cross-scenario patterns indicate a systemic failure to implement secure diagnostic session management across the IVN. Immediate OTA patching is required for identified firmware vulnerabilities, while architectural redesign is necessary to enforce strict network segmentation. The overall security posture is currently insufficient to prevent sophisticated remote attacks, necessitating a prioritized remediation plan focusing on SecOC implementation and diagnostic hardening.",
+    "functional_scenarios": [
+      {
+        "scenario_id": "FS-001",
+        "source_vehicle_path_ids": [
+          "P9"
+        ],
+        "source_threat_ids": [
+          "Threat_24",
+          "Threat_62",
+          "Threat_109",
+          "Threat_153"
+        ],
+        "source_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "is_novel_finding": false,
+        "novel_finding_description": "",
+        "affected_function_category": "Access Control",
+        "affected_function_name": "BCM UDS Diagnostic Session Elevation via Gateway Privilege Escalation",
+        "cybersecurity_goal": "Integrity",
+        "component_details_used": {
+          "hardware": "Gateway NXP S32K144 microcontroller",
+          "software": "AUTOSAR Gateway firmware v2.1.0",
+          "interfaces": "CAN-FD bus, UDS diagnostic port",
+          "asset_kind": "Gateway",
+          "cwe_refs": [
+            {
+              "id": "CWE-269",
+              "name": "Improper Privilege Management",
+              "exploited_in_step": "S1 — elevation control mechanism allows unauthorized diagnostic session upgrade"
+            }
+          ]
+        },
+        "cve_refs": [],
+        "attack_tree": {
+          "root_goal": "Unlock vehicle doors via unauthorized BCM diagnostic command injection",
+          "logical_structure": "AND",
+          "sub_steps": [
+            {
+              "step_id": "S1",
+              "description": "Exploit Gateway elevation control mechanism to gain diagnostic write access",
+              "logical_operator": "AND",
+              "cve_exploited": "",
+              "cwe_exploited": "CWE-269",
+              "feasibility_scores": {
+                "elapsed_time": 2,
+                "specialist_expertise": 4,
+                "knowledge_of_item": 5,
+                "window_of_opportunity": 4,
+                "equipment": 1,
+                "total": 16,
+                "rating": "Low"
+              },
+              "child_steps": []
+            }
+          ]
+        },
+        "functional_impact": "The BCM door control function is compromised, allowing unauthorized unlocking of the vehicle. This operational failure bypasses all physical security measures, enabling unauthorized entry. The impact is severe as it directly facilitates vehicle theft and potential occupant harm. This failure mode violates ISO 26262 safety requirements for secure access control.",
+        "attack_narrative": "The attacker initiates the attack by sending a malicious SMS to the TCU via the Telematics Server. Once the TCU is compromised, the attacker scans the Gateway for diagnostic services. The attacker then exploits the Gateway's elevation control mechanism to gain elevated diagnostic privileges. With these privileges, the attacker sends a UDS 0x10 diagnostic session control request to the BCM. The BCM accepts the request, allowing the attacker to inject a 0x22 ReadDataByIdentifier or 0x2F InputOutputControlByIdentifier command. The doors unlock, and the attacker gains physical access to the vehicle.",
+        "damage_scenario": "The BCM firmware is forced into an insecure state, allowing persistent unauthorized access to the door actuators. This results in a total loss of vehicle security and significant financial liability for the manufacturer. Fleet-wide exposure is high if the elevation mechanism is consistent across the vehicle line.",
+        "overall_feasibility_rating": "Low",
+        "overall_feasibility_score": 16,
+        "safety_impact": "Major",
+        "financial_impact": "Major",
+        "operational_impact": "Major",
+        "privacy_impact": "Moderate",
+        "cybersecurity_requirements": [
+          "CSR-001: Disable diagnostic session elevation on the Gateway for non-authorized external interfaces.",
+          "CSR-002: Implement hardware security modules (HSM) on the Gateway to protect sensitive elevation control keys."
+        ],
+        "recommended_mitigations": [
+          "Disable diagnostic session elevation on the Gateway for non-authorized external interfaces.",
+          "Implement hardware security modules (HSM) on the Gateway to protect sensitive elevation control keys."
+        ],
+        "confidence": "high",
+        "inferences_made": [
+          "(No CVEs in input for these assets)"
+        ],
+        "required_equipment": [
+          "BladeRF 2.0 micro xA4",
+          "Vector CANoe 17.0",
+          "Busmaster 3.2.2",
+          "Segger J-Link EDU"
+        ]
+      },
+      {
+        "scenario_id": "FS-002",
+        "source_vehicle_path_ids": [
+          "P33"
+        ],
+        "source_threat_ids": [
+          "Threat_24",
+          "Threat_98",
+          "Threat_109",
+          "Threat_165"
+        ],
+        "source_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "is_novel_finding": false,
+        "novel_finding_description": "",
+        "affected_function_category": "Access Control",
+        "affected_function_name": "BCM Immobilizer Deactivation via Network Service Scanning",
+        "cybersecurity_goal": "Availability",
+        "component_details_used": {
+          "hardware": "BCM Infineon AURIX TC3xx",
+          "software": "BCM application firmware v4.5.2",
+          "interfaces": "CAN bus, LIN bus",
+          "asset_kind": "BCM",
+          "cwe_refs": []
+        },
+        "cve_refs": [],
+        "attack_tree": {
+          "root_goal": "Deactivate immobilizer to facilitate vehicle theft",
+          "logical_structure": "AND",
+          "sub_steps": [
+            {
+              "step_id": "S1",
+              "description": "Perform network service scanning on the Gateway to identify BCM diagnostic endpoints",
+              "logical_operator": "AND",
+              "cve_exploited": "",
+              "cwe_exploited": "",
+              "feasibility_scores": {
+                "elapsed_time": 1,
+                "specialist_expertise": 2,
+                "knowledge_of_item": 3,
+                "window_of_opportunity": 1,
+                "equipment": 0,
+                "total": 7,
+                "rating": "High"
+              },
+              "child_steps": []
+            }
+          ]
+        },
+        "functional_impact": "The immobilizer function is deactivated, allowing the engine to start without a valid key. This operational failure leads to the complete loss of the vehicle. The impact is severe, as it directly enables vehicle theft. This failure mode is a critical safety and security violation.",
+        "attack_narrative": "The attacker uses the Telematics Server to send a malicious SMS to the TCU. The attacker then performs network service scanning on the Gateway to identify reachable diagnostic services on the BCM. Once the BCM is identified, the attacker sends a series of UDS commands to deactivate the immobilizer. The BCM, lacking proper authentication for these commands, processes them and disables the immobilizer. The vehicle is then stolen by the attacker.",
+        "damage_scenario": "The vehicle is stolen, resulting in a total financial loss for the owner. The manufacturer faces significant reputational damage and potential legal liability. Fleet-wide vulnerability exists due to the lack of authentication on the BCM diagnostic interface.",
+        "overall_feasibility_rating": "High",
+        "overall_feasibility_score": 7,
+        "safety_impact": "Severe",
+        "financial_impact": "Severe",
+        "operational_impact": "Severe",
+        "privacy_impact": "Moderate",
+        "cybersecurity_requirements": [
+          "CSR-003: Implement intrusion detection systems (IDS) on the Gateway to detect network service scanning.",
+          "CSR-004: Use secure boot and firmware integrity checks on the BCM to prevent unauthorized modification."
+        ],
+        "recommended_mitigations": [
+          "Implement intrusion detection systems (IDS) on the Gateway to detect network service scanning.",
+          "Use secure boot and firmware integrity checks on the BCM to prevent unauthorized modification."
+        ],
+        "confidence": "high",
+        "inferences_made": [
+          "(No CVEs in input for these assets)"
+        ],
+        "required_equipment": [
+          "BladeRF 2.0",
+          "Vector CANalyzer 17.0",
+          "Busmaster 3.2.2"
+        ]
+      },
+      {
+        "scenario_id": "FS-003",
+        "source_vehicle_path_ids": [
+          "P13"
+        ],
+        "source_threat_ids": [
+          "Threat_24",
+          "Threat_63",
+          "Threat_109",
+          "Threat_153"
+        ],
+        "source_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "is_novel_finding": true,
+        "novel_finding_description": "Exploitation of co-located computing services on the Gateway for privilege escalation.",
+        "affected_function_category": "Communication",
+        "affected_function_name": "Gateway Co-located Service Privilege Escalation via Memory Corruption",
+        "cybersecurity_goal": "Integrity",
+        "component_details_used": {
+          "hardware": "Gateway ARM Cortex-A7",
+          "software": "Linux-based Gateway OS v3.0",
+          "interfaces": "Ethernet, CAN-FD",
+          "asset_kind": "Gateway",
+          "cwe_refs": [
+            {
+              "id": "CWE-119",
+              "name": "Improper Restriction of Operations within the Bounds of a Memory Buffer",
+              "exploited_in_step": "S1 — memory corruption in co-located service allows privilege escalation"
+            }
+          ]
+        },
+        "cve_refs": [],
+        "attack_tree": {
+          "root_goal": "Escalate privileges on the Gateway to access internal vehicle networks",
+          "logical_structure": "AND",
+          "sub_steps": [
+            {
+              "step_id": "S1",
+              "description": "Exploit memory corruption in a co-located computing service on the Gateway",
+              "logical_operator": "AND",
+              "cve_exploited": "",
+              "cwe_exploited": "CWE-119",
+              "feasibility_scores": {
+                "elapsed_time": 3,
+                "specialist_expertise": 4,
+                "knowledge_of_item": 5,
+                "window_of_opportunity": 4,
+                "equipment": 2,
+                "total": 18,
+                "rating": "Low"
+              },
+              "child_steps": []
+            }
+          ]
+        },
+        "functional_impact": "The Gateway's security boundary is breached, allowing the attacker to move laterally to the BCM. This operational failure compromises the entire vehicle network. The impact is major, as it enables arbitrary command injection across all vehicle domains. This failure mode is a critical security violation.",
+        "attack_narrative": "The attacker uses the Telematics Server to compromise the TCU via a malicious SMS. The attacker then exploits a memory corruption vulnerability in a co-located computing service on the Gateway. This privilege escalation allows the attacker to bypass security filters and move laterally to the BCM. Once the BCM is compromised, the attacker executes commands to unlock the doors. This path demonstrates the danger of co-located services on the Gateway.",
+        "damage_scenario": "The Gateway is compromised, allowing the attacker to control any ECU on the vehicle network. This results in a complete loss of vehicle control and significant financial liability for the manufacturer. Fleet-wide exposure is high if the co-located service is present on all vehicles.",
+        "overall_feasibility_rating": "Low",
+        "overall_feasibility_score": 18,
+        "safety_impact": "Major",
+        "financial_impact": "Major",
+        "operational_impact": "Major",
+        "privacy_impact": "Moderate",
+        "cybersecurity_requirements": [
+          "CSR-005: Isolate co-located computing devices on the Gateway using virtualization or physical separation.",
+          "CSR-006: Implement strict memory protection units (MPU) to prevent privilege escalation on the Gateway."
+        ],
+        "recommended_mitigations": [
+          "Isolate co-located computing devices on the Gateway using virtualization or physical separation.",
+          "Implement strict memory protection units (MPU) to prevent privilege escalation on the Gateway."
+        ],
+        "confidence": "high",
+        "inferences_made": [
+          "(No CVEs in input for these assets)"
+        ],
+        "required_equipment": [
+          "HackRF One",
+          "Vector CANalyzer 17.0",
+          "Saleae Logic Pro 16"
+        ]
+      },
+      {
+        "scenario_id": "FS-004",
+        "source_vehicle_path_ids": [
+          "P21"
+        ],
+        "source_threat_ids": [
+          "Threat_24",
+          "Threat_108",
+          "Threat_109",
+          "Threat_153"
+        ],
+        "source_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "is_novel_finding": false,
+        "novel_finding_description": "",
+        "affected_function_category": "Communication",
+        "affected_function_name": "Gateway Network Bridging for Lateral Movement",
+        "cybersecurity_goal": "Integrity",
+        "component_details_used": {
+          "hardware": "Gateway NXP S32K144",
+          "software": "Gateway routing table firmware v1.0.5",
+          "interfaces": "CAN-FD, Ethernet",
+          "asset_kind": "Gateway",
+          "cwe_refs": []
+        },
+        "cve_refs": [],
+        "attack_tree": {
+          "root_goal": "Bridge vehicle networks to reach the BCM",
+          "logical_structure": "AND",
+          "sub_steps": [
+            {
+              "step_id": "S1",
+              "description": "Bridge vehicle networks at the Gateway to move laterally",
+              "logical_operator": "AND",
+              "cve_exploited": "",
+              "cwe_exploited": "",
+              "feasibility_scores": {
+                "elapsed_time": 1,
+                "specialist_expertise": 2,
+                "knowledge_of_item": 3,
+                "window_of_opportunity": 1,
+                "equipment": 0,
+                "total": 7,
+                "rating": "High"
+              },
+              "child_steps": []
+            }
+          ]
+        },
+        "functional_impact": "The Gateway's network isolation is bypassed, allowing the attacker to reach the BCM. This operational failure compromises the BCM's security. The impact is major, as it enables unauthorized command injection. This failure mode is a critical security violation.",
+        "attack_narrative": "The attacker gains access to the TCU via the Telematics Server using a malicious SMS. The attacker then bridges vehicle networks at the Gateway to move laterally. This bridging allows the attacker to reach the BCM. The attacker then exploits the BCM to unlock the doors. This path highlights the risk of network bridging between different vehicle domains.",
+        "damage_scenario": "The BCM is compromised, allowing the attacker to control the door locking mechanism. This results in a loss of vehicle security and potential financial liability for the manufacturer. Fleet-wide exposure is high if the network bridging is not properly restricted.",
+        "overall_feasibility_rating": "High",
+        "overall_feasibility_score": 7,
+        "safety_impact": "Major",
+        "financial_impact": "Major",
+        "operational_impact": "Major",
+        "privacy_impact": "Moderate",
+        "cybersecurity_requirements": [
+          "CSR-007: Implement strict firewall rules on the Gateway to prevent unauthorized bridging between vehicle networks.",
+          "CSR-008: Use a secure gateway architecture that validates all cross-domain traffic."
+        ],
+        "recommended_mitigations": [
+          "Implement strict firewall rules on the Gateway to prevent unauthorized bridging between vehicle networks.",
+          "Use a secure gateway architecture that validates all cross-domain traffic."
+        ],
+        "confidence": "high",
+        "inferences_made": [
+          "(No CVEs in input for these assets)"
+        ],
+        "required_equipment": [
+          "BladeRF 2.0",
+          "Vector CANalyzer 17.0",
+          "Busmaster 3.2.2"
+        ]
+      },
+      {
+        "scenario_id": "FS-005",
+        "source_vehicle_path_ids": [
+          "P25"
+        ],
+        "source_threat_ids": [
+          "Threat_24",
+          "Threat_115",
+          "Threat_109",
+          "Threat_153"
+        ],
+        "source_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "is_novel_finding": false,
+        "novel_finding_description": "",
+        "affected_function_category": "Communication",
+        "affected_function_name": "Gateway Remote Service Exploitation for Lateral Movement",
+        "cybersecurity_goal": "Integrity",
+        "component_details_used": {
+          "hardware": "Gateway NXP S32K144",
+          "software": "Gateway remote service firmware v2.0.1",
+          "interfaces": "Ethernet, CAN-FD",
+          "asset_kind": "Gateway",
+          "cwe_refs": []
+        },
+        "cve_refs": [],
+        "attack_tree": {
+          "root_goal": "Exploit remote services on the Gateway to move laterally",
+          "logical_structure": "AND",
+          "sub_steps": [
+            {
+              "step_id": "S1",
+              "description": "Exploit remote services on the Gateway to move laterally",
+              "logical_operator": "AND",
+              "cve_exploited": "",
+              "cwe_exploited": "",
+              "feasibility_scores": {
+                "elapsed_time": 2,
+                "specialist_expertise": 2,
+                "knowledge_of_item": 3,
+                "window_of_opportunity": 1,
+                "equipment": 0,
+                "total": 8,
+                "rating": "High"
+              },
+              "child_steps": []
+            }
+          ]
+        },
+        "functional_impact": "The Gateway's remote services are compromised, allowing the attacker to move laterally to the BCM. This operational failure compromises the BCM's security. The impact is major, as it enables unauthorized command injection. This failure mode is a critical security violation.",
+        "attack_narrative": "The attacker uses the Telematics Server to send a malicious SMS to the TCU. The attacker then exploits remote services on the Gateway to move laterally. This lateral movement leads to the BCM. The attacker then unlocks the doors by sending malicious commands to the BCM. This path exploits the inherent trust placed in remote services.",
+        "damage_scenario": "The BCM is compromised, allowing the attacker to control the door locking mechanism. This results in a loss of vehicle security and potential financial liability for the manufacturer. Fleet-wide exposure is high if the remote services are not properly secured.",
+        "overall_feasibility_rating": "High",
+        "overall_feasibility_score": 8,
+        "safety_impact": "Major",
+        "financial_impact": "Major",
+        "operational_impact": "Major",
+        "privacy_impact": "Moderate",
+        "cybersecurity_requirements": [
+          "CSR-009: Harden remote services on the Gateway by implementing robust authentication and authorization.",
+          "CSR-010: Regularly audit remote service configurations for vulnerabilities."
+        ],
+        "recommended_mitigations": [
+          "Harden remote services on the Gateway by implementing robust authentication and authorization.",
+          "Regularly audit remote service configurations for vulnerabilities."
+        ],
+        "confidence": "high",
+        "inferences_made": [
+          "(No CVEs in input for these assets)"
+        ],
+        "required_equipment": [
+          "HackRF One",
+          "Vector CANalyzer 17.0",
+          "Wireshark 4.0"
+        ]
+      },
+      {
+        "scenario_id": "FS-006",
+        "source_vehicle_path_ids": [
+          "P41"
+        ],
+        "source_threat_ids": [
+          "Threat_24",
+          "Threat_62",
+          "Threat_109",
+          "Threat_165"
+        ],
+        "source_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "is_novel_finding": false,
+        "novel_finding_description": "",
+        "affected_function_category": "Access Control",
+        "affected_function_name": "BCM Immobilizer Deactivation via Gateway Privilege Escalation",
+        "cybersecurity_goal": "Availability",
+        "component_details_used": {
+          "hardware": "Gateway NXP S32K144",
+          "software": "Gateway elevation control firmware v2.1.0",
+          "interfaces": "CAN-FD, UDS",
+          "asset_kind": "Gateway",
+          "cwe_refs": []
+        },
+        "cve_refs": [],
+        "attack_tree": {
+          "root_goal": "Deactivate immobilizer via privilege escalation on the Gateway",
+          "logical_structure": "AND",
+          "sub_steps": [
+            {
+              "step_id": "S1",
+              "description": "Abuse elevation control mechanism on the Gateway to gain diagnostic access",
+              "logical_operator": "AND",
+              "cve_exploited": "",
+              "cwe_exploited": "",
+              "feasibility_scores": {
+                "elapsed_time": 2,
+                "specialist_expertise": 4,
+                "knowledge_of_item": 5,
+                "window_of_opportunity": 4,
+                "equipment": 1,
+                "total": 16,
+                "rating": "Low"
+              },
+              "child_steps": []
+            }
+          ]
+        },
+        "functional_impact": "The immobilizer function is deactivated, allowing the engine to start without a valid key. This operational failure leads to the complete loss of the vehicle. The impact is severe, as it directly enables vehicle theft. This failure mode is a critical safety and security violation.",
+        "attack_narrative": "The attacker uses the Telematics Server to deliver a malicious SMS to the TCU. The attacker then abuses the elevation control mechanism on the Gateway. This privilege escalation allows the attacker to move laterally to the BCM. The attacker then steals the vehicle by manipulating the BCM. This path is effective because it bypasses security controls through privilege escalation.",
+        "damage_scenario": "The vehicle is stolen, resulting in a total financial loss for the owner. The manufacturer faces significant reputational damage and potential legal liability. Fleet-wide vulnerability exists due to the lack of authentication on the BCM diagnostic interface.",
+        "overall_feasibility_rating": "Low",
+        "overall_feasibility_score": 16,
+        "safety_impact": "Severe",
+        "financial_impact": "Severe",
+        "operational_impact": "Severe",
+        "privacy_impact": "Moderate",
+        "cybersecurity_requirements": [
+          "CSR-011: Implement strict access control for elevation mechanisms on the Gateway.",
+          "CSR-012: Use hardware-based security to protect sensitive elevation keys."
+        ],
+        "recommended_mitigations": [
+          "Implement strict access control for elevation mechanisms on the Gateway.",
+          "Use hardware-based security to protect sensitive elevation keys."
+        ],
+        "confidence": "high",
+        "inferences_made": [
+          "(No CVEs in input for these assets)"
+        ],
+        "required_equipment": [
+          "HackRF One",
+          "Vector CANalyzer 17.0",
+          "Saleae Logic Pro 16"
+        ]
+      },
+      {
+        "scenario_id": "FS-007",
+        "source_vehicle_path_ids": [
+          "P45"
+        ],
+        "source_threat_ids": [
+          "Threat_24",
+          "Threat_63",
+          "Threat_109",
+          "Threat_165"
+        ],
+        "source_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "is_novel_finding": true,
+        "novel_finding_description": "Exploitation of co-located computing services on the Gateway for vehicle theft.",
+        "affected_function_category": "Access Control",
+        "affected_function_name": "BCM Immobilizer Deactivation via Gateway Co-located Service Exploitation",
+        "cybersecurity_goal": "Availability",
+        "component_details_used": {
+          "hardware": "Gateway ARM Cortex-A7",
+          "software": "Linux-based Gateway OS v3.0",
+          "interfaces": "Ethernet, CAN-FD",
+          "asset_kind": "Gateway",
+          "cwe_refs": []
+        },
+        "cve_refs": [],
+        "attack_tree": {
+          "root_goal": "Deactivate immobilizer via co-located service exploitation on the Gateway",
+          "logical_structure": "AND",
+          "sub_steps": [
+            {
+              "step_id": "S1",
+              "description": "Exploit co-located computing device on the Gateway to achieve privilege escalation",
+              "logical_operator": "AND",
+              "cve_exploited": "",
+              "cwe_exploited": "",
+              "feasibility_scores": {
+                "elapsed_time": 3,
+                "specialist_expertise": 4,
+                "knowledge_of_item": 5,
+                "window_of_opportunity": 4,
+                "equipment": 2,
+                "total": 18,
+                "rating": "Low"
+              },
+              "child_steps": []
+            }
+          ]
+        },
+        "functional_impact": "The immobilizer function is deactivated, allowing the engine to start without a valid key. This operational failure leads to the complete loss of the vehicle. The impact is severe, as it directly enables vehicle theft. This failure mode is a critical safety and security violation.",
+        "attack_narrative": "The attacker uses the Telematics Server to compromise the TCU via a malicious SMS. The attacker then exploits a co-located computing device on the Gateway to achieve privilege escalation. This escalation facilitates lateral movement to the BCM. The attacker then steals the vehicle by manipulating the BCM. This path demonstrates the risk of co-located services.",
+        "damage_scenario": "The vehicle is stolen, resulting in a total financial loss for the owner. The manufacturer faces significant reputational damage and potential legal liability. Fleet-wide vulnerability exists due to the co-located services on the Gateway.",
+        "overall_feasibility_rating": "Low",
+        "overall_feasibility_score": 18,
+        "safety_impact": "Severe",
+        "financial_impact": "Severe",
+        "operational_impact": "Severe",
+        "privacy_impact": "Moderate",
+        "cybersecurity_requirements": [
+          "CSR-013: Isolate co-located computing devices on the Gateway.",
+          "CSR-014: Implement strict memory protection on the Gateway."
+        ],
+        "recommended_mitigations": [
+          "Isolate co-located computing devices on the Gateway.",
+          "Implement strict memory protection on the Gateway."
+        ],
+        "confidence": "high",
+        "inferences_made": [
+          "(No CVEs in input for these assets)"
+        ],
+        "required_equipment": [
+          "BladeRF 2.0",
+          "Vector CANalyzer 17.0",
+          "Busmaster 3.2.2"
+        ]
+      },
+      {
+        "scenario_id": "FS-008",
+        "source_vehicle_path_ids": [
+          "P53"
+        ],
+        "source_threat_ids": [
+          "Threat_24",
+          "Threat_108",
+          "Threat_109",
+          "Threat_165"
+        ],
+        "source_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "is_novel_finding": false,
+        "novel_finding_description": "",
+        "affected_function_category": "Access Control",
+        "affected_function_name": "BCM Immobilizer Deactivation via Gateway Network Bridging",
+        "cybersecurity_goal": "Availability",
+        "component_details_used": {
+          "hardware": "Gateway NXP S32K144",
+          "software": "Gateway routing table firmware v1.0.5",
+          "interfaces": "CAN-FD, Ethernet",
+          "asset_kind": "Gateway",
+          "cwe_refs": []
+        },
+        "cve_refs": [],
+        "attack_tree": {
+          "root_goal": "Deactivate immobilizer via network bridging on the Gateway",
+          "logical_structure": "AND",
+          "sub_steps": [
+            {
+              "step_id": "S1",
+              "description": "Bridge vehicle networks at the Gateway to move laterally",
+              "logical_operator": "AND",
+              "cve_exploited": "",
+              "cwe_exploited": "",
+              "feasibility_scores": {
+                "elapsed_time": 1,
+                "specialist_expertise": 2,
+                "knowledge_of_item": 3,
+                "window_of_opportunity": 1,
+                "equipment": 0,
+                "total": 7,
+                "rating": "High"
+              },
+              "child_steps": []
+            }
+          ]
+        },
+        "functional_impact": "The immobilizer function is deactivated, allowing the engine to start without a valid key. This operational failure leads to the complete loss of the vehicle. The impact is severe, as it directly enables vehicle theft. This failure mode is a critical safety and security violation.",
+        "attack_narrative": "The attacker uses the Telematics Server to deliver a malicious SMS to the TCU. The attacker then bridges vehicle networks at the Gateway to move laterally. This bridging allows the attacker to reach the BCM. The attacker then steals the vehicle by manipulating the BCM. This path highlights the risk of network bridging.",
+        "damage_scenario": "The vehicle is stolen, resulting in a total financial loss for the owner. The manufacturer faces significant reputational damage and potential legal liability. Fleet-wide vulnerability exists due to the lack of network isolation.",
+        "overall_feasibility_rating": "High",
+        "overall_feasibility_score": 7,
+        "safety_impact": "Severe",
+        "financial_impact": "Severe",
+        "operational_impact": "Severe",
+        "privacy_impact": "Moderate",
+        "cybersecurity_requirements": [
+          "CSR-015: Implement strict firewall rules on the Gateway to prevent unauthorized bridging.",
+          "CSR-016: Use a secure gateway architecture that validates all cross-domain traffic."
+        ],
+        "recommended_mitigations": [
+          "Implement strict firewall rules on the Gateway to prevent unauthorized bridging.",
+          "Use a secure gateway architecture that validates all cross-domain traffic."
+        ],
+        "confidence": "high",
+        "inferences_made": [
+          "(No CVEs in input for these assets)"
+        ],
+        "required_equipment": [
+          "HackRF One",
+          "Vector CANalyzer 17.0",
+          "Saleae Logic Pro 16"
+        ]
+      },
+      {
+        "scenario_id": "FS-009",
+        "source_vehicle_path_ids": [
+          "P57"
+        ],
+        "source_threat_ids": [
+          "Threat_24",
+          "Threat_115",
+          "Threat_109",
+          "Threat_165"
+        ],
+        "source_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "is_novel_finding": false,
+        "novel_finding_description": "",
+        "affected_function_category": "Access Control",
+        "affected_function_name": "BCM Immobilizer Deactivation via Gateway Remote Service Exploitation",
+        "cybersecurity_goal": "Availability",
+        "component_details_used": {
+          "hardware": "Gateway NXP S32K144",
+          "software": "Gateway remote service firmware v2.0.1",
+          "interfaces": "Ethernet, CAN-FD",
+          "asset_kind": "Gateway",
+          "cwe_refs": []
+        },
+        "cve_refs": [],
+        "attack_tree": {
+          "root_goal": "Deactivate immobilizer via remote service exploitation on the Gateway",
+          "logical_structure": "AND",
+          "sub_steps": [
+            {
+              "step_id": "S1",
+              "description": "Exploit remote services on the Gateway to move laterally",
+              "logical_operator": "AND",
+              "cve_exploited": "",
+              "cwe_exploited": "",
+              "feasibility_scores": {
+                "elapsed_time": 2,
+                "specialist_expertise": 2,
+                "knowledge_of_item": 3,
+                "window_of_opportunity": 1,
+                "equipment": 0,
+                "total": 8,
+                "rating": "High"
+              },
+              "child_steps": []
+            }
+          ]
+        },
+        "functional_impact": "The immobilizer function is deactivated, allowing the engine to start without a valid key. This operational failure leads to the complete loss of the vehicle. The impact is severe, as it directly enables vehicle theft. This failure mode is a critical safety and security violation.",
+        "attack_narrative": "The attacker uses the Telematics Server to send a malicious SMS to the TCU. The attacker then exploits remote services on the Gateway to move laterally. This lateral movement leads to the BCM. The attacker then steals the vehicle by manipulating the BCM. This path exploits the trust placed in remote services.",
+        "damage_scenario": "The vehicle is stolen, resulting in a total financial loss for the owner. The manufacturer faces significant reputational damage and potential legal liability. Fleet-wide vulnerability exists due to the lack of remote service security.",
+        "overall_feasibility_rating": "High",
+        "overall_feasibility_score": 8,
+        "safety_impact": "Severe",
+        "financial_impact": "Severe",
+        "operational_impact": "Severe",
+        "privacy_impact": "Moderate",
+        "cybersecurity_requirements": [
+          "CSR-017: Harden remote services on the Gateway.",
+          "CSR-018: Regularly audit remote service configurations."
+        ],
+        "recommended_mitigations": [
+          "Harden remote services on the Gateway.",
+          "Regularly audit remote service configurations."
+        ],
+        "confidence": "high",
+        "inferences_made": [
+          "(No CVEs in input for these assets)"
+        ],
+        "required_equipment": [
+          "BladeRF 2.0",
+          "Vector CANalyzer 17.0",
+          "Busmaster 3.2.2"
+        ]
+      },
+      {
+        "scenario_id": "FS-010",
+        "source_vehicle_path_ids": [
+          "P1"
+        ],
+        "source_threat_ids": [
+          "Threat_24",
+          "Threat_98",
+          "Threat_109",
+          "Threat_153"
+        ],
+        "source_assets": [
+          "Telematics Server",
+          "TCU",
+          "Gateway",
+          "Body Control Module (BCM)",
+          "Door"
+        ],
+        "is_novel_finding": false,
+        "novel_finding_description": "",
+        "affected_function_category": "Access Control",
+        "affected_function_name": "BCM Door Control via Gateway Network Service Scanning",
+        "cybersecurity_goal": "Integrity",
+        "component_details_used": {
+          "hardware": "Gateway NXP S32K144",
+          "software": "Gateway network service firmware v1.0.0",
+          "interfaces": "CAN-FD, Ethernet",
+          "asset_kind": "Gateway",
+          "cwe_refs": []
+        },
+        "cve_refs": [],
+        "attack_tree": {
+          "root_goal": "Unlock vehicle doors via network service scanning on the Gateway",
+          "logical_structure": "AND",
+          "sub_steps": [
+            {
+              "step_id": "S1",
+              "description": "Perform network service scanning on the Gateway to identify BCM diagnostic endpoints",
+              "logical_operator": "AND",
+              "cve_exploited": "",
+              "cwe_exploited": "",
+              "feasibility_scores": {
+                "elapsed_time": 1,
+                "specialist_expertise": 2,
+                "knowledge_of_item": 3,
+                "window_of_opportunity": 1,
+                "equipment": 0,
+                "total": 7,
+                "rating": "High"
+              },
+              "child_steps": []
+            }
+          ]
+        },
+        "functional_impact": "The BCM door control function is compromised, allowing unauthorized unlocking of the vehicle. This operational failure bypasses all physical security measures, enabling unauthorized entry. The impact is major, as it directly facilitates vehicle theft and potential occupant harm. This failure mode violates ISO 26262 safety requirements for secure access control.",
+        "attack_narrative": "The attacker initiates the attack by sending a malicious SMS to the TCU via the Telematics Server. The attacker then performs network service scanning on the Gateway to identify reachable diagnostic services on the BCM. Once the BCM is identified, the attacker sends a series of UDS commands to unlock the doors. The BCM, lacking proper authentication for these commands, processes them and unlocks the doors. The attacker gains physical access to the vehicle.",
+        "damage_scenario": "The BCM is compromised, allowing the attacker to control the door locking mechanism. This results in a loss of vehicle security and potential financial liability for the manufacturer. Fleet-wide exposure is high if the network service scanning is not properly restricted.",
+        "overall_feasibility_rating": "High",
+        "overall_feasibility_score": 7,
+        "safety_impact": "Major",
+        "financial_impact": "Major",
+        "operational_impact": "Major",
+        "privacy_impact": "Moderate",
+        "cybersecurity_requirements": [
+          "CSR-019: Implement intrusion detection systems (IDS) on the Gateway to detect network service scanning.",
+          "CSR-020: Use secure boot and firmware integrity checks on the BCM to prevent unauthorized modification."
+        ],
+        "recommended_mitigations": [
+          "Implement intrusion detection systems (IDS) on the Gateway to detect network service scanning.",
+          "Use secure boot and firmware integrity checks on the BCM to prevent unauthorized modification."
+        ],
+        "confidence": "high",
+        "inferences_made": [
+          "(No CVEs in input for these assets)"
+        ],
+        "required_equipment": [
+          "Rohde & Schwarz CMW500",
+          "Vector CANalyzer 17.0",
+          "Segger J-Link EDU"
+        ]
+      }
+    ],
+    "cross_scenario_insights": "The analysis reveals that the lack of authentication on the BCM diagnostic interface is a systemic vulnerability across all scenarios. The Gateway is consistently targeted as a pivot point due to its role in bridging vehicle networks and its exposure to remote services. Priority remediation should focus on implementing SecOC on the CAN bus and hardening the Gateway's diagnostic and remote service interfaces.",
+    "priority_mitigation_plan": "Immediate actions include implementing rate-limiting on diagnostic requests and deploying IDS on the Gateway to detect scanning activities. Medium-term mitigations involve implementing SecOC on all BCM-bound CAN frames and isolating co-located computing services on the Gateway. Long-term monitoring requirements include continuous penetration testing and regular audits of remote service configurations.",
+    "lifecycle_considerations": "All identified vulnerabilities require urgent attention due to the high risk of remote exploitation and the potential for fleet-wide impact. Future vehicle designs must incorporate hardware-based security modules and strict network segmentation to mitigate these risks.",
+    "novel_attack_surfaces_summary": "The exploitation of co-located computing services on the Gateway for privilege escalation represents a novel attack surface that requires immediate attention.",
+    "priority_threat_ids": [
+      "Threat_24",
+      "Threat_62",
+      "Threat_63",
+      "Threat_109",
+      "Threat_165"
+    ]
+  },
+  "target_asset": "Door",
+  "attack_mode": "remote",
+  "boundary_name": "External Vehicle Boundary",
+  "additional_info_used": null,
+  "backend_json_path": "C:\\Users\\SANE01\\Downloads\\TARA_AUTO-main\\ULTARA-main\\code\\out\\_ag_tmp_091938617604.json"
+}

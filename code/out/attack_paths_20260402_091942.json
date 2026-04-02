@@ -1,0 +1,4711 @@
+{
+  "meta": {
+    "generated_at": "2026-04-02T09:19:42",
+    "tool": "tool_attack_paths v4",
+    "project": "",
+    "tm7": "C:/Users/SANE01/Downloads/TARA_AUTO-main/ULTARA-main/code/in/Automotive DFD_B.tm7",
+    "mode": "remote",
+    "target": "Door",
+    "boundary": "External Vehicle Boundary",
+    "raw_path_count": 64,
+    "total_paths": 56,
+    "multi_cycle_paths": 0
+  },
+  "assets": [
+    {
+      "name": "TCU",
+      "element_type": "node",
+      "phase": "In",
+      "asset_guid": "6fcd03b4-7101-49f4-8915-c1bb9349e6de",
+      "category": null,
+      "asset_type": null,
+      "asset_kind": null,
+      "asset_properties": [],
+      "source": null,
+      "cwe_count": 0,
+      "threat_count": 33,
+      "cwes": [],
+      "threats": [
+        {
+          "tid": "Threat_02",
+          "name": "Gather Target Information – from Vehicle",
+          "tactics": [
+            "Reconnaissance"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_14",
+          "name": "Black Hole Attacks",
+          "tactics": [
+            "Manipulate Environment"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_05",
+          "name": "Downgrade to Insecure Protocols",
+          "tactics": [
+            "Manipulate Environment"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_07",
+          "name": "Manipulate Communications",
+          "tactics": [
+            "Manipulate Environment"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_08",
+          "name": "Relay Communications",
+          "tactics": [
+            "Manipulate Environment"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_09",
+          "name": "Rogue Cellular Base Station",
+          "tactics": [
+            "Manipulate Environment"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_17",
+          "name": "Exploit via Radio Interface",
+          "tactics": [
+            "Initial Access"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_24",
+          "name": "Malicious SMS",
+          "tactics": [
+            "Initial Access"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_27",
+          "name": "Exploitation via Bluetooth",
+          "tactics": [
+            "Initial Access"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_28",
+          "name": "Exploitation via C-V2X",
+          "tactics": [
+            "Initial Access"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_40",
+          "name": "External Remote Services",
+          "tactics": [
+            "Initial Access"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_80",
+          "name": "Enable Remote Functions",
+          "tactics": [
+            "Defense Evasion"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_126",
+          "name": "Cellular Communication",
+          "tactics": [
+            "Command and Control"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_130",
+          "name": "Standard Cryptographic Protocol",
+          "tactics": [
+            "Command and Control"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_131",
+          "name": "C2 via Mid Range Wireless Communication",
+          "tactics": [
+            "Command and Control"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_132",
+          "name": "C2 via Wide Range Wireless Communication",
+          "tactics": [
+            "Command and Control"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_137",
+          "name": "Dynamic Resolution",
+          "tactics": [
+            "Command and Control"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_138",
+          "name": "Encrypted Channel",
+          "tactics": [
+            "Command and Control"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_140",
+          "name": "Non-Standard Port",
+          "tactics": [
+            "Command and Control"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_43",
+          "name": "Command and Scripting Interpreter",
+          "tactics": [
+            "Execution"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_44",
+          "name": "Native API",
+          "tactics": [
+            "Execution"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_85",
+          "name": "Capture SMS Message",
+          "tactics": [
+            "Credential Access"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_89",
+          "name": "ECU Credential Dumping",
+          "tactics": [
+            "Credential Access"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_90",
+          "name": "Unsecured Credentials",
+          "tactics": [
+            "Credential Access"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_92",
+          "name": "Adversary-in-the-Middle",
+          "tactics": [
+            "Credential Access",
+            "Collection"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_110",
+          "name": "Remote Services",
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_112",
+          "name": "Exploitation of Remote Services",
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_113",
+          "name": "Backend Remote Services",
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_114",
+          "name": "Exploitation of Backend Remote Services",
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_125",
+          "name": "Vehicle Telemetry Collection",
+          "tactics": [
+            "Collection"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_88",
+          "name": "Network Sniffing",
+          "tactics": [
+            "Collection"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_150",
+          "name": "Unintended Vehicle Network Message",
+          "tactics": [
+            "Affect Vehicle Function"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_160",
+          "name": "Denial of Service",
+          "tactics": [
+            "Impact"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        }
+      ]
+    },
+    {
+      "name": "TCU → Gateway [CAN]",
+      "element_type": "edge",
+      "phase": "In",
+      "asset_guid": "b61fdc08-11e4-4014-b325-956083b607be",
+      "category": null,
+      "asset_type": null,
+      "asset_kind": null,
+      "asset_properties": [],
+      "source": null,
+      "cwe_count": 0,
+      "threat_count": 0,
+      "cwes": [],
+      "threats": []
+    },
+    {
+      "name": "Telematics Server",
+      "element_type": "node",
+      "phase": "Entry",
+      "asset_guid": "d0670c30-af48-41b5-97fa-74bd9e49efb6",
+      "category": null,
+      "asset_type": null,
+      "asset_kind": null,
+      "asset_properties": [],
+      "source": null,
+      "cwe_count": 0,
+      "threat_count": 0,
+      "cwes": [],
+      "threats": []
+    },
+    {
+      "name": "Smart Phone",
+      "element_type": "node",
+      "phase": "Entry",
+      "asset_guid": "84a780e4-1782-4f47-89c6-4a7784d26a91",
+      "category": null,
+      "asset_type": null,
+      "asset_kind": null,
+      "asset_properties": [],
+      "source": null,
+      "cwe_count": 0,
+      "threat_count": 0,
+      "cwes": [],
+      "threats": []
+    },
+    {
+      "name": "Smart Phone → TCU [Call/SMS]",
+      "element_type": "edge",
+      "phase": "Entry",
+      "asset_guid": "6e015ab5-3b2b-4779-98c0-85706d3b52d0",
+      "category": null,
+      "asset_type": null,
+      "asset_kind": null,
+      "asset_properties": [],
+      "source": null,
+      "cwe_count": 0,
+      "threat_count": 0,
+      "cwes": [],
+      "threats": []
+    },
+    {
+      "name": "Telematics Server → TCU [Telematic data]",
+      "element_type": "edge",
+      "phase": "Entry",
+      "asset_guid": "932dacbe-a48f-4038-a846-1d9b317f0e67",
+      "category": null,
+      "asset_type": null,
+      "asset_kind": null,
+      "asset_properties": [],
+      "source": null,
+      "cwe_count": 0,
+      "threat_count": 0,
+      "cwes": [],
+      "threats": []
+    },
+    {
+      "name": "Gateway",
+      "element_type": "node",
+      "phase": "Through",
+      "asset_guid": "3fa9915a-486c-4d3d-b246-1d38c2f6e586",
+      "category": null,
+      "asset_type": null,
+      "asset_kind": null,
+      "asset_properties": [],
+      "source": null,
+      "cwe_count": 0,
+      "threat_count": 19,
+      "cwes": [],
+      "threats": [
+        {
+          "tid": "Threat_42",
+          "name": "Valid Accounts",
+          "tactics": [
+            "Persistence"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_74",
+          "name": "Bypass Network Filtering",
+          "tactics": [
+            "Defense Evasion"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_62",
+          "name": "Abuse Elevation Control Mechanism",
+          "tactics": [
+            "Defense Evasion"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_83",
+          "name": "Impair Defenses",
+          "tactics": [
+            "Defense Evasion"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_137",
+          "name": "Dynamic Resolution",
+          "tactics": [
+            "Command and Control"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_139",
+          "name": "Non-Application Layer Protocol",
+          "tactics": [
+            "Command and Control"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_98",
+          "name": "Network Service Scanning",
+          "tactics": [
+            "Discovery"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_88",
+          "name": "Network Sniffing",
+          "tactics": [
+            "Discovery"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_63",
+          "name": "Exploit Co-Located Computing Device for Privilege Escalation",
+          "tactics": [
+            "Privilege Escalation"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_108",
+          "name": "Bridge Vehicle Networks",
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_115",
+          "name": "Exploitation of Remote Services in In-Vehicle Network",
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_116",
+          "name": "Remote services in In-Vehicle Network",
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_121",
+          "name": "Gather information about ECU",
+          "tactics": [
+            "Collection"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_150",
+          "name": "Unintended Vehicle Network Message",
+          "tactics": [
+            "Affect Vehicle Function"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_146",
+          "name": "CAN Bus Denial of Service",
+          "tactics": [
+            "Affect Vehicle Function"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_149",
+          "name": "Modify Bus Message",
+          "tactics": [
+            "Affect Vehicle Function"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_160",
+          "name": "Denial of Service",
+          "tactics": [
+            "Impact"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_162",
+          "name": "Loss of Control",
+          "tactics": [
+            "Impact"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_166",
+          "name": "Loss of Financial",
+          "tactics": [
+            "Impact"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        }
+      ]
+    },
+    {
+      "name": "Body Control Module (BCM)",
+      "element_type": "node",
+      "phase": "Through",
+      "asset_guid": "dd03bf0c-89d6-423a-84bb-18753c23b416",
+      "category": null,
+      "asset_type": null,
+      "asset_kind": null,
+      "asset_properties": [],
+      "source": null,
+      "cwe_count": 0,
+      "threat_count": 11,
+      "cwes": [],
+      "threats": [
+        {
+          "tid": "Threat_58",
+          "name": "Firmware Installation - Reprogram ECU",
+          "tactics": [
+            "Persistence"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_78",
+          "name": "Firmware Installation - Reprogram ECU: Downgrade",
+          "tactics": [
+            "Defense Evasion"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_109",
+          "name": "Exploit ECU for Lateral Movement",
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_146",
+          "name": "CAN Bus Denial of Service",
+          "tactics": [
+            "Affect Vehicle Function"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_160",
+          "name": "Denial of Service",
+          "tactics": [
+            "Impact"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_79",
+          "name": "Deactivate Immobilizer",
+          "tactics": [
+            "Defense Evasion"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_111",
+          "name": "Reprogram ECU for Lateral Movement",
+          "tactics": [
+            "Lateral Movement"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_148",
+          "name": "Local Function",
+          "tactics": [
+            "Affect Vehicle Function"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_162",
+          "name": "Loss of Control",
+          "tactics": [
+            "Impact"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_149",
+          "name": "Modify Bus Message",
+          "tactics": [
+            "Affect Vehicle Function"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_150",
+          "name": "Unintended Vehicle Network Message",
+          "tactics": [
+            "Affect Vehicle Function"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        }
+      ]
+    },
+    {
+      "name": "Gateway → Body Control Module (BCM) [B-CAN data]",
+      "element_type": "edge",
+      "phase": "Through",
+      "asset_guid": "827ae996-3fdf-4575-84e5-e2841ce38c17",
+      "category": null,
+      "asset_type": null,
+      "asset_kind": null,
+      "asset_properties": [],
+      "source": null,
+      "cwe_count": 0,
+      "threat_count": 0,
+      "cwes": [],
+      "threats": []
+    },
+    {
+      "name": "Body Control Module (BCM) → Door [Lock / Unlock operation]",
+      "element_type": "edge",
+      "phase": "Through",
+      "asset_guid": "a21422fc-7dd5-4cb4-89c7-4f1b9b007fca",
+      "category": null,
+      "asset_type": null,
+      "asset_kind": null,
+      "asset_properties": [],
+      "source": null,
+      "cwe_count": 0,
+      "threat_count": 0,
+      "cwes": [],
+      "threats": []
+    },
+    {
+      "name": "Door",
+      "element_type": "node",
+      "phase": "Out",
+      "asset_guid": "a8820ccf-1189-4a07-9f83-eff024c2f212",
+      "category": null,
+      "asset_type": null,
+      "asset_kind": null,
+      "asset_properties": [],
+      "source": null,
+      "cwe_count": 0,
+      "threat_count": 2,
+      "cwes": [],
+      "threats": [
+        {
+          "tid": "Threat_153",
+          "name": "Control Doors",
+          "tactics": [
+            "Affect Vehicle Function"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        },
+        {
+          "tid": "Threat_165",
+          "name": "Vehicle Theft",
+          "tactics": [
+            "Impact"
+          ],
+          "cwes": [],
+          "cves": [],
+          "maturity": "",
+          "_src": "asset_map"
+        }
+      ]
+    }
+  ],
+  "attack_paths": [
+    {
+      "path_id": 1,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_98",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_98",
+              "threat_name": "Network Service Scanning",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 2,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_98",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_98",
+              "threat_name": "Network Service Scanning",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 3,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_98",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_98",
+              "threat_name": "Network Service Scanning",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 4,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_98",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_98",
+              "threat_name": "Network Service Scanning",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 5,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_88",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_88",
+              "threat_name": "Network Sniffing",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 6,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_88",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_88",
+              "threat_name": "Network Sniffing",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 7,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_88",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_88",
+              "threat_name": "Network Sniffing",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 8,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_88",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_88",
+              "threat_name": "Network Sniffing",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 9,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_62",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_62",
+              "threat_name": "Abuse Elevation Control Mechanism",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 10,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_62",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_62",
+              "threat_name": "Abuse Elevation Control Mechanism",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 11,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_62",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_62",
+              "threat_name": "Abuse Elevation Control Mechanism",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 12,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_62",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_62",
+              "threat_name": "Abuse Elevation Control Mechanism",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 13,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_63",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_63",
+              "threat_name": "Exploit Co-Located Computing Device for Privilege Escalation",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 14,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_63",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_63",
+              "threat_name": "Exploit Co-Located Computing Device for Privilege Escalation",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 15,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_63",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_63",
+              "threat_name": "Exploit Co-Located Computing Device for Privilege Escalation",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 16,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_63",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_63",
+              "threat_name": "Exploit Co-Located Computing Device for Privilege Escalation",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 17,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_108",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_108",
+              "threat_name": "Bridge Vehicle Networks",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 18,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_108",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_108",
+              "threat_name": "Bridge Vehicle Networks",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 19,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_108",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_108",
+              "threat_name": "Bridge Vehicle Networks",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 20,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_108",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_108",
+              "threat_name": "Bridge Vehicle Networks",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 21,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_115",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_115",
+              "threat_name": "Exploitation of Remote Services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 22,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_115",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_115",
+              "threat_name": "Exploitation of Remote Services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 23,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_115",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_115",
+              "threat_name": "Exploitation of Remote Services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 24,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_115",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_115",
+              "threat_name": "Exploitation of Remote Services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 25,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_116",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_116",
+              "threat_name": "Remote services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 26,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_116",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_116",
+              "threat_name": "Remote services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 27,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_116",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_116",
+              "threat_name": "Remote services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 28,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_116",
+        "Threat_109",
+        "Threat_153"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_116",
+              "threat_name": "Remote services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_153",
+              "threat_name": "Control Doors",
+              "tactic": "Affect Vehicle Function",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 29,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_98",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_98",
+              "threat_name": "Network Service Scanning",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 30,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_98",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_98",
+              "threat_name": "Network Service Scanning",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 31,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_98",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_98",
+              "threat_name": "Network Service Scanning",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 32,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_98",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_98",
+              "threat_name": "Network Service Scanning",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 33,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_88",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_88",
+              "threat_name": "Network Sniffing",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 34,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_88",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_88",
+              "threat_name": "Network Sniffing",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 35,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_88",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_88",
+              "threat_name": "Network Sniffing",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 36,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_88",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_88",
+              "threat_name": "Network Sniffing",
+              "tactic": "Discovery",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 37,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_62",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_62",
+              "threat_name": "Abuse Elevation Control Mechanism",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 38,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_62",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_62",
+              "threat_name": "Abuse Elevation Control Mechanism",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 39,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_62",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_62",
+              "threat_name": "Abuse Elevation Control Mechanism",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 40,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_62",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_62",
+              "threat_name": "Abuse Elevation Control Mechanism",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 41,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_63",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_63",
+              "threat_name": "Exploit Co-Located Computing Device for Privilege Escalation",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 42,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_63",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_63",
+              "threat_name": "Exploit Co-Located Computing Device for Privilege Escalation",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 43,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_63",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_63",
+              "threat_name": "Exploit Co-Located Computing Device for Privilege Escalation",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 44,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_63",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_63",
+              "threat_name": "Exploit Co-Located Computing Device for Privilege Escalation",
+              "tactic": "Privilege Escalation",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 45,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_108",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_108",
+              "threat_name": "Bridge Vehicle Networks",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 46,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_108",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_108",
+              "threat_name": "Bridge Vehicle Networks",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 47,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_108",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_108",
+              "threat_name": "Bridge Vehicle Networks",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 48,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_108",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_108",
+              "threat_name": "Bridge Vehicle Networks",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 49,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_115",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_115",
+              "threat_name": "Exploitation of Remote Services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 50,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_115",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_115",
+              "threat_name": "Exploitation of Remote Services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 51,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_115",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_115",
+              "threat_name": "Exploitation of Remote Services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 52,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_115",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_115",
+              "threat_name": "Exploitation of Remote Services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 53,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_116",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_116",
+              "threat_name": "Remote services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 54,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_24",
+        "Threat_116",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_24",
+              "threat_name": "Malicious SMS",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_116",
+              "threat_name": "Remote services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 55,
+      "cycle_count": 1,
+      "all_assets": [
+        "Telematics Server",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_116",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Telematics Server",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_116",
+              "threat_name": "Remote services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path_id": 56,
+      "cycle_count": 1,
+      "all_assets": [
+        "Smart Phone",
+        "TCU",
+        "Gateway",
+        "Body Control Module (BCM)",
+        "Door"
+      ],
+      "all_threats": [
+        "Threat_40",
+        "Threat_116",
+        "Threat_109",
+        "Threat_165"
+      ],
+      "final_targets": [
+        "Door"
+      ],
+      "path_summary": "[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]",
+      "cycles": [
+        {
+          "entry": [
+            {
+              "asset": "Smart Phone",
+              "threat_id": "",
+              "threat_name": "",
+              "tactic": "",
+              "ukc_phase": "Entry"
+            }
+          ],
+          "in": [
+            {
+              "asset": "TCU",
+              "threat_id": "Threat_40",
+              "threat_name": "External Remote Services",
+              "tactic": "Initial Access",
+              "ukc_phase": "In"
+            }
+          ],
+          "through": [
+            {
+              "asset": "Gateway",
+              "threat_id": "Threat_116",
+              "threat_name": "Remote services in In-Vehicle Network",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            },
+            {
+              "asset": "Body Control Module (BCM)",
+              "threat_id": "Threat_109",
+              "threat_name": "Exploit ECU for Lateral Movement",
+              "tactic": "Lateral Movement",
+              "ukc_phase": "Through"
+            }
+          ],
+          "out": [
+            {
+              "asset": "Door",
+              "threat_id": "Threat_165",
+              "threat_name": "Vehicle Theft",
+              "tactic": "Impact",
+              "ukc_phase": "Out"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

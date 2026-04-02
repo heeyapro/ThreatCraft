@@ -1,0 +1,357 @@
+## SECTION: ASSET_MAPPING
+element_type,name,phase,category,asset_type,asset_kind,asset_properties,source,cwe_id,cwe_name,cwe_sources,cwe_desc,threat_id,threat_name,threat_tactic,threat_source
+node,TCU,In,,,,,,—,,EMB3D,,Threat_02,Gather Target Information – from Vehicle,Reconnaissance,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_14,Black Hole Attacks,Manipulate Environment,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_05,Downgrade to Insecure Protocols,Manipulate Environment,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_07,Manipulate Communications,Manipulate Environment,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_08,Relay Communications,Manipulate Environment,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_09,Rogue Cellular Base Station,Manipulate Environment,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_17,Exploit via Radio Interface,Initial Access,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_24,Malicious SMS,Initial Access,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_27,Exploitation via Bluetooth,Initial Access,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_28,Exploitation via C-V2X,Initial Access,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_40,External Remote Services,Initial Access,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_80,Enable Remote Functions,Defense Evasion,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_126,Cellular Communication,Command and Control,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_130,Standard Cryptographic Protocol,Command and Control,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_131,C2 via Mid Range Wireless Communication,Command and Control,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_132,C2 via Wide Range Wireless Communication,Command and Control,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_137,Dynamic Resolution,Command and Control,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_138,Encrypted Channel,Command and Control,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_140,Non-Standard Port,Command and Control,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_43,Command and Scripting Interpreter,Execution,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_44,Native API,Execution,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_85,Capture SMS Message,Credential Access,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_89,ECU Credential Dumping,Credential Access,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_90,Unsecured Credentials,Credential Access,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_92,Adversary-in-the-Middle,"""Credential Access","Collection""",asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_110,Remote Services,Lateral Movement,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_112,Exploitation of Remote Services,Lateral Movement,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_113,Backend Remote Services,Lateral Movement,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_114,Exploitation of Backend Remote Services,Lateral Movement,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_125,Vehicle Telemetry Collection,Collection,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_88,Network Sniffing,Collection,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_150,Unintended Vehicle Network Message,Affect Vehicle Function,asset_map
+node,TCU,In,,,,,,—,,EMB3D,,Threat_160,Denial of Service,Impact,asset_map
+edge,TCU → Gateway [CAN],In,,,,,,,,,,,,
+node,Telematics Server,Entry,,,,,,,,,,,,
+node,Smart Phone,Entry,,,,,,,,,,,,
+edge,Smart Phone → TCU [Call/SMS],Entry,,,,,,,,,,,,
+edge,Telematics Server → TCU [Telematic data],Entry,,,,,,,,,,,,
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_42,Valid Accounts,Persistence,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_74,Bypass Network Filtering,Defense Evasion,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_62,Abuse Elevation Control Mechanism,Defense Evasion,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_83,Impair Defenses,Defense Evasion,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_137,Dynamic Resolution,Command and Control,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_139,Non-Application Layer Protocol,Command and Control,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_98,Network Service Scanning,Discovery,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_88,Network Sniffing,Discovery,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_63,Exploit Co-Located Computing Device for Privilege Escalation,Privilege Escalation,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_108,Bridge Vehicle Networks,Lateral Movement,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_115,Exploitation of Remote Services in In-Vehicle Network,Lateral Movement,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_116,Remote services in In-Vehicle Network,Lateral Movement,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_121,Gather information about ECU,Collection,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_150,Unintended Vehicle Network Message,Affect Vehicle Function,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_146,CAN Bus Denial of Service,Affect Vehicle Function,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_149,Modify Bus Message,Affect Vehicle Function,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_160,Denial of Service,Impact,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_162,Loss of Control,Impact,asset_map
+node,Gateway,Through,,,,,,—,,EMB3D,,Threat_166,Loss of Financial,Impact,asset_map
+node,Body Control Module (BCM),Through,,,,,,—,,EMB3D,,Threat_58,Firmware Installation - Reprogram ECU,Persistence,asset_map
+node,Body Control Module (BCM),Through,,,,,,—,,EMB3D,,Threat_78,Firmware Installation - Reprogram ECU: Downgrade,Defense Evasion,asset_map
+node,Body Control Module (BCM),Through,,,,,,—,,EMB3D,,Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,asset_map
+node,Body Control Module (BCM),Through,,,,,,—,,EMB3D,,Threat_146,CAN Bus Denial of Service,Affect Vehicle Function,asset_map
+node,Body Control Module (BCM),Through,,,,,,—,,EMB3D,,Threat_160,Denial of Service,Impact,asset_map
+node,Body Control Module (BCM),Through,,,,,,—,,EMB3D,,Threat_79,Deactivate Immobilizer,Defense Evasion,asset_map
+node,Body Control Module (BCM),Through,,,,,,—,,EMB3D,,Threat_111,Reprogram ECU for Lateral Movement,Lateral Movement,asset_map
+node,Body Control Module (BCM),Through,,,,,,—,,EMB3D,,Threat_148,Local Function,Affect Vehicle Function,asset_map
+node,Body Control Module (BCM),Through,,,,,,—,,EMB3D,,Threat_162,Loss of Control,Impact,asset_map
+node,Body Control Module (BCM),Through,,,,,,—,,EMB3D,,Threat_149,Modify Bus Message,Affect Vehicle Function,asset_map
+node,Body Control Module (BCM),Through,,,,,,—,,EMB3D,,Threat_150,Unintended Vehicle Network Message,Affect Vehicle Function,asset_map
+edge,Gateway → Body Control Module (BCM) [B-CAN data],Through,,,,,,,,,,,,
+edge,Body Control Module (BCM) → Door [Lock / Unlock operation],Through,,,,,,,,,,,,
+node,Door,Out,,,,,,—,,EMB3D,,Threat_153,Control Doors,Affect Vehicle Function,asset_map
+node,Door,Out,,,,,,—,,EMB3D,,Threat_165,Vehicle Theft,Impact,asset_map
+
+## SECTION: ATTACK_PATHS
+path_id,cycle_count,cycle_no,ukc_phase,asset_name,threat_id,threat_name,tactic,final_targets,path_summary
+1,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+1,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+1,1,1,Through,Gateway,Threat_98,Network Service Scanning,Discovery,,
+1,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+1,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+2,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+2,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+2,1,1,Through,Gateway,Threat_98,Network Service Scanning,Discovery,,
+2,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+2,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+3,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+3,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+3,1,1,Through,Gateway,Threat_98,Network Service Scanning,Discovery,,
+3,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+3,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+4,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+4,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+4,1,1,Through,Gateway,Threat_98,Network Service Scanning,Discovery,,
+4,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+4,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+5,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+5,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+5,1,1,Through,Gateway,Threat_88,Network Sniffing,Discovery,,
+5,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+5,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+6,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+6,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+6,1,1,Through,Gateway,Threat_88,Network Sniffing,Discovery,,
+6,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+6,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+7,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+7,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+7,1,1,Through,Gateway,Threat_88,Network Sniffing,Discovery,,
+7,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+7,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+8,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+8,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+8,1,1,Through,Gateway,Threat_88,Network Sniffing,Discovery,,
+8,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+8,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+9,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+9,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+9,1,1,Through,Gateway,Threat_62,Abuse Elevation Control Mechanism,Privilege Escalation,,
+9,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+9,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+10,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+10,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+10,1,1,Through,Gateway,Threat_62,Abuse Elevation Control Mechanism,Privilege Escalation,,
+10,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+10,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+11,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+11,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+11,1,1,Through,Gateway,Threat_62,Abuse Elevation Control Mechanism,Privilege Escalation,,
+11,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+11,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+12,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+12,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+12,1,1,Through,Gateway,Threat_62,Abuse Elevation Control Mechanism,Privilege Escalation,,
+12,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+12,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+13,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+13,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+13,1,1,Through,Gateway,Threat_63,Exploit Co-Located Computing Device for Privilege Escalation,Privilege Escalation,,
+13,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+13,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+14,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+14,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+14,1,1,Through,Gateway,Threat_63,Exploit Co-Located Computing Device for Privilege Escalation,Privilege Escalation,,
+14,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+14,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+15,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+15,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+15,1,1,Through,Gateway,Threat_63,Exploit Co-Located Computing Device for Privilege Escalation,Privilege Escalation,,
+15,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+15,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+16,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+16,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+16,1,1,Through,Gateway,Threat_63,Exploit Co-Located Computing Device for Privilege Escalation,Privilege Escalation,,
+16,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+16,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+17,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+17,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+17,1,1,Through,Gateway,Threat_108,Bridge Vehicle Networks,Lateral Movement,,
+17,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+17,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+18,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+18,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+18,1,1,Through,Gateway,Threat_108,Bridge Vehicle Networks,Lateral Movement,,
+18,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+18,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+19,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+19,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+19,1,1,Through,Gateway,Threat_108,Bridge Vehicle Networks,Lateral Movement,,
+19,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+19,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+20,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+20,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+20,1,1,Through,Gateway,Threat_108,Bridge Vehicle Networks,Lateral Movement,,
+20,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+20,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+21,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+21,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+21,1,1,Through,Gateway,Threat_115,Exploitation of Remote Services in In-Vehicle Network,Lateral Movement,,
+21,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+21,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+22,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+22,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+22,1,1,Through,Gateway,Threat_115,Exploitation of Remote Services in In-Vehicle Network,Lateral Movement,,
+22,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+22,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+23,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+23,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+23,1,1,Through,Gateway,Threat_115,Exploitation of Remote Services in In-Vehicle Network,Lateral Movement,,
+23,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+23,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+24,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+24,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+24,1,1,Through,Gateway,Threat_115,Exploitation of Remote Services in In-Vehicle Network,Lateral Movement,,
+24,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+24,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+25,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+25,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+25,1,1,Through,Gateway,Threat_116,Remote services in In-Vehicle Network,Lateral Movement,,
+25,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+25,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+26,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+26,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+26,1,1,Through,Gateway,Threat_116,Remote services in In-Vehicle Network,Lateral Movement,,
+26,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+26,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+27,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+27,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+27,1,1,Through,Gateway,Threat_116,Remote services in In-Vehicle Network,Lateral Movement,,
+27,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+27,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+28,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+28,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+28,1,1,Through,Gateway,Threat_116,Remote services in In-Vehicle Network,Lateral Movement,,
+28,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+28,1,1,Out,Door,Threat_153,Control Doors,Affect Vehicle Function,,
+29,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+29,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+29,1,1,Through,Gateway,Threat_98,Network Service Scanning,Discovery,,
+29,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+29,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+30,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+30,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+30,1,1,Through,Gateway,Threat_98,Network Service Scanning,Discovery,,
+30,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+30,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+31,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+31,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+31,1,1,Through,Gateway,Threat_98,Network Service Scanning,Discovery,,
+31,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+31,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+32,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+32,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+32,1,1,Through,Gateway,Threat_98,Network Service Scanning,Discovery,,
+32,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+32,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+33,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+33,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+33,1,1,Through,Gateway,Threat_88,Network Sniffing,Discovery,,
+33,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+33,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+34,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+34,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+34,1,1,Through,Gateway,Threat_88,Network Sniffing,Discovery,,
+34,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+34,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+35,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+35,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+35,1,1,Through,Gateway,Threat_88,Network Sniffing,Discovery,,
+35,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+35,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+36,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+36,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+36,1,1,Through,Gateway,Threat_88,Network Sniffing,Discovery,,
+36,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+36,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+37,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+37,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+37,1,1,Through,Gateway,Threat_62,Abuse Elevation Control Mechanism,Privilege Escalation,,
+37,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+37,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+38,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+38,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+38,1,1,Through,Gateway,Threat_62,Abuse Elevation Control Mechanism,Privilege Escalation,,
+38,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+38,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+39,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+39,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+39,1,1,Through,Gateway,Threat_62,Abuse Elevation Control Mechanism,Privilege Escalation,,
+39,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+39,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+40,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+40,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+40,1,1,Through,Gateway,Threat_62,Abuse Elevation Control Mechanism,Privilege Escalation,,
+40,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+40,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+41,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+41,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+41,1,1,Through,Gateway,Threat_63,Exploit Co-Located Computing Device for Privilege Escalation,Privilege Escalation,,
+41,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+41,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+42,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+42,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+42,1,1,Through,Gateway,Threat_63,Exploit Co-Located Computing Device for Privilege Escalation,Privilege Escalation,,
+42,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+42,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+43,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+43,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+43,1,1,Through,Gateway,Threat_63,Exploit Co-Located Computing Device for Privilege Escalation,Privilege Escalation,,
+43,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+43,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+44,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+44,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+44,1,1,Through,Gateway,Threat_63,Exploit Co-Located Computing Device for Privilege Escalation,Privilege Escalation,,
+44,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+44,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+45,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+45,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+45,1,1,Through,Gateway,Threat_108,Bridge Vehicle Networks,Lateral Movement,,
+45,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+45,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+46,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+46,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+46,1,1,Through,Gateway,Threat_108,Bridge Vehicle Networks,Lateral Movement,,
+46,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+46,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+47,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+47,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+47,1,1,Through,Gateway,Threat_108,Bridge Vehicle Networks,Lateral Movement,,
+47,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+47,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+48,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+48,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+48,1,1,Through,Gateway,Threat_108,Bridge Vehicle Networks,Lateral Movement,,
+48,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+48,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+49,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+49,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+49,1,1,Through,Gateway,Threat_115,Exploitation of Remote Services in In-Vehicle Network,Lateral Movement,,
+49,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+49,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+50,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+50,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+50,1,1,Through,Gateway,Threat_115,Exploitation of Remote Services in In-Vehicle Network,Lateral Movement,,
+50,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+50,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+51,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+51,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+51,1,1,Through,Gateway,Threat_115,Exploitation of Remote Services in In-Vehicle Network,Lateral Movement,,
+51,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+51,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+52,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+52,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+52,1,1,Through,Gateway,Threat_115,Exploitation of Remote Services in In-Vehicle Network,Lateral Movement,,
+52,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+52,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+53,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+53,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+53,1,1,Through,Gateway,Threat_116,Remote services in In-Vehicle Network,Lateral Movement,,
+53,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+53,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+54,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+54,1,1,In,TCU,Threat_24,Malicious SMS,Initial Access,,
+54,1,1,Through,Gateway,Threat_116,Remote services in In-Vehicle Network,Lateral Movement,,
+54,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+54,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+55,1,1,Entry,Telematics Server,,,,Door,"[Cycle 1: Entry(Telematics Server) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+55,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+55,1,1,Through,Gateway,Threat_116,Remote services in In-Vehicle Network,Lateral Movement,,
+55,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+55,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
+56,1,1,Entry,Smart Phone,,,,Door,"[Cycle 1: Entry(Smart Phone) -> In(TCU) -> Through(Gateway,Body Control Module (BCM)) -> Out(Door)]"
+56,1,1,In,TCU,Threat_40,External Remote Services,Initial Access,,
+56,1,1,Through,Gateway,Threat_116,Remote services in In-Vehicle Network,Lateral Movement,,
+56,1,1,Through,Body Control Module (BCM),Threat_109,Exploit ECU for Lateral Movement,Lateral Movement,,
+56,1,1,Out,Door,Threat_165,Vehicle Theft,Impact,,
