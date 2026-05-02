@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """tool_attack_paths.py  [Code 2] — UKC attack path enumeration and AI-powered TARA analysis"""
 from __future__ import annotations
-# ── Auto-install required packages on first run ─────────────────────────────
+
 def _ensure_packages():
     """
     Silently installs missing AI provider packages the first time the tool runs.
@@ -11,7 +11,6 @@ def _ensure_packages():
     import importlib, subprocess, sys, threading
 
     REQUIRED = [
-        # (import_name, pip_package, extras)
         ("google.genai",  "google-genai",  ""),
         ("openai",        "openai",        ""),
     ]
@@ -23,7 +22,7 @@ def _ensure_packages():
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             )
         except Exception:
-            pass  # Will surface as ImportError when provider is actually used
+            pass  
 
     missing = []
     for import_name, pip_pkg, _ in REQUIRED:
@@ -33,12 +32,12 @@ def _ensure_packages():
             missing.append(pip_pkg)
 
     if missing:
-        # Install in background threads so the UI doesn't block
+        
         threads = [threading.Thread(target=_pip_install, args=(p,), daemon=True)
                    for p in missing]
         for t in threads:
             t.start()
-        # Wait up to 60 s total (UI is still responsive because this runs before mainloop)
+        
         for t in threads:
             t.join(timeout=60)
 
@@ -54,20 +53,16 @@ from tkinter import filedialog, messagebox, ttk
 from typing import Dict, FrozenSet, List, Set, Tuple
 from html import escape
 
-
-#
-
-# ── Risk calculation constants (ISO 21434) ─────────────────────────────────
 _FS_IMPACT_ORDER = {
     "Negligible": 0, "Moderate": 1, "Major": 2, "Severe": 3,
-    # abbreviated forms
+    
     "NEG": 0, "MOD": 1, "MAJ": 2, "SEV": 3,
 }
 _FS_FEASIBILITY_ORDER = {
     "very low": 0, "low": 1, "medium": 2, "high": 3,
 }
 
-# ── Risk calculation (ISO 21434: SFOP max + feasibility) ───────────────────
+
 _FS_IMPACT_ORDER = {
     "Negligible": 0, "Moderate": 1, "Major": 2, "Severe": 3,
     "NEG": 0, "MOD": 1, "MAJ": 2, "SEV": 3,
@@ -75,7 +70,7 @@ _FS_IMPACT_ORDER = {
 _FS_FEASIBILITY_ORDER = {"very low": 0, "low": 1, "medium": 2, "high": 3}
 
 def _calc_risk_level_fs(safety, financial, operational, privacy, feasibility_rating):
-    """ISO 21434 risk level from SFOP max impact + feasibility."""
+    
     max_impact = max(
         _FS_IMPACT_ORDER.get(str(safety).strip(), 1),
         _FS_IMPACT_ORDER.get(str(financial).strip(), 1),
@@ -93,7 +88,7 @@ def _calc_risk_level_fs(safety, financial, operational, privacy, feasibility_rat
 
 
 def _calc_risk_level_fs(safety, financial, operational, privacy, feasibility_rating):
-    """Calculate ISO 21434 risk level from SFOP max impact + feasibility."""
+    
     max_impact = max(
         _FS_IMPACT_ORDER.get(str(safety).strip(), 1),
         _FS_IMPACT_ORDER.get(str(financial).strip(), 1),
@@ -157,9 +152,6 @@ except ImportError as _e:
         win.geometry(f"{w}x{h}+{(sw-w)//2}+{(sh-h)//2}")
 
 
-# ─────────────────────────────────────────────────────────────
-# Top banner gradient
-# ─────────────────────────────────────────────────────────────
 def _draw_top_banner(canvas: tk.Canvas, title: str, subtitle: str) -> None:
     canvas.delete("all")
     w = max(canvas.winfo_width(), 1)
@@ -237,12 +229,6 @@ _DEFAULT_UKC = {
 }
 _TACTIC_TO_PHASE: Dict[str, str] = {}
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# AssetMapDialog — "Other (Custom)" patch
-# Adds a free-text "Other..." entry option to every "Asset Kind" combobox in
-# the AssetMapDialog without requiring access to tool_threat_mapper_v7 source.
-# ─────────────────────────────────────────────────────────────────────────────
 
 _OTHER_SENTINEL = "Other"
 
@@ -362,13 +348,9 @@ def _patch_asset_map_dialog_other(dlg: tk.Toplevel) -> None:
                 pass
 
         for y_key in sorted(rows):
-            # 왼쪽에서 오른쪽 순서대로 정렬
+
             row_cbs = [cb for x, cb in sorted(rows[y_key], key=lambda t: t[0])]
 
-            # row_cbs[0] = Category
-            # row_cbs[1] = Asset Type
-            # row_cbs[2] = Asset Kind
-            # Category 제외, Asset Type / Asset Kind 만 허용
             if len(row_cbs) >= 2:
                 _add_other_to_combobox(row_cbs[1])
             if len(row_cbs) >= 3:
@@ -624,45 +606,33 @@ def build_full_csv(mapping, multi_paths):
     return buf.getvalue()
 
 
-# ════════════════════════════════════════════════════════════════
-# Multi-Agent Framework  (Vehicle Reviewer  +  Functional Generator)
-# ════════════════════════════════════════════════════════════════
-
 class _AutosecBaseAgent:
-    """
-    Stateful multi-turn agent base.
-    Maintains conversation history per agent instance.
-    Supports: Gemini (google-genai chat), GPT (openai), Ollama (openai-compat).
-    """
-    SYSTEM_PROMPT: str = ""   # Override in subclass
+    SYSTEM_PROMPT: str = ""   
 
     def __init__(self, *, provider: str, model: str,
                  gemini_client=None, oai_client=None,
                  log_fn, set_progress_fn, repair_json_fn):
         self.provider       = provider
         self.model          = model
-        self._gc            = gemini_client   # google.genai Client
-        self._oc            = oai_client      # openai.OpenAI client
-        self._log           = log_fn          # thread-safe: already wraps self.after()
+        self._gc            = gemini_client   
+        self._oc            = oai_client      
+        self._log           = log_fn          
         self._progress      = set_progress_fn
         self._repair        = repair_json_fn
-        self._messages: list = []             # OpenAI-style history (gpt / ollama)
-        self._chat           = None           # Gemini chat session
+        self._messages: list = []             
+        self._chat           = None           
         import time as _t, re as _r, json as _j
         self._time = _t
         self._re   = _r
         self._json = _j
 
     def reset(self):
-        """Clear conversation state (call before re-using the same agent)."""
         self._messages = []
         self._chat     = None
 
-    # ── Core send ─────────────────────────────────────────────────────────────
     def send(self, user_msg: str, *, max_retries: int = 4, base_delay: int = 5) -> str:
         if self.provider == "gemini":
             return self._send_gemini(user_msg, max_retries, base_delay)
-        # GPT / Ollama: use continuation-aware send to handle max-token truncation
         return self._send_oai_with_continuation(user_msg, max_retries, base_delay)
 
     def _send_gemini(self, user_msg: str, max_retries: int, base_delay: int) -> str:
@@ -713,7 +683,7 @@ class _AutosecBaseAgent:
             except Exception as ex:
                 last_err = ex
                 err = str(ex)
-                # Always log the raw error so the user can see exactly what happened
+                
                 self._log(f"[WARN] {pname} error (attempt {attempt+1}/{max_retries}): {err[:400]}")
                 is_busy = any(x in err.lower() for x in [
                     "503", "overloaded", "server_error", "temporarily unavailable",
@@ -724,7 +694,7 @@ class _AutosecBaseAgent:
                     self._progress(f"Server busy — retrying in {delay}s...", -1)
                     self._time.sleep(delay)
                     continue
-                # Non-retriable error — surface it immediately with full detail
+                
                 raise RuntimeError(f"{pname} API error: {err}") from ex
 
         raise RuntimeError(
@@ -734,12 +704,6 @@ class _AutosecBaseAgent:
 
     def _send_oai_with_continuation(self, user_msg: str,
                                      max_retries: int, base_delay: int) -> str:
-        """GPT/Ollama call with automatic continuation on max-token truncation.
-
-        If the model stops with finish_reason='length' (output was cut), we
-        immediately send a follow-up asking it to continue, then merge the two
-        raw fragments before JSON repair.  Retries on busy errors as usual.
-        """
         pname = self.provider.upper()
         self._messages.append({"role": "user", "content": user_msg})
         msgs = [{"role": "system", "content": self.SYSTEM_PROMPT}] + self._messages
@@ -777,17 +741,17 @@ class _AutosecBaseAgent:
                             model=self.model, messages=cont_msgs,
                             max_tokens=16384, temperature=0.1)
                         cont_text = (cont_resp.choices[0].message.content or "").strip()
-                        # Strip any accidental markdown fences from the continuation
+                        
                         cont_text = self._re.sub(r"^```[a-z]*\s*", "", cont_text)
                         cont_text = self._re.sub(r"\s*```\s*$", "", cont_text)
                         text = text + cont_text
                         self._log(f"[INFO] {pname} continuation received "
                                   f"({len(cont_text)} chars). Merging fragments.")
-                        # Replace the provisional partial assistant msg
+                        
                         self._messages.pop()
                     except Exception as _ce:
                         self._log(f"[WARN] {pname} continuation failed: {_ce!s:.200}")
-                        # Fall through with the partial text; _repair_json handles it
+                        
 
                 self._messages.append({"role": "assistant", "content": text})
                 return text
@@ -812,7 +776,7 @@ class _AutosecBaseAgent:
             f"Last error: {last_err}"
         )
 
-    # ── JSON helper ───────────────────────────────────────────────────────────
+
     def send_and_parse(self, user_msg: str) -> dict:
         raw = self.send(user_msg)
         raw = self._re.sub(r"^```json\s*", "", raw, flags=self._re.MULTILINE)
@@ -828,13 +792,6 @@ class _AutosecBaseAgent:
 
 
 class VehicleLevelReviewerAgent(_AutosecBaseAgent):
-    """
-    Agent 1 — Vehicle-Level Security Reviewer.
-
-    Turn 1 : Generate vehicle-level attack path review.
-    Turn 2 : Self-validate (path count ≥ 10, ordering, sentence completeness,
-              no invented identifiers).
-    """
     SYSTEM_PROMPT = """\
 You are a senior automotive cybersecurity architect with deep expertise in ISO/SAE 21434, WP.29 R155, UNECE CS regulations, and the MITRE ATT&CK for Vehicles / Unified Kill Chain (UKC) framework.
 
@@ -927,14 +884,12 @@ FINAL RULES:
     def run(self, summary: dict) -> dict:
         summary_str = self._json.dumps(summary, ensure_ascii=False, indent=2)
 
-        # ── Turn 1: Generate ───────────────────────────────────────────────────
         self._log("[AGENT-1] Turn 1 — generating vehicle-level review...")
         result = self.send_and_parse(
             "Analyze the following attack graph JSON and produce a complete "
             "vehicle-level review per your role instructions:\n\n" + summary_str
         )
 
-        # ── Turn 2: Self-validate ──────────────────────────────────────────────
         self._log("[AGENT-1] Turn 2 — self-validating output...")
         validated = self.send_and_parse(
             "Review your previous JSON output against these criteria:\n"
@@ -954,12 +909,7 @@ FINAL RULES:
 
 
 class FunctionalLevelGeneratorAgent(_AutosecBaseAgent):
-    """
-    Agent 2 — Functional-Level Threat Scenario Generator.
 
-    Turn 1 : Generate functional scenarios using vehicle-level review as context.
-    Turn 2 : Self-validate (unique function names, CVE origin, count ≥ 10, ordering).
-    """
     SYSTEM_PROMPT = """\
 You are a senior automotive cybersecurity researcher performing ISO/SAE 21434 Clause 15 function-level TARA. You generate technically rigorous, component-specific threat scenarios with precise CVE exploitation analysis and detailed attack trees.
 
@@ -1126,7 +1076,7 @@ FINAL RULES:
 6. Do not treat the examples as the only acceptable content or simply restate their wording. They are illustrative examples only. Use their format and level of specificity as guidance, and write the output as rigorously and precisely as possible based on the actual input data."""
 
     def run(self, summary: dict, vehicle_review: dict, additional_info: str = "") -> dict:
-        # Trim vehicle review if too large (keep most relevant parts)
+
         vr_str = self._json.dumps(vehicle_review, ensure_ascii=False, indent=2)
         if len(vr_str) > 12000:
             vr_inner = vehicle_review.get("vehicle_level_review", vehicle_review)
@@ -1140,7 +1090,7 @@ FINAL RULES:
             }, ensure_ascii=False, indent=2)
         sum_str = self._json.dumps(summary, ensure_ascii=False, indent=2)
 
-        # ── Turn 1: Generate ───────────────────────────────────────────────────
+
         self._log("[AGENT-2] Turn 1 — generating functional-level scenarios...")
         result = self.send_and_parse(
             "Generate functional-level threat scenarios based on the following inputs.\n\n"
@@ -1151,7 +1101,7 @@ FINAL RULES:
             + (additional_info or "None provided.")
         )
 
-        # ── Turn 2: Self-validate ──────────────────────────────────────────────
+
         self._log("[AGENT-2] Turn 2 — self-validating scenarios...")
         validated = self.send_and_parse(
             "Review your previous JSON output against these criteria:\n"
@@ -1173,9 +1123,7 @@ FINAL RULES:
         return validated
 
 
-# ════════════════════════════════════════════════════════════════
-# Results
-# ════════════════════════════════════════════════════════════════
+
 class FullResultWindow(tk.Toplevel):
     def __init__(self, parent, mapping, multi_paths, out_json, out_csv, attack_graph_png=None, report_html_path=None, gemini_analysis_path=None):
         super().__init__(parent)
@@ -1184,7 +1132,7 @@ class FullResultWindow(tk.Toplevel):
         _center(self, 1320, 900)
         self.configure(bg="white")
 
-        # Treeview row height for this window
+
         _s = ttk.Style(self)
         _s.configure("Treeview", rowheight=26, font=("Segoe UI", 9))
         _s.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
@@ -1194,7 +1142,7 @@ class FullResultWindow(tk.Toplevel):
         self._attack_graph_img = None
         self._attack_graph_src_pil = None
 
-        # Load Gemini AI analysis data if available
+
         self._gemini_data = None
         if gemini_analysis_path and Path(gemini_analysis_path).exists():
             try:
@@ -1662,19 +1610,15 @@ class FullResultWindow(tk.Toplevel):
                     )
         self._t2.bind("<<TreeviewSelect>>", on_path_sel)
 
-        # ── AI Analysis tab (only shown when Gemini data is available) ──
+
         if self._gemini_data:
             ai_tab = tk.Frame(nb, bg="white")
             nb.add(ai_tab, text="AI Analysis")
             self._build_ai_tab(ai_tab)
 
-    # ──────────────────────────────────────────────────────────────
-    # AI Analysis Tab
-    # ──────────────────────────────────────────────────────────────
-    def _build_ai_tab(self, parent):
-        """Gemini AI Analysis results: Vehicle-Level Review + Functional-Level Scenarios"""
 
-        # Warning banner
+    def _build_ai_tab(self, parent):
+
         banner = tk.Frame(parent, bg="#7B1FA2", pady=6)
         banner.pack(fill="x")
         tk.Label(
@@ -1688,12 +1632,11 @@ class FullResultWindow(tk.Toplevel):
         nb_ai = ttk.Notebook(parent)
         nb_ai.pack(fill="both", expand=True, padx=6, pady=4)
 
-        # Tab 1: Vehicle-Level Review
+
         vl_tab = tk.Frame(nb_ai, bg="white")
         nb_ai.add(vl_tab, text="Vehicle-Level Review")
         self._build_vehicle_level_tab(vl_tab)
 
-        # Tab 2: Functional-Level Scenarios
         fl_tab = tk.Frame(nb_ai, bg="white")
         nb_ai.add(fl_tab, text="Functional-Level Scenarios")
         self._build_functional_level_tab(fl_tab)
@@ -1705,7 +1648,7 @@ class FullResultWindow(tk.Toplevel):
                      font=("Arial", 11), fg="#888", bg="white").pack(pady=40)
             return
 
-        # Overall Summary
+
         summary_frame = tk.LabelFrame(
             parent, text="  Overall Assessment Summary  ", font=("Arial", 9, "bold"),
             bg="#F3E5F5", fg="#4A148C", bd=2, relief="groove"
@@ -1750,7 +1693,7 @@ class FullResultWindow(tk.Toplevel):
                      font=("Arial", 8), fg="#E65100", bg="#FFF3E0", wraplength=900, justify="left"
                      ).pack(anchor="w", padx=4, pady=2)
 
-        # Path list (top) + detail (bottom)
+
         paned = ttk.PanedWindow(parent, orient="vertical")
         paned.pack(fill="both", expand=True, padx=6, pady=4)
 
@@ -1760,7 +1703,7 @@ class FullResultWindow(tk.Toplevel):
         paned.add(bot_frame, weight=3)
 
         path_reviews = vr.get("path_reviews", []) or []
-        # Sort P1,P2... numerically
+
         import re as _re_pid
         def _pid_key(p):
             m = _re_pid.search(r"\d+", p.get("path_id","P0"))
@@ -1798,7 +1741,7 @@ class FullResultWindow(tk.Toplevel):
         tv.tag_configure("warn", background="#FFF8E1")
         tv.tag_configure("err", background="#FFEBEE")
 
-        # Detail panel
+
         detail_label = tk.Label(bot_frame, text="Click a path row to view detailed narrative",
                                  font=("Arial", 9), fg="#888", bg="white", pady=6)
         detail_label.pack()
@@ -1837,24 +1780,24 @@ class FullResultWindow(tk.Toplevel):
             txt_detail.insert("end", f"Path {pid}  —  Confidence: {conf}", "h1")
             txt_detail.insert("end", "\n" + "─" * 80 + "\n", "sep")
 
-            # Phase sequence
+
             seq = pr.get("phase_sequence", "")
             if seq:
                 txt_detail.insert("end", f"\nPhase Sequence: {seq}\n", "body")
 
-            # Narrative (support both old and new field names)
+
             narr = pr.get("narrative", "") or pr.get("narrative_en", "") or pr.get("narrative_ko", "") or ""
             if narr:
                 txt_detail.insert("end", "\nAttack Path Narrative\n", "h2")
                 txt_detail.insert("end", narr + "\n", "body")
 
-            # Entry point assessment
+
             entry = pr.get("entry_point_assessment", "") or pr.get("entry_point_description", "") or ""
             if entry:
                 txt_detail.insert("end", "\nEntry Point Assessment\n", "h2")
                 txt_detail.insert("end", entry + "\n", "body")
 
-            # Phase validity
+
             phase_val = pr.get("phase_validity", {}) or {}
             if phase_val:
                 txt_detail.insert("end", "\nUKC Phase Validity\n", "h2")
@@ -1865,20 +1808,20 @@ class FullResultWindow(tk.Toplevel):
 
 
 
-            # Recommendations
+
             recs = pr.get("recommendations", []) or []
             if recs:
                 txt_detail.insert("end", "\nRecommendations\n", "h2")
                 for r in recs:
                     txt_detail.insert("end", f"  -> {r}\n", "body")
 
-            # Attack objective
+
             obj = pr.get("attack_objective", "") or pr.get("attack_goal", "") or ""
             if obj:
                 txt_detail.insert("end", "\nAttack Objective\n", "h2")
                 txt_detail.insert("end", "  " + obj + "\n", "body")
 
-            # Dominant tactics
+
             tactics = pr.get("dominant_tactics", []) or []
             if tactics:
                 txt_detail.insert("end", "\nDominant Tactics\n", "h2")
@@ -1897,7 +1840,7 @@ class FullResultWindow(tk.Toplevel):
 
         scenarios = fa.get("functional_scenarios", []) or []
 
-        # Summary
+
         summary_frame = tk.LabelFrame(
             parent, text="  Functional-Level Analysis Summary  ", font=("Arial", 9, "bold"),
             bg="#E3F2FD", fg="#0D47A1", bd=2, relief="groove"
@@ -1920,7 +1863,7 @@ class FullResultWindow(tk.Toplevel):
         txt_sum.insert("1.0", summary_text)
         txt_sum.config(state="disabled")
 
-        # Extra insights rows
+
         novel = fa.get("novel_attack_surfaces_summary", "")
         if novel:
             nrow = tk.Frame(summary_frame, bg="#E8F5E9")
@@ -1938,7 +1881,7 @@ class FullResultWindow(tk.Toplevel):
                      font=("Arial", 8), fg="#1B5E20", bg="#E8F5E9", wraplength=1000, justify="left"
                      ).pack(anchor="w", padx=4, pady=2)
 
-        # Scenario list (top) + detail (bottom)
+
         paned = ttk.PanedWindow(parent, orient="vertical")
         paned.pack(fill="both", expand=True, padx=6, pady=4)
 
@@ -1977,7 +1920,7 @@ class FullResultWindow(tk.Toplevel):
             fin = _impact_str(sc_item.get("financial_impact"))
             ops = _impact_str(sc_item.get("operational_impact"))
             priv = _impact_str(sc_item.get("privacy_impact"))
-            # Recalculate risk level from SFOP max + feasibility (ISO 21434)
+
             rlvl = _calc_risk_level_fs(
                 sc_item.get("safety_impact", "Negligible"),
                 sc_item.get("financial_impact", "Negligible"),
@@ -1996,7 +1939,7 @@ class FullResultWindow(tk.Toplevel):
         sv.tag_configure("moderate", background="#FFFDE7")
         sv.tag_configure("negligible", background="#F1F8E9")
 
-        # Detail panel
+
         txt_det = tk.Text(bot_f, wrap="word", font=("Segoe UI", 9),
                           bg="#FAFAFA", fg="#222", relief="flat", bd=0,
                           padx=10, pady=8, state="disabled")
@@ -2036,7 +1979,7 @@ class FullResultWindow(tk.Toplevel):
             cgoal = sc_item.get("cybersecurity_goal", "—")
             feasibility = sc_item.get("overall_feasibility_rating", "")
             feasibility_score = sc_item.get("overall_feasibility_score", "")
-            # Recalculate instead of using LLM's arbitrary number
+
             risk_level = _calc_risk_level_fs(
                 sc_item.get("safety_impact", "Negligible"),
                 sc_item.get("financial_impact", "Negligible"),
@@ -2058,14 +2001,14 @@ class FullResultWindow(tk.Toplevel):
                 txt_det.insert("end", f"   |   Risk Level: {risk_level}", "body")
             txt_det.insert("end", "\n" + "─" * 80 + "\n\n", "sep")
 
-            # Novel finding description
+
             if is_novel:
                 novel_desc = sc_item.get("novel_finding_description", "")
                 if novel_desc:
                     txt_det.insert("end", "Novel Attack Surface Description\n", "h2")
                     txt_det.insert("end", novel_desc + "\n", "novel_t")
 
-            # Component details used
+
             comp = sc_item.get("component_details_used", {}) or {}
             if any(comp.values()):
                 txt_det.insert("end", "\nComponent Details\n", "h2")
@@ -2077,19 +2020,19 @@ class FullResultWindow(tk.Toplevel):
                             v_str = str(v)
                         txt_det.insert("end", f"  {k.capitalize()}: {v_str}\n", "code")
 
-            # Functional Impact
+
             fi = sc_item.get("functional_impact", "") or sc_item.get("functional_impact_ko", "") or ""
             if fi:
                 txt_det.insert("end", "\nFunctional Impact\n", "h2")
                 txt_det.insert("end", fi + "\n", "body")
 
-            # Attack Narrative
+
             an = sc_item.get("attack_narrative", "") or sc_item.get("attack_narrative_ko", "") or ""
             if an:
                 txt_det.insert("end", "\nAttack Narrative (Detailed)\n", "h2")
                 txt_det.insert("end", an + "\n", "body")
 
-            # Attack Tree
+
             atree = sc_item.get("attack_tree", {}) or {}
             if atree:
                 root_goal = atree.get("root_goal", "")
@@ -2109,13 +2052,13 @@ class FullResultWindow(tk.Toplevel):
                             txt_det.insert("end", f"  -> Feasibility: {s_rating}", "body")
                         txt_det.insert("end", "\n", "body")
 
-            # Damage Scenario
+
             ds = sc_item.get("damage_scenario", "") or sc_item.get("damage_scenario_ko", "") or ""
             if ds:
                 txt_det.insert("end", "\nDamage Scenario\n", "h2")
                 txt_det.insert("end", ds + "\n", "body")
 
-            # Impact Ratings
+
             txt_det.insert("end", "\nImpact Ratings\n", "h2")
             for label, key in [("Safety", "safety_impact"), ("Financial", "financial_impact"),
                                 ("Operational", "operational_impact"), ("Privacy", "privacy_impact")]:
@@ -2124,21 +2067,21 @@ class FullResultWindow(tk.Toplevel):
                 txt_det.insert("end", f"  {label}: ", "body")
                 txt_det.insert("end", val.upper() + "\n", tag_n)
 
-            # Cybersecurity Requirements
+
             reqs = sc_item.get("cybersecurity_requirements", []) or []
             if reqs:
                 txt_det.insert("end", "\nCybersecurity Requirements\n", "h2")
                 for r in reqs:
                     txt_det.insert("end", f"  * {r}\n", "req")
 
-            # Recommended Mitigations
+ 
             mits = sc_item.get("recommended_mitigations", []) or []
             if mits:
                 txt_det.insert("end", "\nRecommended Mitigations\n", "h2")
                 for m in mits:
                     txt_det.insert("end", f"  -> {m}\n", "body")
 
-            # Inferences
+
             inferences = sc_item.get("inferences_made", []) or []
             if inferences:
                 txt_det.insert("end", "\nInferences Made\n", "h2")
@@ -2251,7 +2194,7 @@ class SplashScreen(tk.Toplevel):
         card = tk.Frame(outer, bg="white")
         card.pack(fill="both", expand=True, padx=18, pady=18)
 
-        # 로고 영역
+
         logo_wrap = tk.Frame(card, bg="white")
         logo_wrap.pack(pady=(8, 12))
 
@@ -2325,10 +2268,6 @@ class SplashScreen(tk.Toplevel):
         self.update_idletasks()
 
 
-
-# ════════════════════════════════════════════════════════════════
-# Main GUI
-# ════════════════════════════════════════════════════════════════
 class AttackPathsGUI(tk.Tk):
     def __init__(self, backend_script=None):
         super().__init__()
@@ -2340,7 +2279,7 @@ class AttackPathsGUI(tk.Tk):
         _center(self,980,680)
         self.configure(bg="white")
 
-        # ── Global Treeview row height ──────────────────────────
+
         _style = ttk.Style(self)
         _style.configure("Treeview", rowheight=26, font=("Segoe UI", 9))
         _style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
@@ -2365,7 +2304,7 @@ class AttackPathsGUI(tk.Tk):
         )
         self.v_tm7 = tk.StringVar()
         self.v_llm_api_key = tk.StringVar()
-        self.v_additional_info = tk.StringVar()   # Additional system context for Gemini
+        self.v_additional_info = tk.StringVar()   
         self.v_mode = tk.StringVar(value="remote")
         self.v_target = tk.StringVar()
         self.v_boundary = tk.StringVar()
@@ -2469,7 +2408,7 @@ class AttackPathsGUI(tk.Tk):
 
         _left_row(left_card, 0, "TM7 File", self.v_tm7, self._br_tm7)
 
-        # ── AI Model / Model Type / API Key (3 rows) ─────────────
+       
         self.v_ai_provider = tk.StringVar(value="gemini")
         self.v_ai_model    = tk.StringVar(value="gemini-3.1-flash-lite-preview")
 
@@ -2479,7 +2418,7 @@ class AttackPathsGUI(tk.Tk):
 
         _lbl_kw = dict(font=("Arial", 9), bg="white", fg="#333", anchor="e", width=15)
 
-        # Row 0: AI Model (provider)
+       
         tk.Label(_ai_outer, text="AI Model", **_lbl_kw
                  ).grid(row=0, column=0, padx=(2, 8), pady=3, sticky="e")
         _provider_cb = ttk.Combobox(_ai_outer, textvariable=self.v_ai_provider,
@@ -2495,7 +2434,7 @@ class AttackPathsGUI(tk.Tk):
             }
             prov = self.v_ai_provider.get()
             self.v_ai_model.set(defaults.get(prov, ""))
-            # Dynamically update labels depending on selected provider
+            
             if prov == "ollama":
                 _lbl_api_key.config(text="Base URL")
                 _hint_model.config(text="e.g. llama3.8 / llama3.2 / mistral")
@@ -2510,7 +2449,7 @@ class AttackPathsGUI(tk.Tk):
                 _lbl_key_hint.config(text="AIza...")
         _provider_cb.bind("<<ComboboxSelected>>", _on_provider_change)
 
-        # Row 1: AI Model Type (keyboard input)
+        
         tk.Label(_ai_outer, text="AI Model Type", **_lbl_kw
                  ).grid(row=1, column=0, padx=(2, 8), pady=3, sticky="e")
         tk.Entry(_ai_outer, textvariable=self.v_ai_model,
@@ -2520,7 +2459,7 @@ class AttackPathsGUI(tk.Tk):
                  font=("Arial", 7), fg="#aaa", bg="white")
         _hint_model.grid(row=1, column=2, sticky="w", padx=(0, 4))
 
-        # Row 2: AI API Key + Test
+        
         _lbl_api_key = tk.Label(_ai_outer, text="AI API Key", **_lbl_kw)
         _lbl_api_key.grid(row=2, column=0, padx=(2, 8), pady=3, sticky="e")
 
@@ -2537,7 +2476,7 @@ class AttackPathsGUI(tk.Tk):
             key      = self.v_llm_api_key.get().strip()
             model    = self.v_ai_model.get().strip()
 
-            # --- Gemini ---
+            
             if provider == "gemini":
                 model = model or "gemini-3.1-flash-lite-preview"
                 if not key:
@@ -2605,11 +2544,11 @@ class AttackPathsGUI(tk.Tk):
                 import threading as _t
                 _t.Thread(target=_do_test_gpt, daemon=True).start()
 
-            # --- Ollama (local) ---
+            
             elif provider == "ollama":
                 model    = model or "llama3.8"
                 base_url = key if key else "http://localhost:11434"
-                # Normalise: Ollama OpenAI-compat endpoint is /v1
+                
                 if not base_url.rstrip("/").endswith("/v1"):
                     base_url = base_url.rstrip("/") + "/v1"
                 try:
@@ -2879,10 +2818,10 @@ class AttackPathsGUI(tk.Tk):
         llm_api_key  = self.v_llm_api_key.get().strip()
         user_model   = self.v_ai_model.get().strip() or "gemini-3.1-flash-lite-preview"
 
-        # Additional context
+        
         additional_info = ""
 
-                # AI analysis now runs in _run_ai_with_mapping() after AssetMapDialog
+               
 
         def worker():
             try:
@@ -2899,19 +2838,19 @@ class AttackPathsGUI(tk.Tk):
                     dep_map=self.v_dep.get(),
                     impact_map=self.v_impact.get(),
                     max_depth=int(self.v_depth.get() or 30),
-                    llm_api_key="",   # AI runs exclusively in frontend. Do not pass API key to backend.
+                    llm_api_key="",   
                 )
                 result = run_bundle["result"]
                 self._attack_graph_png = run_bundle.get("attack_graph_png")
                 self._report_html_path = run_bundle.get("report_html")
 
-                # Log backend stderr if report not generated (helps diagnose crashes)
+                
                 if not self._report_html_path:
                     _be_err = (run_bundle.get("backend_stderr") or "").strip()
                     _be_out = (run_bundle.get("backend_stdout") or "").strip()
                     if _be_err:
                         self.after(0, lambda e=_be_err[:600]: self._log(f"[WARN] Backend stderr:\n{e}"))
-                    # Fallback: search output dir for latest .html
+                    
                     out_dir_fb = Path(self.v_out_dir.get())
                     html_files = sorted(out_dir_fb.glob("*.html"), key=lambda p: p.stat().st_mtime, reverse=True) if out_dir_fb.exists() else []
                     if html_files:
@@ -2930,10 +2869,10 @@ class AttackPathsGUI(tk.Tk):
                 n_n = len(result.get("nodes", []))
                 self.after(0, lambda: self._log(f"[OK] Paths: {n_p} | Nodes: {n_n}"))
 
-                # Cache raw result for Gemini — will be called AFTER AssetMapDialog
+                
                 self._raw_result_for_gemini = result
                 self._gemini_analysis_path = None
-                # Check if a previous gemini_analysis.json exists (reuse)
+                
                 out_dir_check = Path(self.v_out_dir.get())
                 for _d in ([Path(self._report_html_path).parent] if self._report_html_path else []) + [out_dir_check]:
                     _gp = _d / "gemini_analysis.json"
@@ -3030,15 +2969,13 @@ class AttackPathsGUI(tk.Tk):
             self._log(f"[OK] Report HTML: {self._report_html_path}")
         self._log(f"[OK] JSON: {out_json}  |  CSV: {out_csv}")
 
-        # ── Enrich result with mapping data (category, asset_kind, CWEs, etc.) ─
-        # Build asset_name → mapping info lookup
+
         mapping_by_name: dict = {}
         for m in mapping:
             aname = m.get("name") or m.get("asset_name") or ""
             if aname:
                 mapping_by_name[aname] = m
 
-        # Inject mapping fields into result nodes
         enriched_result = dict(result)
         enriched_nodes = []
         for node in result.get("nodes", []):
@@ -3061,7 +2998,6 @@ class AttackPathsGUI(tk.Tk):
         llm_api_key = self.v_llm_api_key.get().strip()
 
         if llm_api_key:
-            # ── Run AI analysis in background AFTER mapping ──────────────────
             self._set_progress("Running AI Analysis...", 50)
             self._log("[INFO] Asset mapping complete. Starting AI analysis with enriched asset data...")
             _call_gemini_direct = getattr(self, "_call_gemini_direct_fn", None)
@@ -3108,7 +3044,6 @@ class AttackPathsGUI(tk.Tk):
 
     @staticmethod
     def _repair_json(raw: str) -> str:
-        """Close open braces/brackets in truncated JSON."""
         raw = raw.strip()
         if not raw:
             return raw
@@ -3131,7 +3066,6 @@ class AttackPathsGUI(tk.Tk):
 
 
     def _embed_ai_into_report(self, report_path, vehicle_review_data, functional_data):
-        """Inject AI sections directly into HTML report. No subprocess/importlib needed."""
         if not report_path or not Path(report_path).exists():
             return False
         try:
@@ -3145,7 +3079,6 @@ class AttackPathsGUI(tk.Tk):
                 return escape(str(v))
 
             def _eng_name(s: str) -> str:
-                """Extract English from Korean (English) format, or return as-is."""
                 if not s:
                     return s or ""
                 import re as _ren
@@ -3190,7 +3123,6 @@ class AttackPathsGUI(tk.Tk):
 
             # renderers
             def _render_vehicle_level_review_html(vehicle_review_data: Optional[dict]) -> str:
-                """Section 10: Vehicle-Level AI Attack Path Review HTML."""
                 if not vehicle_review_data:
                     return "<div class='card'><p style='color:#6b7280'>No vehicle-level AI review available. Provide a Gemini API key to enable this section.</p></div>"
 
@@ -3282,13 +3214,11 @@ class AttackPathsGUI(tk.Tk):
                 """
 
             def _render_functional_level_html(functional_data: Optional[dict]) -> str:
-                """Section 6-B: Functional-Level Threat Scenarios HTML."""
                 if not functional_data:
                     return "<div class='card'><p style='color:#6b7280'>No functional-level scenarios available. Provide a Gemini API key to enable this section.</p></div>"
 
                 fa = functional_data.get("functional_level_analysis", functional_data)
 
-                # Support both old (ko/en) and new (unified English) field names
                 summary = _safe_text(
                     fa.get("summary_narrative") or
                     fa.get("summary_narrative_en") or
@@ -3332,7 +3262,6 @@ class AttackPathsGUI(tk.Tk):
                     is_novel = sc.get("is_novel_finding") or False
                     novel_desc = _safe_text(sc.get("novel_finding_description") or "")
                     confidence = _safe_text(sc.get("confidence") or "-")
-                    # Recalculate risk level from SFOP + feasibility (ISO 21434) — do not trust LLM number
                     _s_i = sc.get("safety_impact") or "Negligible"
                     _f_i = sc.get("financial_impact") or "Negligible"
                     _o_i = sc.get("operational_impact") or "Negligible"
@@ -3344,12 +3273,10 @@ class AttackPathsGUI(tk.Tk):
                     source_paths = ", ".join(sc.get("source_vehicle_path_ids") or [])
                     source_threats = ", ".join(sc.get("source_threat_ids") or [])
 
-                    # Content fields — support old and new names
                     impact_text = _safe_text(sc.get("functional_impact") or sc.get("functional_impact_ko") or "-")
                     attack_text = _safe_text(sc.get("attack_narrative") or sc.get("attack_narrative_ko") or "-")
                     damage_text = _safe_text(sc.get("damage_scenario") or sc.get("damage_scenario_ko") or "-")
 
-                    # Impact
                     safety_i = sc.get("safety_impact") or "Negligible"
                     financial_i = sc.get("financial_impact") or "Negligible"
                     operational_i = sc.get("operational_impact") or "Negligible"
@@ -3359,16 +3286,15 @@ class AttackPathsGUI(tk.Tk):
                                      key=lambda x: IMPACT_ORDER.get(x, 0))
                     border_color = impact_color.get(max_impact, "#e5e7eb")
 
-                    # Component details
                     comp = sc.get("component_details_used") or {}
                     comp_html = ""
                     if comp:
                         comp_parts = []
                         for k, v in comp.items():
-                            # Skip non-display fields
+
                             if k.lower() in ("cves", "cve_list", "cve", "cve_refs", "asset_kind"):
                                 continue
-                            # Only show hardware, software, interfaces (the 3 useful fields)
+       
                             if k.lower() not in ("hardware", "software", "interfaces"):
                                 continue
                             if v and v != "..." and v != [] and v != "[INFERRED]":
@@ -3378,7 +3304,7 @@ class AttackPathsGUI(tk.Tk):
                         if comp_parts:
                             comp_html = "<div style='font-size:11px;color:#6b7280;margin-bottom:6px'>" + " &nbsp;|&nbsp; ".join(comp_parts) + "</div>"
 
-                    # Attack tree summary
+    
                     atree = sc.get("attack_tree") or {}
                     atree_html = ""
                     if atree.get("root_goal"):
@@ -3393,7 +3319,7 @@ class AttackPathsGUI(tk.Tk):
                             <ul style='margin:0;padding-left:16px'>{steps_html}</ul>
                         </div>"""
 
-                    # Requirements & mitigations
+
                     reqs = sc.get("cybersecurity_requirements") or []
                     mits = sc.get("recommended_mitigations") or []
                     inferences = sc.get("inferences_made") or []
@@ -3524,7 +3450,6 @@ class AttackPathsGUI(tk.Tk):
         import re as _re
         import time as _time
 
-        # ── Provider-specific setup ─────────────────────────────────────────────
         _gemini_client = None
         _oai_client    = None
 
@@ -3673,7 +3598,6 @@ class AttackPathsGUI(tk.Tk):
         
         summary = _compact(result_data)
 
-        # ── Create agents (shared provider / model / clients) ─────────────────
         def _make_log(msg):
             self.after(0, lambda m=msg: self._log(m))
 
@@ -3692,7 +3616,6 @@ class AttackPathsGUI(tk.Tk):
         reviewer  = VehicleLevelReviewerAgent(**_agent_kwargs)
         generator = FunctionalLevelGeneratorAgent(**_agent_kwargs)
 
-        # ── Agent 1: Vehicle-Level Reviewer ───────────────────────────────────
         self.after(0, lambda: self._log(
             f"[INFO] Agent-1 (Vehicle Reviewer) starting [{provider}/{user_model}]..."))
         self.after(0, lambda: self._set_progress("Agent-1: Vehicle-Level Review...", 55))
@@ -3727,7 +3650,6 @@ class AttackPathsGUI(tk.Tk):
                     "Use the 'Test API' button to diagnose."
                 ))
 
-        # ── Agent 2: Functional-Level Generator ───────────────────────────────
         func_data = None
         if vehicle_review:
             self.after(0, lambda: self._log(
@@ -3765,13 +3687,10 @@ class AttackPathsGUI(tk.Tk):
                         "Vehicle-level review was saved. Functional tab will be empty."
                     ))
 
-        # Save - include backend json path so regenerate-report can find it
-        # Find backend _ag_tmp json in the output dir
         _backend_json = None
         _ag_candidates = sorted(out_dir.glob("_ag_tmp_*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
         if _ag_candidates:
             _backend_json = str(_ag_candidates[0])
-        # Fallback: store the relevant data directly so report can be rebuilt without backend json
         bundle = {
             "vehicle_level_review": vehicle_review.get("vehicle_level_review", vehicle_review) if vehicle_review else None,
             "functional_level_analysis": func_data.get("functional_level_analysis", func_data) if func_data else None,
@@ -3788,10 +3707,7 @@ class AttackPathsGUI(tk.Tk):
                 json.dump(bundle, f, ensure_ascii=False, indent=2)
             self.after(0, lambda p=str(gpath): self._log(f"[OK] AI analysis saved: {p}"))
 
-            # ── Inject AI results into existing HTML report ───────────────────
-            # PRIMARY: directly patch the placeholder sections in the already-
-            # generated HTML.  This is path-independent and always reliable.
-            # FALLBACK: re-run the full backend (which also searches for the JSON).
+
             _vr_embed = ({"vehicle_level_review": bundle["vehicle_level_review"]}
                          if bundle.get("vehicle_level_review") else None)
             _fa_embed = ({"functional_level_analysis": bundle["functional_level_analysis"]}
@@ -3810,7 +3726,7 @@ class AttackPathsGUI(tk.Tk):
                         "[WARN] Direct HTML injection failed — trying backend regeneration..."))
                     self._regenerate_final_report_from_backend()
             else:
-                # No existing report yet — generate via backend (it will find gemini_analysis.json)
+
                 self.after(0, lambda: self._log(
                     "[INFO] No existing report found — regenerating via backend..."))
                 self._regenerate_final_report_from_backend()
@@ -3840,7 +3756,7 @@ class AttackPathsGUI(tk.Tk):
                 dep_map=self.v_dep.get(),
                 impact_map=self.v_impact.get(),
                 max_depth=int(self.v_depth.get() or 30),
-                llm_api_key="",   # AI still runs in frontend; backend only reads gemini_analysis.json
+                llm_api_key="",  
             )
 
             report_html = run_bundle.get("report_html")
@@ -3910,8 +3826,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-'''
-# Entry point
-=> python tool_attack_paths_v19.py --backend ../backend/parse_attack_graph_v37.py
-'''
