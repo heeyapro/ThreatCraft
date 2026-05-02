@@ -103,9 +103,9 @@
       </a>
       <br />
       <b>Heeyapro</b>
-      <hr style="margin:6px 0; border:0.5px solid #444; opacity:0.4;">
+      <hr style="margin:3px 0; border:0.5px solid #444; opacity:0.4;">
       🧠 Project Lead
-      <hr style="margin:6px 0; border:0.5px solid #444; opacity:0.4;">
+      <hr style="margin:3px 0; border:0.5px solid #444; opacity:0.4;">
       📧 kangdohee1211@korea.ac.kr
     </td>
     <td align="center">
@@ -116,7 +116,7 @@
       <b>sinse100</b>
       <hr style="margin:3px 0; border:0.5px solid #444; opacity:0.4;">
       🔬 Co-Researcher
-      <hr style="margin:6px 0; border:0.5px solid #444; opacity:0.4;">
+      <hr style="margin:3px 0; border:0.5px solid #444; opacity:0.4;">
       📧 sinse100@korea.ac.kr
     </td>
   </tr>
