@@ -179,6 +179,10 @@ ThreatCraft/
 │           │
 │           └── threat_to_tactic_ver0.1.json
 │               # Threat → MITRE ATT&CK tactic mapping & ordering logic
+└── example/
+        ├── Automotive DFD_B.tm7       # Example DFD
+        ├── _ag_tmp_184849195185.html  # Output Report in FTML format
+        └── _ag_tmp_184849195185.pdf   # Output Report in PDF format
 ```
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
