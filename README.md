@@ -268,17 +268,10 @@ Configure the analysis environment as follows:
 
 ---
 
-### **2. Rule-Based Attack Graph Generation**
+### **2. Configure Implementation Detail of Assets**
 
-Once execution begins, ThreatCraft first activates the **Rule-Based Engine Layer**:
-
-- Constructs initial **attack paths** based on:
-  - Asset dependency graph
-  - Attack vector feasibility rules
-  - MITRE ATT&CK tactic ordering (UKC-aligned)
-
-- Generates a structured **attack graph**, such as:
-
+Next, we define the implementation details for each asset. For instance, as shown in the figure below, a TCU may run a Linux operating system with multiple implementation characteristics, such as loadable kernel modules (PID-23L1) and Linux namespace isolation (PID-23L2). Note that it is not mandatory to provide implementation details for all assets.
+ 
 <img src="asset/20260502_181157.png" alt="config" width="100%">
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
