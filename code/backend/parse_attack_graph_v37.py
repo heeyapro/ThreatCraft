@@ -18,9 +18,7 @@ from typing import Dict, List, Optional, Set, Tuple
 from graphviz import Digraph
 
 
-# ============================================================
-# HTML Detection Report Generator (Annex H styled)
-# ============================================================
+
 IMPACT_ORDER = {
     "Negligible": 0,
     "Low": 1,
@@ -31,7 +29,6 @@ IMPACT_ORDER = {
 
 IMPACT_BY_SCORE = {0: "Negligible", 1: "Low", 2: "Moderate", 3: "Major", 4: "Severe"}
 
-## 
 FEASIBILITY_ORDER = {
     "very low": 0,
     "low": 1,
@@ -54,7 +51,6 @@ def _safe_text(v) -> str:
 
 
 def _eng_name(s: str) -> str:
-    """Extract English from Korean (English) format, or return as-is."""
     if not s:
         return s or ""
     import re as _ren
@@ -219,7 +215,6 @@ def _collect_observed_tactics(data: dict) -> Dict[str, str]:
             bucket.append(tactic)
     return {tid: ", ".join(vals) for tid, vals in tactic_map.items()}
 
-## Path description builder
 def _build_path_descriptions(data: dict) -> List[List[dict]]:
     node_index = {n.get("node_id"): n for n in data.get("nodes", [])}
     rendered = []
@@ -236,7 +231,6 @@ def _build_path_descriptions(data: dict) -> List[List[dict]]:
         rendered.append(row)
     return rendered
 
-## Path-with-risk description builder
 def _build_path_descriptions_for_path_with_risk(data: dict) -> List[List[dict]]:
     node_index = {n.get("node_id"): n for n in data.get("nodes", [])}
     rendered = []
@@ -264,7 +258,6 @@ def _format_path(path_rows: List[dict]) -> str:
         )
     return " &rarr; ".join(chunks)
 
-## Path-with-risk description builder
 def _format_path_fixed(path_rows: List[dict]) -> str:
     chunks = []
     for step in path_rows:
@@ -390,8 +383,6 @@ def _convert_html_to_pdf(html_path: Path, pdf_path: Path) -> bool:
     )
     return False
 
-## ======================= Added in v26 ============================================================================================
-
 def _stencil_to_cy_type(stencil_type: str) -> str:
     if stencil_type == "StencilEllipse":
         return "process"
@@ -402,14 +393,14 @@ def _stencil_to_cy_type(stencil_type: str) -> str:
 
 def _phase_color(phase: Optional[str]) -> str:
     if phase == "Out":
-        return "#ef4444"   # red
+        return "#ef4444"   
     if phase == "Through":
-        return "#f59e0b"   # orange
+        return "#f59e0b"   
     if phase == "In":
-        return "#22c55e"   # green
+        return "#22c55e"   
     if phase == "Entry":
-        return "#9ca3af"   # gray
-    return "#cbd5e1"       # default
+        return "#9ca3af"   
+    return "#cbd5e1"      
 
 
 def _phase_priority(phase: Optional[str]) -> int:
@@ -537,17 +528,9 @@ def _build_cytoscape_dfd_model(tm7_path: Path, attack_graph_result: dict) -> dic
         "nodes": cy_nodes,
         "edges": cy_edges,
     }
-## =====================================================================================================================================
-
-
-# ============================================================
-# Gemini AI Integration
-# ============================================================
-
 
 
 def _render_vehicle_level_review_html(vehicle_review_data: Optional[dict]) -> str:
-    """Section 10: Vehicle-Level AI Attack Path Review HTML."""
     if not vehicle_review_data:
         return "<div class='card'><p style='color:#6b7280'>No vehicle-level AI review available. Provide a Gemini API key to enable this section.</p></div>"
 
@@ -640,13 +623,13 @@ def _render_vehicle_level_review_html(vehicle_review_data: Optional[dict]) -> st
 
 
 def _render_functional_level_html(functional_data: Optional[dict]) -> str:
-    """Section 6-B: Functional-Level Threat Scenarios HTML."""
+    
     if not functional_data:
         return "<div class='card'><p style='color:#6b7280'>No functional-level scenarios available. Provide a Gemini API key to enable this section.</p></div>"
 
     fa = functional_data.get("functional_level_analysis", functional_data)
 
-    # Support both old (ko/en) and new (unified English) field names
+    
     summary = _safe_text(
         fa.get("summary_narrative") or
         fa.get("summary_narrative_en") or
@@ -690,7 +673,7 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
         is_novel = sc.get("is_novel_finding") or False
         novel_desc = _safe_text(sc.get("novel_finding_description") or "")
         confidence = _safe_text(sc.get("confidence") or "-")
-        # Recalculate risk level from SFOP + feasibility (ISO 21434) — do not trust LLM number
+        
         _s_i = sc.get("safety_impact") or "Negligible"
         _f_i = sc.get("financial_impact") or "Negligible"
         _o_i = sc.get("operational_impact") or "Negligible"
@@ -702,12 +685,12 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
         source_paths = ", ".join(sc.get("source_vehicle_path_ids") or [])
         source_threats = ", ".join(sc.get("source_threat_ids") or [])
 
-        # Content fields — support old and new names
+        
         impact_text = _safe_text(sc.get("functional_impact") or sc.get("functional_impact_ko") or "-")
         attack_text = _safe_text(sc.get("attack_narrative") or sc.get("attack_narrative_ko") or "-")
         damage_text = _safe_text(sc.get("damage_scenario") or sc.get("damage_scenario_ko") or "-")
 
-        # Impact
+        
         safety_i = sc.get("safety_impact") or "Negligible"
         financial_i = sc.get("financial_impact") or "Negligible"
         operational_i = sc.get("operational_impact") or "Negligible"
@@ -717,16 +700,16 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
                          key=lambda x: IMPACT_ORDER.get(x, 0))
         border_color = impact_color.get(max_impact, "#e5e7eb")
 
-        # Component details
+        
         comp = sc.get("component_details_used") or {}
         comp_html = ""
         if comp:
             comp_parts = []
             for k, v in comp.items():
-                # Skip non-display fields
+                
                 if k.lower() in ("cves", "cve_list", "cve", "cve_refs", "asset_kind"):
                     continue
-                # Only show hardware, software, interfaces (the 3 useful fields)
+                
                 if k.lower() not in ("hardware", "software", "interfaces"):
                     continue
                 if v and v != "..." and v != [] and v != "[INFERRED]":
@@ -736,7 +719,7 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
             if comp_parts:
                 comp_html = "<div style='font-size:11px;color:#6b7280;margin-bottom:6px'>" + " &nbsp;|&nbsp; ".join(comp_parts) + "</div>"
 
-        # Attack tree summary
+        
         atree = sc.get("attack_tree") or {}
         atree_html = ""
         if atree.get("root_goal"):
@@ -751,7 +734,7 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
                 <ul style='margin:0;padding-left:16px'>{steps_html}</ul>
             </div>"""
 
-        # Requirements & mitigations
+        
         reqs = sc.get("cybersecurity_requirements") or []
         mits = sc.get("recommended_mitigations") or []
         inferences = sc.get("inferences_made") or []
@@ -1033,7 +1016,7 @@ def generate_html_report(
         for idx, path in enumerate(path_with_risk_rows, start=1)
     ) or "<tr><td colspan='2'>No valid attack path identified.</td></tr>"
 
-    # Embed image as base64 data URI so it shows in report regardless of working directory
+    
     attack_graph_img_html = "<p>No attack graph image generated.</p>"
     if attack_graph_path and Path(attack_graph_path).exists():
         try:
@@ -1051,7 +1034,7 @@ def generate_html_report(
         except Exception as _ie:
             attack_graph_img_html = f"<p>Could not embed attack graph image: {_ie}</p>" 
 
-    # Generate AI section HTML
+    
     vehicle_review_html = _render_vehicle_level_review_html(gemini_vehicle_review)
     functional_level_html = _render_functional_level_html(gemini_functional)
 
@@ -1460,10 +1443,6 @@ def generate_html_report(
     print(f"[+] Annex H styled HTML report generated: {report_path}")
 
 
-# ============================================================
-# TM7 helpers
-# ============================================================
-
 def local(tag: str) -> str:
     return tag.split("}")[-1] if "}" in tag else tag
 
@@ -1514,9 +1493,6 @@ def safe_float(x: Optional[str]) -> Optional[float]:
     except ValueError:
         return None
 
-# ============================================================
-# Data models
-# ============================================================
 
 @dataclass(frozen=True)
 class DFDNode:
@@ -1544,9 +1520,7 @@ class ThreatInfo:
 
 PHASE_ORDER = {"In": 0, "Through": 1, "Out": 2}
 
-# ============================================================
-# Path validity
-# ============================================================
+
 
 def path_phase_counts_remote(path_node_ids: List[str], graph_nodes: Dict[str, dict]) -> Dict[str, int]:
     cnt = {"Entry": 0, "In": 0, "Through": 0, "Out": 0}
@@ -1583,9 +1557,7 @@ def dedupe_paths(paths: List[List[str]]) -> List[List[str]]:
         out.append(p)
     return out
 
-# ============================================================
-# Merged DFD subgraph helpers
-# ============================================================
+
 
 def build_merged_dfd_subgraph(
     *,
@@ -1657,9 +1629,7 @@ def build_merged_dfd_subgraph(
         "edge_count": len(dfd_edges_out),
     }
 
-# ============================================================
-# Load mappings
-# ============================================================
+
 
 def norm_tactic(t: str) -> str:
     return " ".join((t or "").strip().split()).lower()
@@ -1711,9 +1681,7 @@ def load_dependencies(dependency_path: Path) -> List[dict]:
     raw = json.loads(dependency_path.read_text(encoding="utf-8"))
     return raw if isinstance(raw, list) else []
 
-# ============================================================
-# TM7 parse
-# ============================================================
+
 
 def parse_tm7(tm7_path: Path) -> Tuple[Dict[str, DFDNode], List[DFDFlow], List[dict]]:
     tree = ET.parse(str(tm7_path))
@@ -1765,9 +1733,7 @@ def parse_tm7(tm7_path: Path) -> Tuple[Dict[str, DFDNode], List[DFDFlow], List[d
 
     return nodes_by_guid, flows, boundaries
 
-# ============================================================
-# Threat selection
-# ============================================================
+
 
 def threat_candidates_for_asset(
     asset_name: str,
@@ -1808,9 +1774,7 @@ def threat_candidates_for_asset(
     cands.sort(key=lambda x: PHASE_ORDER[x.phase], reverse=True)
     return cands
 
-# ============================================================
-# Dependency evaluation
-# ============================================================
+
 
 def _threat_expr_satisfied(op: str, items: List[str], present: Set[str]) -> bool:
     opn = (op or "-").strip().upper()
@@ -1945,9 +1909,7 @@ def path_satisfies_dependencies(
 
     return True
 
-# ============================================================
-# Attack graph shared state
-# ============================================================
+
 
 @dataclass
 class GraphBuildState:
@@ -1993,9 +1955,7 @@ def find_boundary_rect(boundaries: List[dict], boundary_name: str) -> Optional[d
             return {"left": b["left"], "top": b["top"], "width": b["width"], "height": b["height"]}
     return None
 
-# ============================================================
-# Remote/Adjacent Entry generation
-# ============================================================
+
 
 def add_single_entry_before_in(
     st: GraphBuildState,
@@ -2039,9 +1999,7 @@ def add_single_entry_before_in(
             all_paths.append(list(path_node_ids))
         path_node_ids.pop()
 
-# ============================================================
-# Remote/Adjacent DFS
-# ============================================================
+
 
 def dfs_backward_remote(
     st: GraphBuildState,
@@ -2198,9 +2156,7 @@ def dfs_backward_remote(
 
         path_node_ids.pop()
 
-# ============================================================
-# Local/Physical DFS
-# ============================================================
+
 
 def dfs_backward_local_physical(
     st: GraphBuildState,
@@ -2357,9 +2313,6 @@ def dfs_backward_local_physical(
 
         path_node_ids.pop()
 
-# ============================================================
-# Build: Remote/Adjacent
-# ============================================================
 
 def build_attack_graph_remote_adjacent(
     tm7_path: Path,
@@ -2606,9 +2559,7 @@ def build_attack_graph_remote_adjacent(
         },
     }
 
-# ============================================================
-# Build: Local/Physical
-# ============================================================
+
 
 def build_attack_graph_local_physical(
     tm7_path: Path,
@@ -2830,9 +2781,7 @@ def build_attack_graph_local_physical(
         },
     }
 
-# ============================================================
-# Graphviz rendering (unchanged from v32)
-# ============================================================
+
 
 def _shape_from_stencil(stencil_type: str) -> str:
     if stencil_type == "StencilParallelLines":
@@ -2941,9 +2890,7 @@ def _render_report_preview_from_graph(result: dict, out_prefix: Path | str, font
     preview_prefix = Path(out_prefix)
     return render_merged_attack_graph_graphviz(result=result, out_prefix=preview_prefix, fmt="png", font=font)
 
-# ============================================================
-# Attack Tree (unchanged from v32)
-# ============================================================
+
 
 def _gv_escape(s: str) -> str:
     if s is None:
@@ -3193,13 +3140,10 @@ def get_ukc_phases(tactics, json_data):
     return list(phases)
 
 
-# ============================================================
-# CLI (main)
-# ============================================================
+
 
 def main():
     ap = argparse.ArgumentParser(description="TM7-based attack graph (JSON) generation")
-    # Changed to optional — not required in --regenerate-report mode
     ap.add_argument("--tm7", default="")
     ap.add_argument("--type", default="remote", choices=["remote", "adjacent", "local", "physical"])
     ap.add_argument("--target", default="")
@@ -3232,7 +3176,6 @@ def main():
 
     args = ap.parse_args()
 
-    # ── Fast-path: regenerate report only ──────────────────────────────────────
     if getattr(args, "regenerate_report", False):
         _ga_path = args.gemini_analysis or os.environ.get("TARA_GEMINI_ANALYSIS", "")
         _rp = args.report_html or args.detection_report
@@ -3240,7 +3183,6 @@ def main():
             print(f"[ERROR] --gemini-analysis file not found: {_ga_path}", file=sys.stderr)
             sys.exit(2)
         if not _rp:
-            # Fall back to --detection-report default
             _rp = getattr(args, "detection_report", "") or ""
         if not _rp:
             print("[ERROR] --report-html (or --detection-report) required with --regenerate-report", file=sys.stderr)
@@ -3254,7 +3196,6 @@ def main():
             _gemini_func = _fa
             _ga_dir = Path(_ga_path).parent
 
-            # 1. Search for backend output json (must contain mode/target_asset_name)
             _out_path = _gb.get("backend_json_path") or ""
             if not _out_path or not Path(_out_path).exists():
                 _ag_jsons = sorted(_ga_dir.glob("_ag_tmp_*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
@@ -3262,9 +3203,7 @@ def main():
             if not _out_path or not Path(_out_path).exists():
                 _ap_jsons = sorted(_ga_dir.glob("attack_paths_*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
                 _out_path = str(_ap_jsons[0]) if _ap_jsons else ""
-            # Even without out_path, report can be built from AI data alone
 
-            # 2. Patch missing mode/target_asset_name from bundle
             if _out_path and Path(_out_path).exists():
                 _od = json.loads(Path(_out_path).read_text(encoding="utf-8"))
                 _patched = False
@@ -3281,11 +3220,9 @@ def main():
                     json.dump(_od, _t, ensure_ascii=False); _t.close()
                     _out_path = _t.name
 
-            # 3. Auxiliary files
             _risk_path = str(_ga_dir / "attack_graph_with_risk_temp.json")
             _report_path = Path(_rp)
 
-            # 4. Search for attack graph image
             _ag_img = ""
             for _ext in [".png", ".pdf", ".svg"]:
                 for _stem in ["merged_attack_graph", "_ag_graph"]:
@@ -3317,7 +3254,6 @@ def main():
             sys.exit(1)
         sys.exit(0)
 
-    # Validate required args only in normal (non-regenerate) mode
     if not args.tm7:
         print("[ERROR] --tm7 is required (unless using --regenerate-report)", file=sys.stderr)
         sys.exit(2)
@@ -3388,7 +3324,6 @@ def main():
 
     if not result.get("ok", False):
         print(f"[INFO] reason: {result.get('reason')}")
-        # Do NOT return — still generate the HTML report with available data
 
     rendered = None
     report_preview_graph = None
@@ -3406,7 +3341,6 @@ def main():
         except Exception as e:
             print(f"[WARN] merged graphviz rendering failed: {e}", file=sys.stderr)
 
-    # Compute risk scores
     risk_path = str(Path(args.out).parent / "attack_graph_with_risk_temp.json")
     try:
         add_risk_to_paths(out_path, risk_path, attack_vector_map, asset_map, threat_map, impact_map, "./threat_library/impact_feasability_map.json")
@@ -3426,12 +3360,10 @@ def main():
         except Exception as e:
             print(f"[WARN] attack tree rendering failed: {e}", file=sys.stderr)
 
-    # ── AI analysis: performed exclusively in tool_attack_paths frontend ──────
 
     gemini_vehicle_review = None
     gemini_functional = None
 
-    # Generate HTML report
     report_path = Path(args.detection_report)
     if report_preview_graph is not None:
         attack_graph_path = str(report_preview_graph)
@@ -3440,21 +3372,14 @@ def main():
     else:
         attack_graph_path = args.merged_graph_out + "." + args.merged_graph_format
 
-    # ── Load gemini_analysis.json generated by frontend ─────────────────────
-    # AI runs only in frontend. Results are stored in gemini_analysis.json
-    # and loaded here during report generation.
     if not gemini_vehicle_review and not gemini_functional:
         _search_dirs = []
-        # Priority 1: same dir as backend output json (_ag_tmp_*.json)
         _search_dirs.append(Path(args.out).parent)
-        # Priority 2: same dir as report html
         if args.detection_report:
             _search_dirs.append(Path(args.detection_report).parent)
-        # Priority 3: parent dirs (max 2 levels up)
         for _lvl in [1, 2]:
             _search_dirs.append(Path(args.out).parents[_lvl])
 
-        # Deduplicate while preserving order
         _seen_dirs = set()
         _unique_dirs = []
         for _d in _search_dirs:
@@ -3487,7 +3412,6 @@ def main():
 
     if args.detection_report:
         try:
-            # preview PNG를 우선 사용
             _ag_path = ""
             if report_preview_graph and Path(str(report_preview_graph)).exists():
                 _ag_path = str(report_preview_graph)
@@ -3527,13 +3451,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-'''
-Run command
-
-python parse_attack_graph_v37.py --tm7 "../in/Automotive DFD_B.tm7" --type remote --target "Door" --boundary "External Vehicle Boundary"  --asset-map "threat_library/asset_to_threats_ver0.3.json" --threat-map "threat_library/threat_to_tactic_ver0.1.json"  --attack-vector-map "threat_library/attack_vector_feasibility_ver0.1.json" --dependency-map "threat_library/dependency.json"  --out "../out/attack_graph_remote_filtered.json" --render-attack-tree --attack-tree-png "../out/attack_tree_remote_filtered.png" --merged-graph-out "../out/merged_attack_graph_remote_filtered" --detection-report "../out/result_report_v2.html" --impact-map "threat_library/impact_map.json"
-python parse_attack_graph_v37.py --tm7 "../in/Automotive DFD_B.tm7" --type physical --target "Door" --boundary "External Vehicle Boundary"  --asset-map "threat_library/asset_to_threats_ver0.3.json" --threat-map "threat_library/threat_to_tactic_ver0.1.json"  --attack-vector-map "threat_library/attack_vector_feasibility_ver0.1.json" --dependency-map "threat_library/dependency.json"  --out "../out/attack_graph_physical_filtered.json" --render-attack-tree --attack-tree-png "../out/attack_tree_physical_filtered.png" --merged-graph-out "../out/merged_attack_graph_physical_filtered" --detection-report "../out/result_report_v2.html" --impact-map "threat_library/impact_map.json"
-python parse_attack_graph_v37.py --tm7 "../in/Automotive DFD_B.tm7" --type local --target "Door" --boundary "External Vehicle Boundary"  --asset-map "threat_library/asset_to_threats_ver0.3.json" --threat-map "threat_library/threat_to_tactic_ver0.1.json"  --attack-vector-map "threat_library/attack_vector_feasibility_ver0.1.json" --dependency-map "threat_library/dependency.json"  --out "../out/attack_graph_local_filtered.json" --render-attack-tree --attack-tree-png "../out/attack_tree_local_filtered.png" --merged-graph-out "../out/merged_attack_graph_local_filtered" --detection-report "../out/result_report_v2.html" --impact-map "threat_library/impact_map.json"
-python parse_attack_graph_v37.py --tm7 "../in/Automotive DFD_B.tm7" --type adjacent --target "Door" --boundary "External Vehicle Boundary"  --asset-map "threat_library/asset_to_threats_ver0.3.json" --threat-map "threat_library/threat_to_tactic_ver0.1.json"  —attack-vector-map "threat_library/attack_vector_feasibility_ver0.1.json" —dependency-map "threat_library/dependency.json"  —out "../out/attack_graph_adjacent_filtered.json" —render-attack-tree —attack-tree-png "../out/attack_tree_adjacent_filtered.png" —merged-graph-out "../out/merged_attack_graph_adjacent_filtered" —detection-report "../out/result_report_v2.html" —impact-map "threat_library/impact_map.json"
-
-'''
