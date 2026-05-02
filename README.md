@@ -12,6 +12,6 @@
   </p>
 
   <img src="logo/1770647509745-Photoroom.png" width="60%">
-<br><b>ThreatCraft</b>is an automated threat modeling tool that integrates structured threat knowledge with large language models to generate coherent attack scenarios. It first derives valid attack paths using a rule-based engine grounded in a unified kill chain, ensuring structural consistency. These paths then guide LLMs to produce realistic, context-aware threat scenarios while mitigating hallucinations
+<br><b>ThreatCraft</b> is an automated threat modeling tool that integrates structured threat knowledge with large language models to generate coherent attack scenarios. It first derives valid attack paths using a rule-based engine grounded in a unified kill chain, ensuring structural consistency. These paths then guide LLMs to produce realistic, context-aware threat scenarios while mitigating hallucinations
 <br/>
 </div>
