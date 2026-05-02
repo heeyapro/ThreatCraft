@@ -27,6 +27,7 @@
 
 <details open="open">
   <summary>Table of Contents</summary>
+  <ol>
     <li><a href="#overview"> ➤ Overview</a></li>
     <li><a href="#project-files-description"> ➤ Project Files Description</a></li>
     <li><a href="#installation"> ➤ Getting Started</a></li>
