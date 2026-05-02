@@ -276,6 +276,8 @@ For instance, as shown in the figure below a TCU may run a Linux operating syste
 - loadable kernel modules (PID-23L1) and
 - Linux namespace isolation (PID-23L2). 
 
+After adding the implementation details to the assets, click “OK”.
+
 > 📌 Note: It is not mandatory to provide implementation details for all assets.
  
 <img src="asset/20260502_181157.png" alt="config" width="100%">
