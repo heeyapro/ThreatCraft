@@ -51,53 +51,119 @@
 
 
 <p align="justify">
-Figure illustrates the overall architecture of <b>ThreatCraft</b>, a hybrid threat modeling framework that combines rule-based reasoning with LLM-based scenario refinement. The system is organised as a multi-stage pipeline that transforms system inputs into structured attack scenarios and a final threat report.
+
+ThreatCraft is a hybrid threat modeling framework that integrates a rule-based attack reasoning engine with LLM-based scenario generation. The system is designed to address two fundamental limitations in existing approaches: (i) rule-based systems require extensive manual rule engineering, and (ii) LLM-based approaches suffer from hallucinated or structurally invalid attack paths.
+
 </p>
 
-<ul>
-  <li>
-    <b>1. Input Data</b><br/>
-    The system takes a Data Flow Diagram (DFD), attack mode, and target asset as inputs.
-    These define the initial system context for threat modeling.
-  </li>
+---
 
-  <li>
-    <b>2. Logical Path Extraction</b><br/>
-    A rule-based engine extracts valid system-level attack paths from the DFD.
-    This step enforces structural correctness using asset dependencies and attack-step relations.
-  </li>
+### 🧭 1. High-Level Pipeline (Figure Mapping: WorkFlow-1 / Left → Right Flow)
 
-  <li>
-    <b>3. UKC-Based Scenario Construction</b><br/>
-    Extracted paths are structured using the Unified Kill Chain (UKC) model (In / Through / Out),
-    ensuring temporally and semantically consistent attack progression.
-  </li>
+<p align="justify">
 
-  <li>
-    <b>4. CWE/CVE Mapping</b><br/>
-    System components are mapped to MITRE EMB3D™ categories and enriched with CWE/CVE data,
-    enabling vulnerability-aware reasoning for each attack step.
-  </li>
+The overall architecture shown in <b>WorkFlow-1.png</b> is organized as a sequential pipeline:
 
-  <li>
-    <b>5. Risk Value Determination</b><br/>
-    A risk matrix is applied to evaluate each attack scenario in terms of feasibility and impact,
-    producing quantitative risk scores.
-  </li>
+</p>
 
-  <li>
-    <b>6. LLM-Based Refinement (Reviewer & Generator)</b><br/>
-    - <b>Reviewer</b>: validates and rewrites system-level attack paths into structured natural language<br/>
-    - <b>Generator</b>: generates function-level attack scenarios using CWE/CVE and component context<br/>
-    Iterative self-checking reduces hallucination and improves consistency.
-  </li>
+- 📌 <b>Input Layer (DFD / System Description)</b>  
+  → System configuration, asset relationships, and exposure information  
+  → (Figure: left-most input block)
 
-  <li>
-    <b>7. Output Layer</b><br/>
-    Final outputs are compiled into a structured TARA report,
-    summarizing attack paths, risks, and vulnerability-aware scenarios.
-  </li>
-</ul>
+- 📌 <b>Rule-Based Attack Engine</b>  
+  → Constructs structured attack paths using:
+  - Integrated Attack Library (MITRE ATT&CK, CVE, CWE, domain KBs)
+  - Asset & attack-step dependency model  
+  - Unified Kill Chain (UKC) phase structuring  
+  → (Figure: upper-middle “Rule Engine” block)
+
+- 📌 <b>Risk Assessment Module</b>  
+  → Evaluates attack paths using:
+  - Feasibility (attack vector: network/local/physical/etc.)
+  - Impact (SFOP + asset criticality)  
+  → (Figure: branch under rule engine → “Risk Matrix”)
+
+- 📌 <b>System-Level Attack Graph Output</b>  
+  → Structured, validated multi-step attack paths  
+  → (Figure: central graph / intermediate representation)
+
+---
+
+### 🤖 2. LLM-Guided Threat Refinement Layer
+
+<p align="justify">
+
+The system-level outputs are not final results. They are used as grounded constraints for LLM-based refinement.
+
+</p>
+
+- 📌 <b>Reviewer Agent</b>  
+  → Converts structured attack paths into natural-language reasoning  
+  → Validates logical consistency against attack knowledge base  
+  → (Figure: LLM block – “Reviewer”)
+
+- 📌 <b>Generator Agent</b>  
+  → Expands system-level paths into function-level attack scenarios  
+  → Injects vulnerability context (CWE / CVE / EMB3D mapping)  
+  → (Figure: LLM block – “Generator”)
+
+- 📌 <b>Component-Specific Knowledge Injection</b>  
+  → Embeds real-world vulnerability context:
+  - MITRE EMB3D (hardware/software/network/application mapping)
+  - CWE / CVE enrichment  
+  → (Figure: side knowledge input feeding LLM layer)
+
+---
+
+### 🔗 3. Hybrid Fusion Mechanism (Core Contribution)
+
+<p align="justify">
+
+ThreatCraft enforces consistency by tightly coupling symbolic reasoning and generative modeling:
+
+</p>
+
+- ✔ Rule-based engine ensures:
+  - Valid attack sequencing (no hallucinated transitions)
+  - UKC-aligned temporal ordering
+  - Reproducible attack graph structure
+
+- ✔ LLM layer ensures:
+  - Realistic scenario elaboration
+  - Context-aware vulnerability exploitation details
+  - Natural-language threat interpretation
+
+→ (Figure: connection between Rule Engine → LLM Layer)
+
+---
+
+### 📊 4. Output Layer
+
+<p align="justify">
+
+The final output is a structured threat report that includes:
+
+</p>
+
+- 🧩 Function-level attack scenarios
+- 🧩 System-level validated attack graph
+- 🧩 Risk scores (feasibility × impact)
+- 🧩 Asset-level vulnerability mapping
+
+→ (Figure: bottom/right output block)
+
+---
+
+### 🎯 Key Insight of the Architecture
+
+<p align="justify">
+
+ThreatCraft is not a pure LLM system nor a pure rule engine. Instead, it is a <b>two-stage constrained generation framework</b> where:
+</p>
+
+- Rule-based reasoning defines the “what is possible”
+- LLM defines the “how it actually happens”
+- Knowledge base grounding ensures “real-world feasibility”
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
@@ -112,18 +178,6 @@ Figure illustrates the overall architecture of <b>ThreatCraft</b>, a hybrid thre
 
 <!-- OVERVIEW -->
 <h2 id="installation"> :gear: Installation</h2>
-<!-- subsection 1. graphviz 설치 -->
-<!-- https://graphviz.org/download/  가서 다운로드-->
-<!-- Add Graphviz to the system PATH for all users -->
-
-<!-- 필요한 Python 패키지 설치 -->
-<!-- pip install Graphviz -->
-<!-- pip install Pillow -->
-
-<!-- 도구 실행 -->
-<!-- code/frontend 에 가서 python tool_attack_paths_v19.py --backend ../backend/parse_attack_graph_v37.py 명령어 입력  -->
-
-
 
 <p align="justify">
   Follow the steps below to set up and run <b>ThreatCraft</b> in your local environment.
