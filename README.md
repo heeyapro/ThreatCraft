@@ -270,7 +270,13 @@ Configure the analysis environment as follows:
 
 ### **2. Configure Implementation Detail of Assets**
 
-Next, we define the implementation details for each asset. For instance, as shown in the figure below, a TCU may run a Linux operating system with multiple implementation characteristics, such as loadable kernel modules (PID-23L1) and Linux namespace isolation (PID-23L2). Note that it is not mandatory to provide implementation details for all assets.
+Next, we define the implementation details for each asset. 
+
+For instance, as shown in the figure below a TCU may run a Linux operating system with multiple implementation characteristics:
+- loadable kernel modules (PID-23L1) and
+- Linux namespace isolation (PID-23L2). 
+
+> 📌 Note: It is not mandatory to provide implementation details for all assets.
  
 <img src="asset/20260502_181157.png" alt="config" width="100%">
 
