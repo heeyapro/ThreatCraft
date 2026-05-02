@@ -284,7 +284,7 @@ After adding the implementation details to the assets, click “OK”.
 
 ---
 
-### **3. Check the Analysis Result
+### **3. Check the Analysis Result**
 
 There are 3 tabs on the result window. which is:
 - Asset Mapping : Each CWE threat is mapped to a specific asset. Note that CWE entries for an asset are not provided by default; they are only available once you define the asset’s implementation details, as described in Subsection 2 (“Configure Implementation Details of Assets”).
