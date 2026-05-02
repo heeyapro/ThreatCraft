@@ -58,16 +58,16 @@ ThreatCraft is a hybrid threat modeling framework that integrates a rule-based a
 
 ---
 
-### 🧭 1. High-Level Pipeline (Figure Mapping: WorkFlow-1 / Left → Right Flow)
+### 🔁 1. Rule-Based Engine Layer
 
 <p align="justify">
 
-The overall architecture shown in <b>WorkFlow-1.png</b> is organized as a sequential pipeline:
+The overall architecture shown in Figure above is organized as a sequential pipeline:
 
 </p>
 
-- 📌 <b>Input Layer (DFD / System Description)</b>  
-  → System configuration, asset relationships, and exposure information  
+- 📌 <b>Input Data (DFD / System Description)</b>  
+  → DataFlow Diagram(DFD), Attack Mode, Target Asset
   → (Figure: left-most input block)
 
 - 📌 <b>Rule-Based Attack Engine</b>  
@@ -75,17 +75,13 @@ The overall architecture shown in <b>WorkFlow-1.png</b> is organized as a sequen
   - Integrated Attack Library (MITRE ATT&CK, CVE, CWE, domain KBs)
   - Asset & attack-step dependency model  
   - Unified Kill Chain (UKC) phase structuring  
-  → (Figure: upper-middle “Rule Engine” block)
+  → (Figure: upper-middle “Rule Engine” block which is composed of 'Attack Scenario' and 'Risk Value Determination' block)
 
 - 📌 <b>Risk Assessment Module</b>  
   → Evaluates attack paths using:
   - Feasibility (attack vector: network/local/physical/etc.)
   - Impact (SFOP + asset criticality)  
   → (Figure: branch under rule engine → “Risk Matrix”)
-
-- 📌 <b>System-Level Attack Graph Output</b>  
-  → Structured, validated multi-step attack paths  
-  → (Figure: central graph / intermediate representation)
 
 ---
 
@@ -111,33 +107,11 @@ The system-level outputs are not final results. They are used as grounded constr
   → Embeds real-world vulnerability context:
   - MITRE EMB3D (hardware/software/network/application mapping)
   - CWE / CVE enrichment  
-  → (Figure: side knowledge input feeding LLM layer)
+  → (Figure: CWE/CVE Mapping feeding LLM layer)
 
 ---
 
-### 🔗 3. Hybrid Fusion Mechanism (Core Contribution)
-
-<p align="justify">
-
-ThreatCraft enforces consistency by tightly coupling symbolic reasoning and generative modeling:
-
-</p>
-
-- ✔ Rule-based engine ensures:
-  - Valid attack sequencing (no hallucinated transitions)
-  - UKC-aligned temporal ordering
-  - Reproducible attack graph structure
-
-- ✔ LLM layer ensures:
-  - Realistic scenario elaboration
-  - Context-aware vulnerability exploitation details
-  - Natural-language threat interpretation
-
-→ (Figure: connection between Rule Engine → LLM Layer)
-
----
-
-### 📊 4. Output Layer
+### 📊 3. Output 
 
 <p align="justify">
 
