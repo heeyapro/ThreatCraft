@@ -292,9 +292,9 @@ There are 3 tabs on the result window. which is:
 - Attack Paths : Summarise each identified attack path. Each path represents a unique combination of assets and threats.
 <img src="asset/20260502_181549.png" alt="analysis_result2" width="100%">
 - AI Analysis :dfgfgdfg
-  + Vehicle-Level Review :
+  -- Vehicle-Level Review : For each attack path, the tool assess its likelihood (confidence level). We also provide mitigation recommendations for each path. Furthermore, we perform a comprehensive evaluation across all attack paths to identify and present the highest-risk path.
   <img src="asset/20260502_185751.png" alt="analysis_result3" width="100%">
-  + FUnctional-Level Review : 
+  -- Functional-Level Review : The tool evaluate the most critical vulnerabilities within each asset in the aggregated attack tree of attack paths from a SFOP (Safety, Financial, Operational, Privacy) perspective, and present the results for each asset-specific vulnerability accordingly.
   <img src="asset/20260502_185712.png" alt="analysis_result4" width="100%">
 
 
