@@ -284,6 +284,11 @@ After adding the implementation details to the assets, click “OK”.
 
 ---
 
+### **3. Check the Analysis Result**
+
+The result window consists of three tabs:
+
+---
 The result window consists of three tabs:
 
 ---
