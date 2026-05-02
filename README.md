@@ -1,5 +1,5 @@
 <p align="center"> 
-  <img src="logo/1770647509745-Photoroom.png" width="20%">
+  <img src="asset/logo_temp.png" width="20%">
 </p>
 
 <div align="center">
