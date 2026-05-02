@@ -1,6 +1,6 @@
 <div align="center">
 
-  <h1 align="center">ULTARA (UKC-Leveraged TARA)</h1>
+  <h1 align="center">ThreatCraft</h1>
 
   <p align="center">
     <a href="https://www.python.org/">
