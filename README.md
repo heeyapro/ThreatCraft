@@ -279,6 +279,8 @@ Once execution begins, ThreatCraft first activates the **Rule-Based Engine Layer
 
 - Generates a structured **attack graph**, such as:
 
+<img src="asset/20260502_181157.png" alt="config" width="100%">
+
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
 <!-- OVERVIEW -->
