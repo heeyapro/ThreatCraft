@@ -30,9 +30,9 @@
   <ol>
     <li><a href="#overview"> ➤ Overview</a></li>
     <li><a href="#project-files-description"> ➤ Project Files Description</a></li>
-    <li><a href="#installation"> ➤ Getting Started</a></li>
-    <li><a href="#usage example"> ➤ Scenario 1: Depth First Search </a></li>
-    <li><a href="#contributors"> ➤ Scenario 2: Breadth First Search </a></li>
+    <li><a href="#installation"> ➤ Installation</a></li>
+    <li><a href="#usage example"> ➤ Usage Example </a></li>
+    <li><a href="#contributors"> ➤ Contributors </a></li>
   </ol>
 </details>
 
