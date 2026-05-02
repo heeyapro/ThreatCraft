@@ -97,7 +97,7 @@
         <sub><b>sinse100</b></sub>
       </a>
       <br />
-       🧠 Co-Developer
+       🔬 Co-Researcher
     </td>
   </tr>
 </table>
