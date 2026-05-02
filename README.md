@@ -77,16 +77,30 @@
 <!-- OVERVIEW -->
 <h2 id="contributors"> :busts_in_silhouette: Contributors</h2>
 
-<a href="https://github.com/heeyapro/ULTARA/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=heeyapro/ULTARA" />
-</a>
+<div align="center">
 
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/heeyapro">
+        <img src="https://github.com/heeyapro.png" width="100px;" alt=""/>
+        <br />
+        <sub><b>Heeyapro</b></sub>
+      </a>
+      <br />
+      🧠 Lead Developer
+    </td>
 
+    <td align="center">
+      <a href="https://github.com/your-id">
+        <img src="https://github.com/your-id.png" width="100px;" alt=""/>
+        <br />
+        <sub><b>Your Name</b></sub>
+      </a>
+      <br />
+      🔐 Security Researcher
+    </td>
+  </tr>
+</table>
 
-
-
-
-
-
-  TBD
-</p>
+</div>
