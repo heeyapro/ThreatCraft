@@ -90,7 +90,6 @@
       <br />
       🧠 Lead Developer
     </td>
-
     <td align="center">
       <a href="https://github.com/your-id">
         <img src="https://github.com/your-id.png" width="100px;" alt=""/>
