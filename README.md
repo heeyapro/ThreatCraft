@@ -73,13 +73,48 @@
 
 <!-- 필요한 Python 패키지 설치 -->
 <!-- pip install Graphviz -->
+<!-- pip install Pillow -->
+
+<!-- 도구 실행 -->
+<!-- code/frontend 에 가서 python tool_attack_paths_v19.py --backend ../backend/parse_attack_graph_v37.py 명령어 입력  -->
 
 
 
-<p align="justify"> 
-  TBD
+<p align="justify">
+  Follow the steps below to set up and run <b>ThreatCraft</b> in your local environment.
 </p>
 
+<ol>
+  <li>
+    <b>Install Graphviz</b><br/>
+    Download and install Graphviz from the official site:<br/>
+    https://graphviz.org/download/<br/><br/>
+    After installation, make sure to add Graphviz to your system <b>PATH</b> (required for rendering attack graphs).
+  </li>
+
+  <li>
+    <b>Install Python dependencies</b><br/>
+    Run the following command in your project environment:
+    <pre><code>pip install graphviz pillow</code></pre>
+  </li>
+
+  <li>
+    <b>Verify backend prerequisites</b><br/>
+    Ensure Python version is <b>3.10+</b> and Graphviz is accessible from the terminal:
+    <pre><code>dot -V</code></pre>
+  </li>
+
+  <li>
+    <b>Run ThreatCraft</b><br/>
+    Navigate to the frontend directory and execute:
+    <pre><code>cd code/frontend
+python tool_attack_paths_v19.py --backend ../backend/parse_attack_graph_v37.py</code></pre>
+  </li>
+</ol>
+
+<p align="justify">
+  Once executed successfully, the system will generate attack graphs and launch the ThreatCraft workflow pipeline.
+</p>
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
 <!-- OVERVIEW -->
