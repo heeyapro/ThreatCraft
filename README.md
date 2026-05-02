@@ -227,9 +227,59 @@ python tool_attack_paths_v19.py --backend ../backend/parse_attack_graph_v37.py</
 <!-- OVERVIEW -->
 <h2 id="usage-example"> :rocket: Usage Example</h2>
 
-<p align="justify"> 
-  TBD
-</p>
+## 🚗 Usage Example: Remote Attack on Vehicle Door System
+
+### 🎯 Scenario Definition
+
+We assume an attacker attempting to remotely compromise a vehicle door control system.
+
+- **Target Asset**: `Door`
+- **Trust Boundary**: `External Vehicle Boundary`
+- **Attack Mode**: `Remote`
+- **DFD Input**: Vehicle system Data Flow Diagram (TM7 format)
+
+---
+
+## 🧪 Step-by-Step Execution
+
+### **1. Launch ThreatCraft & Configure Analysis Context**
+
+After starting the application, the GUI dashboard is displayed.
+
+Configure the analysis environment as follows:
+
+- 📂 **DFD File Selection**  
+  Load the target system model (`TM7 file`) representing the vehicle architecture.
+
+- 🧠 **LLM Configuration**  
+  - Select LLM backend (e.g., GPT-based model)
+  - Input valid API key
+
+- 🎯 **Target Definition**
+  - Select **Target Asset**: `Door`
+
+- 🌐 **Trust Boundary Selection**
+  - Define system boundary: `External Vehicle Boundary`
+
+- ⚔️ **Attack Mode**
+  - Set attacker capability: `Remote`
+
+- ▶️ Click **`Run Analysis`**
+
+> 📌 Note: All required threat intelligence libraries (CVE/CWE/EMB3D mappings, dependency graphs, risk models) are preloaded via *Library File Settings* by default.
+
+---
+
+### **2. Rule-Based Attack Graph Generation**
+
+Once execution begins, ThreatCraft first activates the **Rule-Based Engine Layer**:
+
+- Constructs initial **attack paths** based on:
+  - Asset dependency graph
+  - Attack vector feasibility rules
+  - MITRE ATT&CK tactic ordering (UKC-aligned)
+
+- Generates a structured **attack graph**, such as:
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
