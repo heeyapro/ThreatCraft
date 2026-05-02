@@ -97,21 +97,25 @@
   <tr>
     <td align="center">
       <a href="https://github.com/heeyapro">
-        <img src="https://github.com/heeyapro.png" width="100px;" alt=""/>
-        <br />
-        <sub><b>Heeyapro</b></sub>
+        <img src="https://github.com/heeyapro.png" width="90px;" style="border-radius:50%;" />
       </a>
       <br />
-      🧠 Project-Leader
+      <b>Heeyapro</b>
+      <br />
+      🧠 Project Lead
+      <br />
+      📧 <a href="mailto:kangdohee1211@korea.ac.kr>m">heeyapro@email.com</a>
     </td>
     <td align="center">
       <a href="https://github.com/sinse100">
-        <img src="https://github.com/sinse100.png" width="100px;" alt=""/>
-        <br />
-        <sub><b>sinse100</b></sub>
+        <img src="https://github.com/sinse100.png" width="90px;" style="border-radius:50%;" />
       </a>
       <br />
-       🔬 Co-Researcher
+      <b>sinse100</b>
+      <br />
+      🔬 Co-Researcher
+      <br />
+      📧 <a href="mailto:sinse100@korea.ac.kr">sinse100@email.com</a>
     </td>
   </tr>
 </table>
