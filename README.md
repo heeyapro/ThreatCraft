@@ -284,18 +284,40 @@ After adding the implementation details to the assets, click “OK”.
 
 ---
 
-### **3. Check the Analysis Result**
+The result window consists of three tabs:
 
-There are 3 tabs on the result window. which is:
-- Asset Mapping : Each CWE threat is mapped to a specific asset. Note that CWE entries for an asset are not provided by default; they are only available once you define the asset’s implementation details, as described in Subsection 2 (“Configure Implementation Details of Assets”).
+---
+
+#### **1) Asset Mapping**
+Each CWE threat is mapped to a specific asset. Note that CWE entries for an asset are not provided by default; they become available only after defining the asset’s implementation details, as described in Subsection 2 (“Configure Implementation Details of Assets”).
+
 <img src="asset/20260502_183945.png" alt="analysis_result1" width="100%">
-- Attack Paths : Summarise each identified attack path. Each path represents a unique combination of assets and threats.
+
+---
+
+#### **2) Attack Paths**
+Each identified attack path is summarised. Each path represents a unique combination of assets and threats.
+
 <img src="asset/20260502_181549.png" alt="analysis_result2" width="100%">
-- AI Analysis :dfgfgdfg
-  -- Vehicle-Level Review : For each attack path, the tool assess its likelihood (confidence level). We also provide mitigation recommendations for each path. Furthermore, we perform a comprehensive evaluation across all attack paths to identify and present the highest-risk path.
-  <img src="asset/20260502_185751.png" alt="analysis_result3" width="100%">
-  -- Functional-Level Review : The tool evaluate the most critical vulnerabilities within each asset in the aggregated attack tree of attack paths from a SFOP (Safety, Financial, Operational, Privacy) perspective, and present the results for each asset-specific vulnerability accordingly.
-  <img src="asset/20260502_185712.png" alt="analysis_result4" width="100%">
+
+---
+
+#### **3) AI Analysis**
+The AI analysis is divided into two levels:
+
+---
+
+##### **Vehicle-Level Review**
+For each attack path, the tool assesses its likelihood (confidence level) and provides mitigation recommendations. Furthermore, it performs a comprehensive evaluation across all attack paths to identify and present the highest-risk path.
+
+<img src="asset/20260502_185751.png" alt="analysis_result3" width="100%">
+
+---
+
+##### **Functional-Level Review**
+The tool evaluates the most critical vulnerabilities within each asset in the aggregated attack tree from an SFOP (Safety, Financial, Operational, Privacy) perspective, and presents the results for each asset-specific vulnerability accordingly.
+
+<img src="asset/20260502_185712.png" alt="analysis_result4" width="100%">
 
 
 > 📌 Note: You could save its results into JSON, CSV respectively
