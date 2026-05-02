@@ -103,10 +103,10 @@
       </a>
       <br />
       <b>Heeyapro</b>
-      <br />
+      <hr style="margin:6px 0; border:0.5px solid #444; opacity:0.4;">
       🧠 Project Lead
-      <br />
-      📧 <a href="mailto:heeyapro@email.com">kangdohee1211@korea.ac.kr</a>
+      <hr style="margin:6px 0; border:0.5px solid #444; opacity:0.4;">
+      📧 kangdohee1211@korea.ac.kr
     </td>
     <td align="center">
       <a href="https://github.com/sinse100">
@@ -114,10 +114,10 @@
       </a>
       <br />
       <b>sinse100</b>
-      <br />
+      <hr style="margin:6px 0; border:0.5px solid #444; opacity:0.4;">
       🔬 Co-Researcher
-      <br />
-      📧 <a href="mailto:sinse100@email.com">sinse100@korea.ac.kr</a>
+      <hr style="margin:6px 0; border:0.5px solid #444; opacity:0.4;">
+      📧 sinse100@korea.ac.kr
     </td>
   </tr>
 </table>
