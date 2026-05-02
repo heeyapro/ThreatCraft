@@ -31,15 +31,51 @@
     <li><a href="#overview"> ➤ Overview</a></li>
     <li><a href="#project-files-description"> ➤ Project Files Description</a></li>
     <li><a href="#installation"> ➤ Installation</a></li>
-    <li><a href="#usage example"> ➤ Usage Example </a></li>
+    <li><a href="#usage-example"> ➤ Usage Example </a></li>
     <li><a href="#contributors"> ➤ Contributors </a></li>
   </ol>
 </details>
 
-![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/fire.png)
 
 <!-- OVERVIEW -->
 <h2 id="overview"> :cloud: Overview</h2>
+
+<p align="justify"> 
+  TBD
+</p>
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/fire.png)
+
+<!-- OVERVIEW -->
+<h2 id="project-files-description"> :file_folder: Project Files Description</h2>
+
+<p align="justify"> 
+  TBD
+</p>
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/fire.png)
+
+<!-- OVERVIEW -->
+<h2 id="installation"> :gear: Installation</h2>
+
+<p align="justify"> 
+  TBD
+</p>
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/fire.png)
+
+<!-- OVERVIEW -->
+<h2 id="usage-example"> :rocket: Usage Example</h2>
+
+<p align="justify"> 
+  TBD
+</p>
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/fire.png)
+
+<!-- OVERVIEW -->
+<h2 id="contributors"> :busts_in_silhouette: Contributors</h2>
 
 <p align="justify"> 
   TBD
