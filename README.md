@@ -282,15 +282,17 @@ After adding the implementation details to the assets, click “OK”.
  
 <img src="asset/20260502_181157.png" alt="config" width="100%">
 
+---
 
 ### **3. Check the Analysis Result
 
 There are 3 tabs on the result window. which is:
-- Asset Mapping : Each CWE threat mapped to each asset. You nned to remember that CWE for each asset is unprovided unless you provide the asset implementation detail described in subsection 2(Configure Implementation Detail of Assets)
+- Asset Mapping : Each CWE threat is mapped to a specific asset. Note that CWE entries for an asset are not provided by default; they are only available once you define the asset’s implementation details, as described in Subsection 2 (“Configure Implementation Details of Assets”).
 <img src="asset/20260502_183945.png" alt="analysis_result1" width="100%">
-- Attack Paths : Summarization of eahc of identified attack paths
+- Attack Paths : Summarise each identified attack path. Each path represents a unique combination of assets and threats.
 <img src="asset/20260502_181549.png" alt="analysis_result2" width="100%">
 - AI Analysis :dfgfgdfg
+  + sdf
 
 > 📌 Note: You could save its results into JSON, CSV respectively
   
