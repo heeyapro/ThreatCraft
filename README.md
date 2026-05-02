@@ -36,7 +36,7 @@
   </ol>
 </details>
 
-![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/fire.png)
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
 <!-- OVERVIEW -->
 <h2 id="overview"> :cloud: Overview</h2>
@@ -45,7 +45,7 @@
   TBD
 </p>
 
-![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/fire.png)
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
 <!-- OVERVIEW -->
 <h2 id="project-files-description"> :file_folder: Project Files Description</h2>
@@ -54,7 +54,7 @@
   TBD
 </p>
 
-![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/fire.png)
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
 <!-- OVERVIEW -->
 <h2 id="installation"> :gear: Installation</h2>
@@ -63,7 +63,7 @@
   TBD
 </p>
 
-![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/fire.png)
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
 <!-- OVERVIEW -->
 <h2 id="usage-example"> :rocket: Usage Example</h2>
@@ -72,7 +72,7 @@
   TBD
 </p>
 
-![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/fire.png)
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
 <!-- OVERVIEW -->
 <h2 id="contributors"> :busts_in_silhouette: Contributors</h2>
