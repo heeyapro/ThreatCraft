@@ -39,7 +39,7 @@
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
 <!-- OVERVIEW -->
-<h2 id="overview"> :cloud: Overview</h2>
+<h2 id="overview"> :book: Overview</h2>
 
 <p align="justify"> 
   TBD
