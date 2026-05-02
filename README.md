@@ -292,7 +292,11 @@ There are 3 tabs on the result window. which is:
 - Attack Paths : Summarise each identified attack path. Each path represents a unique combination of assets and threats.
 <img src="asset/20260502_181549.png" alt="analysis_result2" width="100%">
 - AI Analysis :dfgfgdfg
-  + sdf
+  + asdf
+  <img src="asset/20260502_185751.png" alt="analysis_result3" width="100%">
+  + asdfasdf
+  <img src="asset/20260502_185712.png" alt="analysis_result4" width="100%">
+
 
 > 📌 Note: You could save its results into JSON, CSV respectively
   
