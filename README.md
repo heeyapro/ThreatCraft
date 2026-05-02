@@ -93,6 +93,9 @@
 
 <div align="center">
 
+<!-- ================= Lead ================= -->
+<h3>🧠 Project Lead</h3>
+
 <table>
   <tr>
     <td align="center">
@@ -102,10 +105,22 @@
       <br />
       <b>Heeyapro</b>
       <br />
-      🧠 Project Lead
-      <br />
-      📧 <a href="mailto:kangdohee1211@korea.ac.kr>m">heeyapro@email.com</a>
+      📧 <a href="mailto:heeyapro@email.com">heeyapro@email.com</a>
     </td>
+  </tr>
+</table>
+
+<br/>
+
+---
+
+<br/>
+
+<!-- ================= Research ================= -->
+<h3>🔬 Research Contributors</h3>
+
+<table>
+  <tr>
     <td align="center">
       <a href="https://github.com/sinse100">
         <img src="https://github.com/sinse100.png" width="90px;" style="border-radius:50%;" />
@@ -113,9 +128,7 @@
       <br />
       <b>sinse100</b>
       <br />
-      🔬 Co-Researcher
-      <br />
-      📧 <a href="mailto:sinse100@korea.ac.kr">sinse100@email.com</a>
+      📧 <a href="mailto:sinse100@email.com">sinse100@email.com</a>
     </td>
   </tr>
 </table>
