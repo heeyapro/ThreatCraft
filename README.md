@@ -56,7 +56,7 @@ Figure illustrates the overall architecture of <b>ThreatCraft</b>, a hybrid thre
 
 <ul>
   <li>
-    <b>1. Input Layer</b><br/>
+    <b>1. Input Data</b><br/>
     The system takes a Data Flow Diagram (DFD), attack mode, and target asset as inputs.
     These define the initial system context for threat modeling.
   </li>
