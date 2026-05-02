@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-tool_threat_mapper.py  [Code 1 - multi-category edition]
-DFD → Attack Path Filter → Asset Property Mapping (multi-category) → Threat + CWE Results + Attack Graph
-"""
 from __future__ import annotations
 import argparse, csv, io, json, os, subprocess, sys, threading, traceback
 import tkinter as tk
@@ -13,7 +9,7 @@ from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 from typing import Dict, List, Optional, Set, Tuple
 
-# ── Path Constants ─────────────────────────────────────────────
+
 _SCRIPT_DIR    = Path(__file__).resolve().parent
 DEFAULT_BACKEND    = (_SCRIPT_DIR / "../backend/parse_attack_graph_v37.py").resolve()
 DEFAULT_ASSET_MAP  = (_SCRIPT_DIR / "../backend/threat_library/asset_to_threats_ver0.3.json").resolve()
@@ -24,7 +20,6 @@ DEFAULT_IMPACT_MAP = (_SCRIPT_DIR / "../backend/threat_library/impact_map.json")
 DEFAULT_OUT_DIR    = (_SCRIPT_DIR / "../out").resolve()
 HIERARCHY_JSON     = _SCRIPT_DIR / "hierarchy_data_ver0.2.json"
 
-# ── Hierarchy Data ─────────────────────────────────────────────
 _H: Optional[dict] = None
 def _load_h() -> dict:
     global _H
@@ -121,8 +116,6 @@ def _center(win, w, h):
     sw,sh=win.winfo_screenwidth(),win.winfo_screenheight()
     win.geometry(f"{w}x{h}+{(sw-w)//2}+{(sh-h)//2}")
 
-# ── Backend Execution ──────────────────────────────────────────
-# (03.17 Note) Added the llm_api_key parameter for the LLM API key
 def run_path_filter(backend_path,tm7_path,mode,target,boundary,
                     asset_map,threat_map,av_map,dep_map,impact_map,
                     max_depth=30, llm_api_key=None):
@@ -145,7 +138,6 @@ def run_path_filter(backend_path,tm7_path,mode,target,boundary,
          "--no-render-attack-tree",
          "--detection-report",tmp_report]
 
-    # (03.17 Note) Pass the LLM API key when executing the backend script
     if llm_api_key:
         cmd.extend(["--llm-api-key", llm_api_key])
 
@@ -168,7 +160,7 @@ def run_path_filter(backend_path,tm7_path,mode,target,boundary,
         "backend_stderr": proc.stderr or "",
     }
 
-# ── Element Extraction ─────────────────────────────────────────
+
 def extract_elements(result):
     PRI={"Out":3,"Through":2,"In":1,"Entry":0}
     asset_phase: Dict[str,str]={}
@@ -197,7 +189,7 @@ def extract_elements(result):
     elements.sort(key=lambda x:ORDER.get(x.get("phase",""),9))
     return elements
 
-# ── Graphviz Attack Graph Generation ───────────────────────────
+
 def build_attack_graph_dot(result: dict, mapping: List[dict]) -> str:
     node_idx = {n['node_id']: n for n in result.get('nodes',[])}
     asset_nm = {n['asset_guid']: n['asset_name'] for n in result.get('nodes',[])}
@@ -314,9 +306,7 @@ def render_graphviz(dot_src: str, out_path: str) -> bool:
     except (FileNotFoundError, subprocess.TimeoutExpired):
         return False
 
-# ════════════════════════════════════════════════════════════════
-# Property Selection Popup
-# ════════════════════════════════════════════════════════════════
+
 class _PropPickerDialog(tk.Toplevel):
     def __init__(self, parent, props, selected):
         super().__init__(parent); self.title("Select Properties")
@@ -353,9 +343,7 @@ class _PropPickerDialog(tk.Toplevel):
     def _ok(self):
         self.result=[p for v,p in zip(self._vars,self._props) if v.get()]; self.destroy()
 
-# ════════════════════════════════════════════════════════════════
-# Asset Property Mapping Dialog
-# ════════════════════════════════════════════════════════════════
+
 class AssetMapDialog(tk.Toplevel):
     def __init__(self, parent, elements, at_data=None):
         super().__init__(parent); self.title("Asset Property Mapping")
@@ -378,7 +366,7 @@ class AssetMapDialog(tk.Toplevel):
         self._sf.bind("<Configure>",lambda e:canvas.configure(scrollregion=canvas.bbox("all")))
         _cw=canvas.create_window((0,0),window=self._sf,anchor="nw")
         canvas.configure(yscrollcommand=sb.set)
-        # Make the inner frame always match the canvas width so cards fill horizontally
+
         canvas.bind("<Configure>",lambda e:canvas.itemconfig(_cw,width=e.width))
         sb.pack(side="right",fill="y"); canvas.pack(side="left",fill="both",expand=True)
         canvas.bind_all("<MouseWheel>",lambda e:canvas.yview_scroll(-1*(e.delta//120),"units"))
@@ -400,9 +388,7 @@ class AssetMapDialog(tk.Toplevel):
     def _ok(self): self.confirmed=True; self.destroy()
     def get_mapping(self): return [r.to_dict() for r in self.rows]
 
-# ════════════════════════════════════════════════════════════════
-# Asset Row (Card) — holds multiple category entries
-# ════════════════════════════════════════════════════════════════
+
 class _MapRow:
     def __init__(self, parent, idx, el, at_data=None):
         self.idx=idx; self.el=el; self.at_data=at_data
@@ -415,15 +401,15 @@ class _MapRow:
             bg={"In":"#F3FFF5","Out":"#FFF3F3","Through":"#FFFCF0","Entry":"#F6F6F6"}.get(ph,"white")
         self.bg=bg
 
-        # Card container with thin border
+
         self.frame=tk.Frame(parent,bg=bg,highlightthickness=1,highlightbackground="#C9CED6")
         self._build_header(bg,ph,etype)
 
-        # Inner container for category rows
+
         self.cats_frame=tk.Frame(self.frame,bg=bg)
         self.cats_frame.pack(fill="x",padx=10,pady=(0,2))
 
-        # Add-category button row
+
         btnf=tk.Frame(self.frame,bg=bg)
         btnf.pack(fill="x",padx=10,pady=(2,8))
         self._add_btn=tk.Button(btnf,text="＋  Add Category",font=("Arial",9,"bold"),
@@ -435,7 +421,6 @@ class _MapRow:
                                   font=("Arial",8,"italic"),fg="#555")
         self._count_lbl.pack(side="left",padx=12)
 
-        # Start with one empty entry
         self._add_entry()
 
     def _build_header(self, bg, ph, etype):
@@ -460,7 +445,6 @@ class _MapRow:
         tk.Label(hdr,text=f"[{ph}]",bg=bg,font=("Arial",9,"bold"),
                  fg=ph_clr).pack(side="left",padx=6)
 
-        # DFD threats preview
         dfd_threats=_get_dfd_threats(self.el.get("name",""),self.at_data)
         preview=", ".join(t.get("id","") for t in dfd_threats[:3])
         if len(dfd_threats)>3: preview+=f" +{len(dfd_threats)-3}"
@@ -475,7 +459,6 @@ class _MapRow:
         self._update_count()
 
     def _remove_entry(self, entry):
-        # Keep at least one entry; if user removes the last one, just clear it
         if len(self.entries) <= 1:
             entry.clear()
             self._update_count()
@@ -548,7 +531,6 @@ class _MapRow:
             "type": self.el.get("type","node"),
             "phase": self.el.get("phase",""),
             "asset_guid": self.el.get("asset_guid",""),
-            # primary (first) category — kept for backward compatibility
             "category":          primary.get("category"),
             "asset_type":        primary.get("asset_type"),
             "asset_kind":        primary.get("asset_kind"),
@@ -556,21 +538,15 @@ class _MapRow:
             "asset_kind_full":   primary.get("asset_kind_full") or primary.get("asset_kind"),
             "asset_properties":  primary.get("asset_properties") or [],
             "source":            primary.get("source"),
-            # full category list
             "categories":        categories_list,
             "category_count":    len(categories_list),
-            # merged CWE/Threats
             "cwes":              all_cwes,
             "cwe_count":         len(all_cwes),
             "threats":           threats,
             "threat_count":      len(threats),
         }
 
-# ════════════════════════════════════════════════════════════════
-# Category Entry — one Category/Type/Kind/Detail/Properties selection
-#   • Asset Type / Asset Kind are EDITABLE: pick from dropdown OR type freely
-#   • Detail is a free-text field for a refinement (e.g. version "4.0")
-# ════════════════════════════════════════════════════════════════
+
 class _CategoryEntry:
     def __init__(self, parent, row: _MapRow):
         self.row=row
@@ -582,12 +558,11 @@ class _CategoryEntry:
         self._selected_props: List[str] = []
         self.frame=tk.Frame(parent,bg=row.bg)
         self._build(row.bg)
-        # trace fires on ANY change (typing or .set()) — used for enable/disable + CWE count.
+
         self.v_cat.trace_add("write",self._on_cat)
         self.v_type.trace_add("write",self._on_type_changed)
         self.v_kind.trace_add("write",self._on_kind_changed)
-        # <<ComboboxSelected>> fires only when the user picks from the dropdown —
-        # used to cascade-reset downstream values.
+
         self.cb_type.bind("<<ComboboxSelected>>",self._on_type_selected)
         self.cb_kind.bind("<<ComboboxSelected>>",self._on_kind_selected)
 
@@ -597,23 +572,21 @@ class _CategoryEntry:
         tk.Label(f,text="•",bg=bg,font=("Arial",12,"bold"),fg="#888",
                  width=2).pack(side="left")
 
-        # 1) Category — readonly: fixed list from hierarchy
         self.cb_cat=ttk.Combobox(f,textvariable=self.v_cat,width=14,
                                   state="readonly",font=("Arial",9))
         self.cb_cat["values"]=_list_cats()
         self.cb_cat.pack(side="left",padx=2,pady=2)
 
-        # 2) Asset Type — editable combobox (pick OR type your own)
         self.cb_type=ttk.Combobox(f,textvariable=self.v_type,width=16,
                                    state="disabled",font=("Arial",9))
         self.cb_type.pack(side="left",padx=2,pady=2)
 
-        # 3) Asset Kind — editable combobox (pick OR type your own)
+
         self.cb_kind=ttk.Combobox(f,textvariable=self.v_kind,width=18,
                                    state="disabled",font=("Arial",9))
         self.cb_kind.pack(side="left",padx=2,pady=2)
 
-        # 3-extra) Detail — free-text refinement (e.g. version "4.0")
+
         tk.Label(f,text="＋",bg=bg,font=("Arial",10,"bold"),
                  fg="#4A90E2").pack(side="left",padx=(4,0))
         self.e_detail=tk.Entry(f,textvariable=self.v_detail,width=12,
@@ -624,33 +597,32 @@ class _CategoryEntry:
                                 state="disabled")
         self.e_detail.pack(side="left",padx=(0,2),pady=2)
 
-        # 4) Properties selector
+
         self._pbtn=tk.Button(f,text="Select Properties",width=16,
                               font=("Arial",8),relief="flat",bd=1,
                               bg="#E8F0FE",fg="#1A73E8",cursor="hand2",
                               state="disabled",command=self._pick)
         self._pbtn.pack(side="left",padx=2,pady=2)
 
-        # 5) CWE count
+
         tk.Label(f,text="CWE",bg=bg,font=("Arial",8),fg="#666"
                  ).pack(side="left",padx=(8,0))
         tk.Label(f,textvariable=self.v_ncwe,bg="#FFF8F0",width=4,
                  font=("Arial",9,"bold"),fg="#E65100",relief="solid",bd=1,
                  anchor="center").pack(side="left",padx=2)
 
-        # 6) Delete button
+
         self._del_btn=tk.Button(f,text="✕",font=("Arial",9,"bold"),
                                  relief="flat",bg="#FFEBEE",fg="#C62828",
                                  width=2,cursor="hand2",bd=0,
                                  command=self._on_delete)
         self._del_btn.pack(side="left",padx=(10,4))
 
-    # ── callbacks ────────────────────────────────
+
     def _on_delete(self):
         self.row._remove_entry(self)
 
     def _on_cat(self,*_):
-        """Category changed (readonly) → full cascade reset."""
         cat=self.v_cat.get()
         self.v_type.set(""); self.v_kind.set(""); self.v_detail.set("")
         self._selected_props=[]; self._upbtn(); self.v_ncwe.set("—")
@@ -666,7 +638,6 @@ class _CategoryEntry:
         self.row.notify_change()
 
     def _on_type_selected(self, event=None):
-        """User picked a Type from the dropdown → reset downstream."""
         cat=self.v_cat.get(); typ=self.v_type.get()
         self.v_kind.set(""); self.v_detail.set("")
         self._selected_props=[]; self._upbtn(); self.v_ncwe.set("—")
@@ -677,7 +648,6 @@ class _CategoryEntry:
         self.e_detail["state"]="disabled"
 
     def _on_type_changed(self,*_):
-        """Any change to Type (select OR typing) → enable/disable downstream."""
         cat=self.v_cat.get(); typ=self.v_type.get()
         if not typ:
             self.cb_kind["state"]="disabled"; self.cb_kind["values"]=[]
@@ -685,7 +655,6 @@ class _CategoryEntry:
             self.e_detail["state"]="disabled"
             self.v_ncwe.set("—")
         else:
-            # Enable kind combobox (editable) when type first gets a value
             if str(self.cb_kind["state"])=="disabled":
                 self.cb_kind["state"]="normal"
                 self.cb_kind["values"]=_list_kinds(cat,typ) if cat else []
@@ -693,7 +662,6 @@ class _CategoryEntry:
         self.row.notify_change()
 
     def _on_kind_selected(self, event=None):
-        """User picked a Kind from the dropdown → enable Detail + Props if available."""
         cat=self.v_cat.get(); typ=self.v_type.get(); knd=self.v_kind.get()
         self._selected_props=[]; self.v_detail.set("")
         self._upbtn()
@@ -703,7 +671,6 @@ class _CategoryEntry:
         self._upcwe()
 
     def _on_kind_changed(self,*_):
-        """Any change to Kind (select OR typing) → update UI state + CWE count."""
         cat=self.v_cat.get(); typ=self.v_type.get(); knd=self.v_kind.get()
         if not knd:
             self._pbtn["state"]="disabled"
@@ -712,7 +679,6 @@ class _CategoryEntry:
         else:
             if str(self.e_detail["state"])=="disabled":
                 self.e_detail["state"]="normal"
-            # Only enable props button if the kind is a valid hierarchy key
             props=_list_props(cat,typ,knd) if (cat and typ) else []
             if props and str(self._pbtn["state"])=="disabled":
                 self._pbtn["state"]="normal"
@@ -747,7 +713,6 @@ class _CategoryEntry:
         if not (cat and typ and knd): self.v_ncwe.set("—"); return
         self.v_ncwe.set(str(len(_get_cwes_merged(cat,typ,knd,self._selected_props or None))))
 
-    # ── state helpers ───────────────────────────
     def is_filled(self):
         return bool(self.v_cat.get().strip() and
                     self.v_type.get().strip() and
@@ -777,9 +742,7 @@ class _CategoryEntry:
             "source": _get_source(cat,typ,knd) if (cat and typ and knd) else None,
         }
 
-# ════════════════════════════════════════════════════════════════
-# Result Window (CWE + Threats + Attack Graph)
-# ════════════════════════════════════════════════════════════════
+
 class ResultWindow(tk.Toplevel):
     def __init__(self, parent, mapping, out_json, out_csv,
                  ag_result=None):
@@ -867,7 +830,6 @@ class ResultWindow(tk.Toplevel):
             sel=tree.selection()
             if not sel: return
             m=mapping[tree.index(sel[0])]
-            # Categories
             for r in ct.get_children(): ct.delete(r)
             for i,c in enumerate(m.get("categories") or [],start=1):
                 props=", ".join(c.get("asset_properties") or [])
@@ -879,13 +841,11 @@ class ResultWindow(tk.Toplevel):
                     c.get("asset_kind_detail") or "—",
                     props or "—",
                     c.get("source") or "—"))
-            # CWEs
             for r in dt.get_children(): dt.delete(r)
             for cwe in m.get("cwes",[]):
                 srcs=" | ".join(cwe.get("sources",[]) or ["—"])
                 dt.insert("","end",values=(f"CWE-{cwe['id']}",cwe.get("name","")[:60],
                     srcs,(cwe.get("desc","") or "")[:80]))
-            # Threats
             for r in tt2.get_children(): tt2.delete(r)
             for th in m.get("threats",[]):
                 src=th.get("_src","EMB3D")
@@ -970,15 +930,12 @@ class ResultWindow(tk.Toplevel):
                   command=lambda:[win.clipboard_clear(),win.clipboard_append(dot_src)]
                   ).pack(pady=6)
 
-# ════════════════════════════════════════════════════════════════
-# JSON / CSV Builders
-# ════════════════════════════════════════════════════════════════
+
 def build_result_json(mapping, meta):
     return {"meta":{"generated_at":datetime.now().isoformat(timespec="seconds"),
                     "tool":"tool_threat_mapper v6 (multi-category + editable type/kind + detail)",**meta},
             "assets":[{"name":m["name"],"element_type":m["type"],"phase":m["phase"],
                         "asset_guid":m.get("asset_guid",""),
-                        # primary category (first) kept for backward compatibility
                         "category":m.get("category"),
                         "asset_type":m.get("asset_type"),
                         "asset_kind":m.get("asset_kind"),
@@ -986,7 +943,6 @@ def build_result_json(mapping, meta):
                         "asset_kind_full":m.get("asset_kind_full") or m.get("asset_kind"),
                         "asset_properties":m.get("asset_properties",[]),
                         "source":m.get("source"),
-                        # full list (each with asset_kind / asset_kind_detail / asset_kind_full)
                         "categories":m.get("categories",[]),
                         "category_count":m.get("category_count",len(m.get("categories",[]))),
                         "cwe_count":m["cwe_count"],
@@ -1036,9 +992,7 @@ def build_result_csv(mapping):
                                  th.get("tid",""),th.get("name",""),tacs,src])
     return buf.getvalue()
 
-# ════════════════════════════════════════════════════════════════
-# Main GUI
-# ════════════════════════════════════════════════════════════════
+
 class ThreatMapperGUI(tk.Tk):
     def __init__(self, backend_script=None):
         super().__init__()
