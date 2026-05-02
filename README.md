@@ -234,7 +234,7 @@ We assume an attacker attempting to remotely compromise a vehicle door control s
 - **Target Asset**: `Door`
 - **Trust Boundary**: `External Vehicle Boundary`
 - **Attack Mode**: `Remote`
-- **DFD Input**: Vehicle system Data Flow Diagram (TM7 format)
+<img src="https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.gif" alt="Markdownify" width="100%">
 
 ---
 
