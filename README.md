@@ -113,8 +113,9 @@ python tool_attack_paths_v19.py --backend ../backend/parse_attack_graph_v37.py</
 </ol>
 
 <p align="justify">
-  Once executed successfully, the system will generate attack graphs and launch the ThreatCraft workflow pipeline.
+  Once executed successfully, the system will launch the ThreatCraft and the GUI will be displayed on your screen.
 </p>
+
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
 <!-- OVERVIEW -->
