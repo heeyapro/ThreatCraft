@@ -103,7 +103,7 @@
       <br />
       🧠 Project Lead
       <br />
-      📧 <a href="mailto:heeyapro@email.com">heeyapro@email.com</a>
+      📧 <a href="mailto:heeyapro@email.com">kangdohee1211@korea.ac.kr</a>
     </td>
     <td align="center">
       <a href="https://github.com/sinse100">
@@ -114,7 +114,7 @@
       <br />
       🔬 Co-Researcher
       <br />
-      📧 <a href="mailto:sinse100@email.com">sinse100@email.com</a>
+      📧 <a href="mailto:sinse100@email.com">sinse100@korea.ac.kr</a>
     </td>
   </tr>
 </table>
