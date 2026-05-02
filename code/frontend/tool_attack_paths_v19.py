@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""tool_attack_paths.py  [Code 2] — UKC attack path enumeration and AI-powered TARA analysis"""
+
 from __future__ import annotations
 
 def _ensure_packages():
-    """
-    Silently installs missing AI provider packages the first time the tool runs.
-    Only installs what is actually missing — no-ops if already present.
-    """
     import importlib, subprocess, sys, threading
 
     REQUIRED = [
