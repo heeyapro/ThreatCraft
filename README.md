@@ -227,9 +227,7 @@ python tool_attack_paths_v19.py --backend ../backend/parse_attack_graph_v37.py</
 <!-- OVERVIEW -->
 <h2 id="usage-example"> :rocket: Usage Example</h2>
 
-## 🚗 Usage Example: Remote Attack on Vehicle Door System
-
-### 🎯 Scenario Definition
+### 🎯 Scenario Definition: Remote Attack on Vehicle Door System
 
 We assume an attacker attempting to remotely compromise a vehicle door control system.
 
@@ -239,8 +237,6 @@ We assume an attacker attempting to remotely compromise a vehicle door control s
 - **DFD Input**: Vehicle system Data Flow Diagram (TM7 format)
 
 ---
-
-## 🧪 Step-by-Step Execution
 
 ### **1. Launch ThreatCraft & Configure Analysis Context**
 
