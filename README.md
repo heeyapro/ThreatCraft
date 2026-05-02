@@ -50,9 +50,54 @@
 <!--  -->
 
 
-<p align="justify"> 
-  TBD
+<p align="justify">
+Figure illustrates the overall architecture of <b>ThreatCraft</b>, a hybrid threat modeling framework that combines rule-based reasoning with LLM-based scenario refinement. The system is organised as a multi-stage pipeline that transforms system inputs into structured attack scenarios and a final threat report.
 </p>
+
+<ul>
+  <li>
+    <b>1. Input Layer</b><br/>
+    The system takes a Data Flow Diagram (DFD), attack mode, and target asset as inputs.
+    These define the initial system context for threat modeling.
+  </li>
+
+  <li>
+    <b>2. Logical Path Extraction</b><br/>
+    A rule-based engine extracts valid system-level attack paths from the DFD.
+    This step enforces structural correctness using asset dependencies and attack-step relations.
+  </li>
+
+  <li>
+    <b>3. UKC-Based Scenario Construction</b><br/>
+    Extracted paths are structured using the Unified Kill Chain (UKC) model (In / Through / Out),
+    ensuring temporally and semantically consistent attack progression.
+  </li>
+
+  <li>
+    <b>4. CWE/CVE Mapping</b><br/>
+    System components are mapped to MITRE EMB3D™ categories and enriched with CWE/CVE data,
+    enabling vulnerability-aware reasoning for each attack step.
+  </li>
+
+  <li>
+    <b>5. Risk Value Determination</b><br/>
+    A risk matrix is applied to evaluate each attack scenario in terms of feasibility and impact,
+    producing quantitative risk scores.
+  </li>
+
+  <li>
+    <b>6. LLM-Based Refinement (Reviewer & Generator)</b><br/>
+    - <b>Reviewer</b>: validates and rewrites system-level attack paths into structured natural language<br/>
+    - <b>Generator</b>: generates function-level attack scenarios using CWE/CVE and component context<br/>
+    Iterative self-checking reduces hallucination and improves consistency.
+  </li>
+
+  <li>
+    <b>7. Output Layer</b><br/>
+    Final outputs are compiled into a structured TARA report,
+    summarizing attack paths, risks, and vulnerability-aware scenarios.
+  </li>
+</ul>
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
