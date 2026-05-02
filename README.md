@@ -289,11 +289,10 @@ After adding the implementation details to the assets, click “OK”.
 There are 3 tabs on the result window. which is:
 - Asset Mapping : Each CWE threat mapped to each asset
 <img src="asset/20260502_183945.png" alt="analysis_result1" width="100%">
-> 📌 Note: You could save its results into JSON, CSV respectively
 - Attack Paths : Summarization of eahc of identified attack paths
 <img src="asset/20260502_181549.png" alt="analysis_result2" width="100%">
-> 📌 Note: You could save its results into JSON, CSV respectively
 - AI Analysis :dfgfgdfg
+
 > 📌 Note: You could save its results into JSON, CSV respectively
   
 
