@@ -144,9 +144,42 @@ ThreatCraft is not a pure LLM system nor a pure rule engine. Instead, it is a <b
 <!-- OVERVIEW -->
 <h2 id="project-files-description"> :file_folder: Project Files Description</h2>
 
-<p align="justify"> 
-  TBD
-</p>
+```bash
+ThreatCraft/
+├── asset/                          # Static assets (figures, logo, references)
+│   ├── logo_temp.png               # Project logo used in README/UI
+│   ├── WorkFlow-1.png              # System architecture diagram (paper figure)
+│   └── UKC_document.pdf            # Unified Kill Chain reference document
+│
+├── code/                           # Core implementation directory
+│   │
+│   ├── frontend/                   # GUI + orchestration layer
+│   │   ├── tool_attack_paths_v19.py        # Main entry point (GUI launcher)
+│   │   ├── tool_threat_mapper_v7.py        # Middleware between GUI and backend
+│   │   └── hierarchy_data_ver0.2.json      # CVE–CWE–asset mapping dataset
+│   │
+│   └── backend/                    # Threat reasoning & attack graph engine
+│       ├── parse_attack_graph_v37.py       # Core attack scenario generator
+│       │
+│       └── threat_library/         # Structured threat intelligence database
+│           ├── asset_to_threats_ver0.3.json
+│           │   # Maps assets → applicable threats & tactics
+│           │
+│           ├── attack_vector_feasibility_ver0.1.json
+│           │   # Threat metadata (tactic, feasibility, attack vector)
+│           │
+│           ├── dependency.json
+│           │   # Asset/threat dependency constraints for attack chaining
+│           │
+│           ├── impact_feasability_map.json
+│           │   # Risk scoring model (severity × feasibility)
+│           │
+│           ├── impact_map.json
+│           │   # SFOP impact model (Safety / Financial / Operational / Privacy)
+│           │
+│           └── threat_to_tactic_ver0.1.json
+│               # Threat → MITRE ATT&CK tactic mapping & ordering logic
+```
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
