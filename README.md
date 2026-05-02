@@ -282,7 +282,6 @@ After adding the implementation details to the assets, click “OK”.
  
 <img src="asset/20260502_181157.png" alt="config" width="100%">
 
-![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
 ### **3. Check the Analysis Result
 
@@ -295,7 +294,7 @@ There are 3 tabs on the result window. which is:
 
 > 📌 Note: You could save its results into JSON, CSV respectively
   
-
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
 
 
