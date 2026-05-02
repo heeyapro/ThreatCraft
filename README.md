@@ -323,6 +323,14 @@ The tool evaluates the most critical vulnerabilities within each asset in the ag
 
 
 > 📌 Note: You could save its results into JSON, CSV respectively, and also, you can check this whole results displayed in TARA Report(check ```example/_ag_tmp_184849195185.html```)
+
+<img src="asset/20260502_192452.png" alt="analysis_result4" width="100%">
+<img src="asset/20260502_192500.png" alt="analysis_result4" width="100%">
+<img src="asset/20260502_192514.png" alt="analysis_result4" width="100%">
+<img src="asset/20260502_192521.png" alt="analysis_result4" width="100%">
+<img src="asset/20260502_192527.png" alt="analysis_result4" width="100%">
+<img src="asset/20260502_192533.png" alt="analysis_result4" width="100%">
+<img src="asset/20260502_192541.png" alt="analysis_result4" width="100%">
   
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
