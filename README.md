@@ -264,6 +264,8 @@ Configure the analysis environment as follows:
 
 > 📌 Note: All required threat intelligence libraries (CVE/CWE/EMB3D mappings, dependency graphs, risk models) are preloaded via *Library File Settings* by default.
 
+<img src="asset/20260502_180259.png" alt="DFD" width="100%">
+
 ---
 
 ### **2. Rule-Based Attack Graph Generation**
