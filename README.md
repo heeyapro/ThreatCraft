@@ -88,16 +88,16 @@
         <sub><b>Heeyapro</b></sub>
       </a>
       <br />
-      🧠 Lead Developer
+      🧠 Project-Leader
     </td>
     <td align="center">
-      <a href="https://github.com/your-id">
-        <img src="https://github.com/your-id.png" width="100px;" alt=""/>
+      <a href="https://github.com/sinse100">
+        <img src="https://github.com/sinse100.png" width="100px;" alt=""/>
         <br />
-        <sub><b>Your Name</b></sub>
+        <sub><b>sinse100</b></sub>
       </a>
       <br />
-      🔐 Security Researcher
+       🧠 Co-Developer
     </td>
   </tr>
 </table>
