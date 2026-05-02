@@ -13,6 +13,9 @@
     <a href="https://github.com/heeyapro/ULTARA/">
       <img src="https://img.shields.io/badge/Github-35495E?logo=GitHub&style=for-the-badge">
     </a>
+    <a href="https://graphviz.org/">
+      <img src="https://img.shields.io/badge/Graphviz-Diagrams-green?style=for-the-badge&logo=diagrams.net&logoColor=white">
+    </a>
   </p>
 <br><b>ThreatCraft</b> is a hybrid threat modeling tool that combines rule-based reasoning with large language models to generate structurally valid and realistic attack paths, addressing limitations of prior approaches such as expert dependency, inconsistency, and hallucinated scenarios.
 <br/>
@@ -58,7 +61,13 @@
 
 <!-- OVERVIEW -->
 <h2 id="installation"> :gear: Installation</h2>
-<!-- graphviz 설치 --> 
+<!-- subsection 1. graphviz 설치 -->
+<!-- https://graphviz.org/download/  가서 다운로드-->
+<!-- Add Graphviz to the system PATH for all users -->
+
+<!-- 필요한 Python 패키지 설치 -->
+<!-- pip install Graphviz -->
+
 
 
 <p align="justify"> 
