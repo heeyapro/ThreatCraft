@@ -234,7 +234,7 @@ We assume an attacker attempting to remotely compromise a vehicle door control s
 - **Target Asset**: `Door`
 - **Trust Boundary**: `External Vehicle Boundary`
 - **Attack Mode**: `Remote`
-<img src="https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.gif" alt="Markdownify" width="100%">
+<img src="asset/20260211_172126.png" alt="DFD" width="100%">
 
 ---
 
