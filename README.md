@@ -1,6 +1,6 @@
 <p align="center"> 
   <!-- 도구 로고 -->
-  <img src="asset/logo.png" width="20%">
+  <img src="asset/logo.png" width="30%">
 </p>
 
 <div align="center">
