@@ -156,7 +156,7 @@ ThreatCraft/
 │   ├── frontend/                   # GUI + orchestration layer
 │   │   ├── tool_attack_paths_v19.py        # Main entry point (GUI launcher)
 │   │   ├── tool_threat_mapper_v7.py        # Middleware between GUI and backend
-│   │   └── hierarchy_data_ver0.2.json      # CVE–CWE–EMB3D mapping dataset
+│   │   └── hierarchy_data_ver0.3.json      # CVE–CWE–EMB3D mapping dataset
 │   │
 │   └── backend/                    # Threat reasoning & attack graph engine
 │       ├── parse_attack_graph_v37.py       # Core attack scenario generator
