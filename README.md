@@ -1,6 +1,6 @@
 <p align="center"> 
   <!-- 도구 로고 -->
-  <img src="asset/logo_temp.png" width="20%">
+  <img src="asset/logo.png" width="20%">
 </p>
 
 <div align="center">
@@ -11,7 +11,7 @@
     <a href="https://www.python.org/">
       <img src="https://img.shields.io/badge/Python-v3.10.19-blue?style=for-the-badge&logo=Python">
     </a>
-    <a href="https://github.com/heeyapro/ULTARA/">
+    <a href="https://github.com/heeyapro/ThreatCraft/">
       <img src="https://img.shields.io/badge/Github-35495E?logo=GitHub&style=for-the-badge">
     </a>
     <a href="https://graphviz.org/">
