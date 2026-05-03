@@ -18,7 +18,7 @@ DEFAULT_AV_MAP     = (_SCRIPT_DIR / "../backend/threat_library/attack_vector_fea
 DEFAULT_DEP_MAP    = (_SCRIPT_DIR / "../backend/threat_library/dependency.json").resolve()
 DEFAULT_IMPACT_MAP = (_SCRIPT_DIR / "../backend/threat_library/impact_map.json").resolve()
 DEFAULT_OUT_DIR    = (_SCRIPT_DIR / "../out").resolve()
-HIERARCHY_JSON     = _SCRIPT_DIR / "hierarchy_data_ver0.2.json"
+HIERARCHY_JSON     = _SCRIPT_DIR / "hierarchy_data_ver0.3.json"
 
 _H: Optional[dict] = None
 def _load_h() -> dict:

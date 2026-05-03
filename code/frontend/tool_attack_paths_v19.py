@@ -996,7 +996,7 @@ OUTPUT — valid JSON only, no markdown fences:
             "exploitation_in_attack": "Step-by-step: attacker sends [specific payload/frame] to [specific interface/port] → triggers [specific vulnerability in named function] → achieves [specific result: code execution/authentication bypass/data leak] → enables [next attack step]",
             "cvss_severity": "Critical|High|Medium|Low",
             "cvss_score": "9.8 or unknown",
-            "source": "hierarchy_data_ver0.2.json"
+            "source": "hierarchy_data_ver0.3.json"
           }}
         ],
         "attack_tree": {{
@@ -1045,7 +1045,7 @@ OUTPUT — valid JSON only, no markdown fences:
         "is_novel_finding": false, "novel_finding_description": "",
         "affected_function_category": "...", "affected_function_name": "...", "cybersecurity_goal": "Confidentiality|Integrity|Availability",
         "component_details_used": {{"hardware": "...", "software": "...", "interfaces": "...", "asset_kind": "...", "cwe_refs": []}},
-        "cve_refs": [{{"cve_id": "CVE-YYYY-NNNNN", "affected_component": "...", "vulnerability_description": "...", "exploitation_in_attack": "...", "cvss_severity": "High", "cvss_score": "unknown", "source": "hierarchy_data_ver0.2.json"}}],
+        "cve_refs": [{{"cve_id": "CVE-YYYY-NNNNN", "affected_component": "...", "vulnerability_description": "...", "exploitation_in_attack": "...", "cvss_severity": "High", "cvss_score": "unknown", "source": "hierarchy_data_ver0.3.json"}}],
         "attack_tree": {{"root_goal": "...", "logical_structure": "AND|OR", "sub_steps": []}},
         "functional_impact": "...", "attack_narrative": "...", "damage_scenario": "...",
         "overall_feasibility_rating": "High|Medium|Low|Very Low", "overall_feasibility_score": 0,
