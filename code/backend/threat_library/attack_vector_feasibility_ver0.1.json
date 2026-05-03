@@ -136,7 +136,7 @@
   },
   {
     "id": "Threat_23",
-    "name": "무선 데이터 시스템 공격 (Radio Data System (RDS) Attacks)",
+    "name": "Radio Data System (RDS) Attacks",
     "tactics": ["Initial Access"],
     "attack_vector": ["adjacent"],
     "feasibility": "medium"
