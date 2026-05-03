@@ -1,5 +1,5 @@
 <p align="center"> 
-  <!-- 도구 로고 -->
+  <!-- tool logo -->
   <img src="asset/logo.png" width="30%">
 </p>
 
@@ -23,6 +23,7 @@
 
 <br>
 <img src="https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.gif" alt="Markdownify" width="100%">
+<img width="2520" height="1080" alt="Image" src="https://github.com/user-attachments/assets/ea3cccd9-7c30-48d4-8b33-b020f24b5cf2" />
 </br>
 </div>
 
