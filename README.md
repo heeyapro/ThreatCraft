@@ -22,7 +22,7 @@
 <br/>
 
 <br>
-[![YouTube](https://img.shields.io/badge/YouTube-ThreatCraft%20Demo-red?logo=youtube)](https://youtu.be/d71FkS2jqmE)
+[![ThreatCraft Demo Video](https://img.youtube.com/vi/d71FkS2jqmE/0.jpg)](https://youtu.be/d71FkS2jqmE)
 </br>
 </div>
 
