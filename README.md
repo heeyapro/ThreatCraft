@@ -1,6 +1,6 @@
 <p align="center"> 
   <!-- tool logo -->
-  <img src="asset/logo.png" width="40%">
+  <img src="asset/logo.png" width="35%">
 </p>
 
 <div align="center">
