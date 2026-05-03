@@ -22,7 +22,7 @@
 <br/>
 
 <br>
-[![ThreatCraft Demo Video]([https://youtu.be/d71FkS2jqmE](https://youtu.be/d71FkS2jqmE))
+[![ThreatCraft Demo](https://img.youtube.com/vi/d71FkS2jqmE/0.jpg)](https://youtu.be/d71FkS2jqmE)
 </br>
 </div>
 
