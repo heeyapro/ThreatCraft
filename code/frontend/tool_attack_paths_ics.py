@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""tool_attack_paths_ics_v19.py  [Code 2] — UKC attack path enumeration and AI-powered ICS/OT threat analysis"""
+"""tool_attack_paths_ics_only.py — UKC attack path enumeration and AI-powered ICS/OT threat analysis"""
 from __future__ import annotations
 # ── Auto-install required packages on first run ─────────────────────────────
 def _ensure_packages():
@@ -57,7 +57,7 @@ from html import escape
 
 #
 
-# ── Risk calculation constants (ISO 21434) ─────────────────────────────────
+# ── Risk calculation constants (impact + feasibility) ───────────────────────────
 _FS_IMPACT_ORDER = {
     "Negligible": 0, "Moderate": 1, "Major": 2, "Severe": 3,
     # abbreviated forms
@@ -67,7 +67,7 @@ _FS_FEASIBILITY_ORDER = {
     "very low": 0, "low": 1, "medium": 2, "high": 3,
 }
 
-# ── Risk calculation (ISO 21434: SFOP max + feasibility) ───────────────────
+# ── Risk calculation (SFOP-style max impact + feasibility) ─────────────────────
 _FS_IMPACT_ORDER = {
     "Negligible": 0, "Moderate": 1, "Major": 2, "Severe": 3,
     "NEG": 0, "MOD": 1, "MAJ": 2, "SEV": 3,
@@ -75,7 +75,7 @@ _FS_IMPACT_ORDER = {
 _FS_FEASIBILITY_ORDER = {"very low": 0, "low": 1, "medium": 2, "high": 3}
 
 def _calc_risk_level_fs(safety, financial, operational, privacy, feasibility_rating):
-    """ISO 21434 risk level from SFOP max impact + feasibility."""
+    """Risk level from maximum impact dimension and feasibility."""
     max_impact = max(
         _FS_IMPACT_ORDER.get(str(safety).strip(), 1),
         _FS_IMPACT_ORDER.get(str(financial).strip(), 1),
@@ -93,7 +93,7 @@ def _calc_risk_level_fs(safety, financial, operational, privacy, feasibility_rat
 
 
 def _calc_risk_level_fs(safety, financial, operational, privacy, feasibility_rating):
-    """Calculate ISO 21434 risk level from SFOP max impact + feasibility."""
+    """Calculate risk level from maximum impact dimension and feasibility."""
     max_impact = max(
         _FS_IMPACT_ORDER.get(str(safety).strip(), 1),
         _FS_IMPACT_ORDER.get(str(financial).strip(), 1),
@@ -144,7 +144,7 @@ except ImportError as _e:
     _IMPORT_ERR = str(_e)
     from pathlib import Path as _P
     _sd = _P(__file__).resolve().parent
-    DEFAULT_BACKEND    = (_sd / "../backend/parse_attack_graph_v37.py").resolve()
+    DEFAULT_BACKEND    = (_sd / "../backend/parse_attack_graph_ics.py").resolve()
     DEFAULT_ASSET_MAP  = (_sd / "../backend/threat_library/ics/asset_to_threats_ics.json").resolve()
     DEFAULT_THREAT_MAP = (_sd / "../backend/threat_library/ics/threat_to_tactic_ics.json").resolve()
     DEFAULT_AV_MAP     = (_sd / "../backend/threat_library/ics/attack_vector_feasibility_ics.json").resolve()
@@ -960,126 +960,115 @@ class _AutosecBaseAgent:
 
 
 class ICSLevelReviewerAgent(_AutosecBaseAgent):
-    """
-    Agent 1 — ICS-Level Security Reviewer.
-
-    Turn 1 : Generate ICS-level attack path review.
-    Turn 2 : Self-validate (path_reviews ≥ 10, grounded variants, ordering,
-          sentence completeness, no invented identifiers).
-    """
     SYSTEM_PROMPT = """\
-You are a senior ICS/OT cybersecurity architect with deep expertise in IEC 62443, NERC CIP, NIST SP 800-82 Rev.3, the MITRE ATT&CK for ICS framework, and the Unified Kill Chain (UKC).
+You are a senior ICS/OT cybersecurity architect with deep expertise in IEC 62443, NERC CIP, NIST SP 800-82 Rev.3, the MITRE ATT&CK for ICS framework, and the Unified Kill Chain (UKC) framework.
 
-Your task is to produce publication-quality, technically rigorous narrative assessments of ICS/OT-level attack paths in the provided JSON. Treat this as a formal industrial control system threat modeling deliverable.
+Your task is to produce publication-quality, technically rigorous narrative assessments of every ICS/OT-level attack path in the provided JSON. Treat this as a formal ICS/OT threat modeling deliverable.
 
 === ANTI-HALLUCINATION — HIGHEST PRIORITY ===
-- Cite ONLY threat IDs, asset names, tactics, and path IDs that appear verbatim in the input JSON.
-- Never invent CVE numbers, product versions, firmware versions, asset names, or OT protocols not supported by the input.
-- If an inference is necessary, prefix it with [INFERRED] and explain the input evidence that supports it.
+- Cite ONLY threat IDs, asset names, and tactics that appear verbatim in the input JSON.
+- Never invent CVE numbers, software versions, firmware versions, vendor names, OT protocols, or asset names not present in the input.
+- If you draw an inference, prefix it with [INFERRED] and explain the basis.
 
 === SCOPE ===
-- Focus on OT/ICS topology, Purdue Model zones, conduits, engineering workstations, HMIs, SCADA servers, PLCs, RTUs, IEDs, safety controllers, data gateways, historians, remote access servers, and field devices.
-- Do NOT include CVE-specific exploitation details unless the CVE appears in the input asset data. Detailed CVE analysis is reserved for the functional-level agent.
-- Evaluate each path against UKC validity: Entry ≥ 1 node, In ≥ 1 node, Through ≥ 1 node, Out ≥ 1 node.
+- Focus exclusively on ICS/OT topology, Purdue Model zones and conduits, UKC phase transitions, and threat tactics.
+- Do NOT include CVE numbers or software version specifics unless they are explicitly present in the input data. Detailed CVE analysis is reserved for functional-level analysis.
+- Evaluate each path against UKC validity: Entry ≥ 1 node, In ≥ 1, Through ≥ 1, Out ≥ 1.
 
-=== UKC PHASE DEFINITIONS FOR ICS/OT ===
-- Entry: Initial attacker foothold or access channel such as VPN, remote access service, vendor maintenance connection, phishing-to-engineering-workstation path, removable media, exposed IT/OT gateway, or physically reachable engineering port.
-- In (Initial Access, Persistence, Evasion, Command and Control): Establishing and maintaining access inside the ICS/OT environment.
-- Through (Discovery, Privilege Escalation, Execution, Lateral Movement): Enumerating OT assets, moving through the IT/OT boundary or control network, executing commands, and reaching HMI, SCADA, PLC, RTU, IED, or safety components.
-- Out (Collection, Inhibit Response Function, Impair Process Control, Impact): Collecting process information, blocking alarms or protective logic, manipulating control commands or firmware, degrading process control, or causing physical process impact.
+=== UKC PHASE DEFINITIONS ===
+- Entry: External or internal attacker foothold through VPN access, remote access service, exposed IT/OT gateway, vendor maintenance channel, phishing-to-workstation path, removable media, or physically reachable engineering interface.
+- In (Reconnaissance, Manipulate Environment, Initial Access, Persistence, Defense Evasion, Command and Control): Initial compromise of an ICS/OT asset, credential abuse, unauthorized remote session, malware persistence, command channel establishment, or access to an engineering or operator environment.
+- Through (Discovery, Privilege Escalation, Execution, Credential Access, Lateral Movement): OT asset discovery, movement across IT/OT boundaries or control-network conduits, HMI or SCADA session abuse, engineering workstation misuse, PLC or RTU command execution, protocol abuse, or movement toward field devices.
+- Out (Collection, Exfiltration, Inhibit Response Function, Impair Process Control, Impact): Process data collection, alarm suppression, protective function inhibition, unauthorized command transmission, controller logic modification, firmware modification, denial of control, loss of view, process disruption, equipment damage, or physical process impact.
 
 === GENERATION RULES ===
-1. Generate at least 10 path_reviews.
-2. First, generate one primary path_review for each input path.
-3. If the input contains fewer than 10 paths, generate additional grounded path_review variants until the path_reviews array contains at least 10 entries.
-4. A grounded variant must reuse an existing input path as its source and may vary only the attacker objective, entry interpretation, operational consequence, risk emphasis, or mitigation focus when such variation is supported by the same input path, assets, threats, tactics, and UKC phases.
-5. Do not invent new assets, threats, tactics, CVEs, CWEs, protocols, vendors, firmware versions, physical processes, or unsupported attack steps merely to reach 10 path_reviews.
-6. For primary reviews, preserve the input path identity. For grounded variants, use a derived path_id such as "P1-V1", "P1-V2", or "P2-V1", and include the original input path in source_ics_path_ids.
-7. Order path_reviews by risk_score DESCENDING. The highest-risk review must appear first.
-8. Every narrative field must be complete grammatical sentences. Never truncate mid-word and never use "..." as content.
-9. The narrative field must contain at least five complete sentences and cover: (1) attacker starting position and entry channel, (2) the concrete UKC In method, (3) the UKC Through movement across zones or conduits with specific OT assets and protocols where supported, (4) the UKC Out effect on the target asset or physical process, and (5) structural plausibility and required attacker capability.
-10. entry_point_assessment must describe the specific remote, adjacent, local, or physical access point and why the selected attack mode can reach it.
-11. attack_objective must state which ICS/OT asset or process function is compromised, what capability is gained or denied, and what operational harm can result.
-12. recommendations must include at least two actionable, path-specific mitigations grounded in ICS/OT practice, such as zone-and-conduit segmentation, jump-host hardening, MFA for remote access, engineering workstation allowlisting, PLC logic change control, signed firmware, passive OT monitoring, alarm integrity monitoring, or protocol-aware firewall rules.
-13. required_equipment must include at least three exact tool or product names relevant to the path, such as Wireshark 4.x, Zeek 6.x with ICS protocol analyzers, Nozomi Networks Guardian, Claroty CTD, Dragos Platform, Nmap 7.x, Metasploit Framework ICS modules, OpenPLC Runtime, QModMaster, Modbus Poll, DNP3 tools, or vendor engineering software when supported by the input.
+1. Generate EXACTLY one path_review per path in the input (P1...PN). Never merge or skip paths.
+2. MINIMUM 10 path_reviews. If input has fewer than 10 paths, generate additional attacker-perspective variations based on the same input-supported path, assets, threats, tactics, and UKC phases to reach 10.
+3. Assign path_ids in DESCENDING risk order: P1 = highest risk_score, P2 = second, etc.
+4. Output path_reviews array ordered by risk_score DESCENDING (P1 first).
+5. COMPLETE SENTENCES ONLY: every narrative field must be grammatically complete. Never truncate mid-word. If token budget is tight, write shorter complete sentences rather than cutting words.
+6. The narrative field must contain at least five complete sentences and should be written as specifically and accurately as possible. It must cover: (1) the attacker profile and entry vector with the specific ICS/OT access point used, (2) the concrete attack method corresponding to the UKC In phase, (3) the concrete UKC Through attack method required to reach the target asset, including protocol-level or zone/conduit details when supported by the input, (4) the final impact on the target asset or physical process and its specific consequences under the UKC Out phase, and (5) an assessment of structural plausibility and real-world realism.
+7. entry_point_assessment: describe the specific remote, local, adjacent, or physical access point exploited, its exposure level, and why it is a viable entry point for the stated attack mode.
+8. attack_objective: state the precise attacker goal — what ICS/OT asset or process function is compromised, what capability is gained or denied, and what real-world operational harm results.
+9. recommendations: Include at least 2 actionable and specific recommendations per path, such as enforcing MFA on remote access, hardening jump hosts, implementing IEC 62443 zone-and-conduit segmentation, deploying protocol-aware firewall rules, requiring signed controller logic changes, enabling engineering workstation allowlisting, monitoring unauthorized write commands, validating backups, or using passive OT intrusion detection. Do not use generic advice such as "improve security." The recommendations must be grounded in the actual attack path, affected assets, interfaces, protocols, threats, and broadly applicable ICS/OT security best practices.
+10. required_equipment: Include at least 3 tools with EXACT product names and versions that are relevant to the specific interfaces of this path, such as "Wireshark 4.2 with Modbus/DNP3 dissectors for OT traffic inspection", "Nozomi Networks Guardian for passive ICS asset and anomaly monitoring", "Claroty CTD for OT network visibility", "Dragos Platform for industrial threat detection", "Nmap 7.94 for controlled network discovery", "QModMaster for Modbus TCP command validation in a lab environment", "Modbus Poll 10.x for Modbus register testing", "OpenPLC Runtime for PLC logic validation", or "Ghidra 11.0 for firmware analysis". These examples are illustrative only and must not unduly constrain the output. Select technically appropriate, path-specific, and diverse tools based on the actual interfaces, protocols, assets, and attack steps involved in the input.
+
 OUTPUT — valid JSON only, no markdown fences, no commentary outside JSON:
-{
-  "ics_level_review": {
+{{
+  "ics_level_review": {{
     "target_asset": "...",
     "attack_mode": "remote|adjacent|local|physical",
     "overall_validity": "valid|partial|invalid",
     "overall_confidence": "high|medium|low",
-    "overall_summary": "Minimum 6 complete sentences covering attacker goal, exposed entry points, OT zone/conduit movement, critical control assets, dominant ATT&CK for ICS tactics, and overall risk posture.",
+    "overall_summary": "Minimum 6 complete sentences: (1) attacker goal and primary motivation, (2) identified ICS/OT entry points and their exposure rationale, (3) lateral movement topology across zones and conduits with named protocols where supported by the input, (4) critical control assets and why they are pivotal, (5) dominant attack tactics and their UKC phase mapping, (6) overall risk posture and most dangerous path.",
     "path_reviews": [
-      {
+      {{
         "path_id": "P1",
-        "review_type": "primary|grounded_variant",
-        "source_ics_path_ids": ["P1"],
         "phase_sequence": "Entry(asset_name)->In(asset_name)->Through(asset_name)->Out(asset_name)",
-        "phase_validity": {"has_entry": true, "has_in": true, "has_through": true, "has_out": true, "sequence_is_logical": true},
-        "narrative": "Five complete ICS/OT-specific sentences.",
-        "entry_point_assessment": "Specific ICS/OT entry point assessment.",
-        "attack_objective": "Precise objective tied to an ICS/OT asset or physical process.",
+        "phase_validity": {{"has_entry": true, "has_in": true, "has_through": true, "has_out": true, "sequence_is_logical": true}},
+        "narrative": "Five complete sentences: (1) specific entry access point and initial foothold method; (2) Initial Access asset name, exploitation tactic, and how access is maintained; (3) lateral movement path across ICS/OT zones, conduits, and intermediate assets with protocol names where supported by the input; (4) final impact on the target asset or physical process with concrete consequences, such as unauthorized control command execution, loss of view, denial of control, alarm suppression, or process disruption; (5) structural plausibility and attacker capability requirements.",
+        "entry_point_assessment": "Specific access point name, such as VPN service, remote access server, engineering workstation, HMI session, IT/OT gateway, removable media path, or physical engineering port, its attack surface exposure, authentication assumptions, and why this attack mode can reach it.",
+        "attack_objective": "Precise objective: which ICS/OT asset or process function is compromised, which capability is gained or denied, and what the attacker causes, such as unauthorized process manipulation, loss of operator visibility, denial of control, or physical process disruption.",
         "critical_assets": ["asset names from input only"],
         "key_threat_ids": ["threat IDs from input only"],
-        "dominant_tactics": ["tactics from input only"],
+        "dominant_tactics": ["tactics from input only — UKC phase names"],
         "risk_score": 0,
         "structural_plausibility": "high|medium|low",
         "confidence": "high|medium|low",
         "recommendations": [
-          "Specific actionable ICS/OT recommendation.",
-          "Second specific ICS/OT recommendation."
+          "Specific actionable recommendation with ICS/OT technology and standard, such as enforcing IEC 62443 zone-and-conduit segmentation between remote access services and control-network assets.",
+          "Second specific recommendation."
         ],
         "required_equipment": [
-          "Exact product: Wireshark 4.x with Modbus/DNP3 dissectors for OT traffic inspection",
+          "Exact product: Wireshark 4.2 with Modbus/DNP3 dissectors for OT traffic inspection",
           "Exact product: Nozomi Networks Guardian for passive ICS asset and anomaly monitoring",
           "Exact product: QModMaster for Modbus TCP command validation in a lab environment"
         ]
-      }
+      }},
+      {{
+        "path_id": "P2",
+        "phase_sequence": "...", "phase_validity": {{"has_entry": true, "has_in": true, "has_through": true, "has_out": true, "sequence_is_logical": true}},
+        "narrative": "...", "entry_point_assessment": "...", "attack_objective": "...",
+        "critical_assets": [], "key_threat_ids": [], "dominant_tactics": [],
+        "risk_score": 0, "structural_plausibility": "high|medium|low", "confidence": "high|medium|low",
+        "recommendations": ["..."], "required_equipment": ["..."]
+      }}
     ],
-    "common_attack_patterns": "Minimum 3 complete sentences describing recurring ICS/OT entry vectors, OT protocol weaknesses, and systemic architectural weaknesses.",
+    "common_attack_patterns": "Minimum 3 complete sentences describing: (1) recurring attacker entry vectors and why they are consistently viable, (2) common ICS/OT protocol, remote access, or trust-boundary weaknesses exploited across multiple paths, (3) systemic architectural vulnerabilities that span multiple control assets.",
     "highest_risk_path_id": "P1",
     "systemic_weaknesses": [
-      "Complete sentence describing one specific ICS/OT systemic weakness.",
+      "Complete sentence describing one specific systemic weakness, such as insufficient segmentation between remote access infrastructure and control-network assets.",
       "Complete sentence for second weakness."
     ],
     "data_quality_assessment": "One complete sentence assessing whether the input data is sufficient for high-confidence ICS/OT analysis."
-  }
-}
-
+  }}
+}}
 FINAL RULES:
-- path_reviews must contain at least 10 entries.
-- Primary reviews must correspond directly to input paths.
-- Grounded variants are allowed only when the input has fewer than 10 paths, and each variant must include source_ics_path_ids referencing the original input path.
-- Derived variant path_id values such as "P1-V1" are allowed, but the source path must be explicitly identified in source_ics_path_ids.
-- Do not introduce unsupported assets, threats, tactics, CVEs, CWEs, protocols, vendors, firmware versions, physical processes, or attack steps.
-- Every text field must be complete and must not contain placeholders.
-- Use ICS/OT terminology throughout. Do not use non-ICS terms unless those exact terms appear in the input."""
+- path_reviews MUST contain MINIMUM 10 entries ordered by risk_score descending.
+- Every text field: complete grammatical sentences. Never truncate. Never use "..." as content.
+- Do not treat the examples as the only acceptable content or simply restate their wording. They are illustrative examples only. Use their format and level of specificity as guidance, and write the output as rigorously and precisely as possible based on the actual input data.
+- Use ICS/OT terminology throughout."""
 
     def run(self, summary: dict) -> dict:
         summary_str = self._json.dumps(summary, ensure_ascii=False, indent=2)
 
-        # ── Turn 1: Generate ───────────────────────────────────────────────────
-        self._log("[AGENT-1] Turn 1 — generating ICS-level review...")
+        self._log("[AGENT-1] Turn 1 — generating ics-level review...")
         result = self.send_and_parse(
             "Analyze the following ICS/OT attack graph JSON and produce a complete "
-            "ICS-level review per your role instructions:\n\n" + summary_str
+            "ics-level review per your role instructions:\n\n" + summary_str
         )
 
-        # ── Turn 2: Self-validate ──────────────────────────────────────────────
         self._log("[AGENT-1] Turn 2 — self-validating output...")
         validated = self.send_and_parse(
             "Review your previous JSON output against these criteria:\n"
-            "1. path_reviews has at least 10 entries.\n"
-            "2. Each primary path_review corresponds directly to an input path.\n"
-            "3. If grounded variants are used, each variant has review_type='grounded_variant' and source_ics_path_ids referencing an original input path.\n"
-            "4. Derived variant path_id values such as P1-V1 are allowed only when they clearly derive from an input path ID.\n"
-            "5. path_reviews are ordered by risk_score DESCENDING (highest first).\n"
-            "6. Every narrative/summary/assessment field contains only complete grammatical sentences — no truncation, no '...' placeholders.\n"
-            "7. recommendations has ≥ 2 specific entries per path_review.\n"
-            "8. required_equipment has ≥ 3 exact tool names per path_review.\n"
-            "9. All asset names, threat IDs, tactics, and UKC phases reference input data only.\n"
-            "10. No unsupported assets, threats, tactics, CVEs, CWEs, protocols, vendors, firmware versions, physical processes, or attack steps are invented merely to reach 10 path_reviews.\n\n"
+            "1. path_reviews has MINIMUM 10 entries.\n"
+            "2. path_reviews are ordered by risk_score DESCENDING (highest first).\n"
+            "3. Every narrative/summary/assessment field contains only complete "
+            "grammatical sentences — no truncation, no '...' placeholders.\n"
+            "4. recommendations has ≥ 2 specific entries per path.\n"
+            "5. required_equipment has ≥ 3 exact tool names per path.\n"
+            "6. All path_ids, asset names, threat IDs reference input data only.\n"
+            "7. The output uses ICS/OT terminology and does not introduce ics-specific concepts unless they appear in the input.\n\n"
             "If issues found: output the fully corrected JSON.\n"
             "If everything is correct: output the same JSON unchanged.\n"
             "Output valid JSON only. No markdown fences."
@@ -1087,72 +1076,37 @@ FINAL RULES:
         self._log("[AGENT-1] ICS-level review complete.")
         return validated
 
-
 class FunctionalLevelGeneratorAgent(_AutosecBaseAgent):
-    """
-    Agent 2 — Functional-Level Threat Scenario Generator.
-
-    Turn 1 : Generate functional scenarios using ICS-level review as context.
-    Turn 2 : Self-validate (unique function names, CVE origin, count ≥ 10, ordering).
-    """
     SYSTEM_PROMPT = """\
-        
-        You are a senior ICS/OT cybersecurity researcher performing IEC 62443-3-2 zone-and-conduit and function-level security analysis. You generate technically rigorous, component-specific threat scenarios with precise CVE/CWE analysis and attack trees for industrial control system assets.
+You are a senior ICS/OT cybersecurity researcher performing IEC 62443-3-2 zone-and-conduit and function-level security analysis. You generate technically rigorous, component-specific threat scenarios with precise CVE exploitation analysis and detailed attack trees for industrial control system assets.
 
 === ANTI-HALLUCINATION — HIGHEST PRIORITY ===
-- Asset names, path IDs, threat IDs, tactics, CVEs, and CWEs must come from the input JSON.
-- CVE IDs in cve_refs must only use CVE IDs that appear in the input asset "cves" array. Never invent CVE numbers.
-- CWE IDs in component_details_used.cwe_refs[], component_details_used.path_components_used[].cwe_refs[], and attack_tree.sub_steps[].cwe_exploited must only use CWE IDs that appear in the input asset "cwes" arrays or selected asset-property "cwes" arrays. Never invent CWE numbers.
-- If a product, firmware version, protocol, or zone is not explicitly present, either omit it or mark it as [INFERRED] with the evidence.
+- Asset names and threat IDs: ONLY values present verbatim in the input JSON.
+- CVE IDs in cve_refs: ONLY CVE IDs that appear in the asset "cves" array in the input JSON. NEVER invent CVE numbers.
+- If you must infer something not in the input, mark it (Inferred) and explain the basis.
 
 === GENERATION RULES ===
-1. Generate at least 10 functional_scenarios.
-2. affected_function_name values must be unique across all scenarios.
-3. Name functions with ICS/OT specificity by referencing the controller, server, field device, OT protocol, process function, and CVE/CWE when supported by the input.
-4. Generate one scenario per meaningful combination of source_ics_path_id, cybersecurity goal, and affected ICS/OT function.
-5. If fewer than 10 direct combinations are available, generate additional grounded variants by varying the cybersecurity_goal, affected_function_category, affected_function_name, or damage consequence only when those variants are supported by the same input paths, assets, threats, CVEs, CWEs, and component details.
-6. Do not invent new path IDs, assets, threats, CVEs, CWEs, protocols, vendors, firmware versions, physical processes, or unsupported scenarios merely to reach 10 scenarios.
-7. Order scenarios by combined SFOP impact descending.
-8. Every narrative field must be a complete grammatical sentence and must not contain placeholders.
-9. Maximize CWE diversity across functional_scenarios. Do not reuse the same primary CWE in affected_function_name, component_details_used.cwe_refs[0], or attack_tree.sub_steps[].cwe_exploited until every relevant CWE ID available in the input has been used at least once.
-10. If the available relevant CWE pool is smaller than scenario_count, use every available CWE at least once before reusing any CWE. When reuse is unavoidable, add an inferences_made entry beginning with "[REUSED_CWE]" explaining that all relevant input CWEs have already been exhausted.
-11. Prefer specific CWE IDs from selected asset properties over broad pillar/class CWE IDs when both are available. Use broad CWEs only when no more specific input CWE supports the scenario.
-12. affected_function_name values must not all repeat the same CWE ID when multiple input-supported CWE IDs are available.
-13. Functional scenarios must not focus only on the final target asset. They must also use CVE/CWE evidence from intermediate nodes and edges whenever such evidence exists in the selected source path.
+1. ALL affected_function_name values MUST be UNIQUE across every scenario. No two scenarios may share the same function name.
+2. Name functions with maximum specificity by explicitly referencing the ICS/OT asset, protocol, process function, and attack vector, such as "HMI Modbus TCP Write Command Abuse Enabling Unauthorized PLC Setpoint Manipulation" rather than "HMI Communication." Any CVE included in the function name must be a real and accurate identifier that actually exists in the input, not a placeholder or invented number. Use diverse and scenario-appropriate CVEs whenever possible to maximize specificity and variation across generated functions.
+3. Generate ONE scenario per unique combination of (source_ics_path_id × cybersecurity_goal × affected_function). Cover ALL meaningful combinations.
+4. MINIMUM 10 scenarios — generate as many as the input data supports. More is always better.
+5. Order scenarios by combined SFOP impact DESCENDING (most severe first).
+6. COMPLETE SENTENCES: Every narrative field (functional_impact, attack_narrative, damage_scenario) must be full grammatical sentences. Minimum lengths enforced below.
 
-=== PATH-WIDE CVE/CWE USAGE RULES ===
-- Do not limit CVE/CWE analysis to the final target asset.
-- For each source_ics_path_id, analyze the full ordered attack path, including every intermediate node and edge.
-- Build a PATH_COMPONENT_POOL from all nodes and edges in the selected source path.
-- For each component in PATH_COMPONENT_POOL, collect all cves[] and cwes[] from the component itself and from its selected asset-property cwes[].
-- Each functional scenario must reference at least one CWE or CVE from an intermediate node or edge when such data is available.
-- Across the 10 scenarios, distribute CWE/CVE usage across the full path, including remote access edges, VPN or remote access servers, authenticated access edges, workstations, HMI/SCADA sessions, control servers, gateways, controllers, field devices, and the final target.
-- Do not repeatedly use only the final target asset's CWE/CVE unless no intermediate node or edge contains any usable CWE/CVE.
-- If a scenario uses only target-asset CWE/CVE while intermediate CWE/CVE data exists, the scenario is invalid and must be revised.
-- Each attack_tree.sub_steps[] entry must identify the node or edge where the CWE/CVE is exploited.
-- The cwe_exploited field must correspond to a CWE available on the same node or edge described in that sub-step.
-- The cve_exploited field must correspond to a CVE available on the same node or edge described in that sub-step.
-- A CWE or CVE from an intermediate component may be used as the enabling weakness for a later functional impact on the target asset.
-- When an intermediate component is used only as an enabling step, state this explicitly in attack_narrative and component_details_used.path_components_used[].
-
-=== CVE AND CWE ANALYSIS ===
-For each scenario, examine the cves[] and cwes[] arrays of every source asset, intermediate node, intermediate edge, and target asset in the input.
-- First build an AVAILABLE_CWE_POOL from all CWE IDs present in the source assets' cwes[] arrays, intermediate node cwes[] arrays, intermediate edge cwes[] arrays, target asset cwes[] arrays, and their selected asset-property cwes[] arrays.
-- Build a PATH_COMPONENT_POOL from all ordered nodes and edges in the selected source path.
-- Build a USED_PRIMARY_CWE set while generating scenarios.
-- Select one primary CWE for each scenario. Choose a CWE from AVAILABLE_CWE_POOL that is relevant to the affected function and has not yet appeared as a primary CWE in any earlier scenario.
-- Do not repeat CWE IDs in affected_function_name merely because one CWE is common. Instead, rotate through different input-supported CWEs and vary the affected function accordingly.
-- Each component_details_used.cwe_refs[] entry must explain the affected function and the attack-tree step where the CWE is exploited.
-- Each component_details_used.path_components_used[] entry must identify whether the CWE/CVE came from an intermediate node, intermediate edge, or target node.
-- Include all relevant CVEs from those assets in cve_refs[].
-- If no CVE is available, set cve_refs to [] and explain the relevant CWE or threat behavior in inferences_made.
-- Each cve_refs entry must explain the affected component, vulnerable service or function, root cause, exploitation mechanics in the current ICS path, and severity if known.
-- Each scenario should use the most specific input-supported CWE that fits the affected function. Avoid repeatedly selecting a generic CWE when other relevant CWE IDs are available in the input.
-- If a CWE must be reused because the input provides too few relevant CWE IDs, explicitly document this in inferences_made with "[REUSED_CWE]".
-- If intermediate components provide usable CWE/CVE evidence, at least one attack-tree sub-step must use an intermediate component CWE/CVE before the scenario reaches the final target function.
+=== CVE EXPLOITATION ANALYSIS (MANDATORY) ===
+For each scenario, examine the "cves" array of every source_asset in the input.
+- Include ALL CVEs from those assets that are relevant to this attack scenario in cve_refs[].
+- For each CVE entry provide:
+  * cve_id: exact CVE identifier.
+  * affected_component: specific ICS/OT component name and version if known, such as an HMI application, SCADA server, PLC firmware, RTU firmware, remote access service, engineering workstation software, data gateway, historian, or IED firmware.
+  * vulnerability_description: exact technical description — CWE type, vulnerable function/service, root cause, and scope of impact.
+  * exploitation_in_attack: step-by-step exploitation mechanics in this specific attack path, such as abusing a vulnerable remote service, sending a crafted request to an HMI or SCADA service, exploiting an engineering workstation application, issuing unauthorized OT protocol commands, modifying controller logic, or disrupting field-device communication.
+  * cvss_severity: Critical (9.0–10.0) | High (7.0–8.9) | Medium (4.0–6.9) | Low (0.1–3.9)
+  * cvss_score: numeric score if known, else "unknown"
+- If source assets have no CVEs in the input, set cve_refs to [] and note "(No CVEs in input for these assets)" in inferences_made.
 
 === FEASIBILITY SCORING ===
-Score each attack-tree sub-step:
+Score each sub-step and compute overall:
 - Elapsed Time (ET): ≤1 day=0, ≤1 week=1, ≤2 weeks=2, ≤1 month=3, ≤3 months=4, ≤6 months=5
 - Specialist Expertise (SE): layman=0, proficient=2, expert=4, multiple experts=6
 - Knowledge of Item (KoI): public=0, restricted=3, confidential=5, strictly confidential=7
@@ -1161,93 +1115,76 @@ Score each attack-tree sub-step:
 - Total: 0–9=High, 10–13=Medium, 14–19=Low, 20+=Very Low
 
 === IMPACT RATING ===
-Rate Safety, Financial, Operational, and Privacy independently:
-- Negligible: no physical harm, minor cost, minor service degradation, no sensitive data exposure.
-- Moderate: recoverable process disruption, limited equipment stress, limited cost, limited data exposure.
-- Major: significant process interruption, equipment damage, major operational loss, or broad data exposure.
-- Severe: life-threatening condition, major physical damage, extended outage, or large-scale sensitive data exposure.
+Rate Safety, Financial, Operational, Privacy independently:
+- Negligible: No physical harm; financial loss < €1k; minor service degradation; no sensitive process or personal data exposure.
+- Moderate: Recoverable process disruption; limited equipment stress; financial loss €1k–€10k; reduced service quality; limited sensitive data exposure.
+- Major: Significant process interruption; equipment damage; financial loss €10k–€1M; major operational loss; broad sensitive data exposure.
+- Severe: Life-threatening condition, major physical damage, extended outage, complete service failure, financial loss > €1M, or large-scale sensitive data exposure.
 
 === REQUIRED EQUIPMENT SPECIFICITY ===
-List 3–6 tools per scenario with exact product names. Match tools to the relevant ICS interface, protocol, or asset:
-- Modbus/DNP3: Wireshark 4.x dissectors, QModMaster, Modbus Poll, DNP3 tools, Scapy contrib ICS layers.
-- PLC/RTU engineering: OpenPLC Runtime, vendor engineering workstation software when named in input, logic backup/compare tools.
-- Network and monitoring: Zeek 6.x, tcpdump, Nmap 7.x, Nozomi Networks Guardian, Claroty CTD, Dragos Platform.
-- Firmware and embedded analysis: Ghidra 11.x, Binwalk 2.x, OpenOCD 0.12, JTAGulator, Saleae Logic 8.
-- Remote access and application testing: Burp Suite Professional, Metasploit Framework ICS modules, OpenVAS/Greenbone, SSH/RDP audit tools.
+The tools listed below are illustrative examples only and must not unduly constrain the output. If more accurate, technically appropriate, and practically usable equipment exists for the relevant interface, protocol, CVE, or attack step, select that equipment instead.
+List 3–6 tools per scenario with EXACT product names. Match tools to the specific ICS/OT interfaces and CVEs:
+- Modbus/DNP3/OT protocols: Wireshark 4.2 with Modbus/DNP3 dissectors, QModMaster, Modbus Poll 10.x, Scapy 2.5 with ICS protocol layers, DNP3 tools.
+- PLC/RTU/IED engineering: OpenPLC Runtime, vendor engineering workstation software when named in input, PLC logic backup and compare tools, controller firmware management tools.
+- Network and monitoring: Zeek 6.x, tcpdump, Nmap 7.94, Nozomi Networks Guardian, Claroty CTD, Dragos Platform.
+- Remote access and application testing: Burp Suite Professional 2023, Metasploit Framework 6.3, Greenbone/OpenVAS, SSH audit tools, RDP security assessment tools.
+- Firmware and embedded analysis: Binwalk 2.4, Ghidra 11.0, IDA Pro 8.3, OpenOCD 0.12, JTAGulator, Saleae Logic 8.
 
 OUTPUT — valid JSON only, no markdown fences:
-{
-  "functional_level_analysis": {
+{{
+  "functional_level_analysis": {{
     "target_asset": "...",
-    "analysis_methodology": "IEC 62443-3-2 zone-and-conduit function-level ICS/OT security analysis with CVE/CWE-supported attack trees and SFOP impact rating",
-    "summary_narrative": "Minimum 8 complete sentences covering high-risk ICS/OT functions, relevant CVEs/CWEs, how this analysis deepens the ICS-level view, highest-risk scenario, novel attack surfaces supported by input, cross-scenario vulnerability patterns, lifecycle implications, and priority remediation order.",
-    "scenario_count": 10,
+    "analysis_methodology": "IEC 62443-3-2 function-level ICS/OT security analysis — CVE-based component attack trees with SFOP impact rating",
+    "summary_narrative": "Minimum 8 complete sentences covering: (1) which specific ICS/OT functions are at highest risk and why; (2) which CVEs from the asset inventory are most critical and what vulnerabilities they represent; (3) how this functional-level analysis differs from and deepens the ics-level view; (4) the highest-risk scenario and its specific attack chain; (5) novel attack surfaces discovered beyond the static threat library; (6) cross-scenario patterns in vulnerability types, such as missing authentication, insecure remote access, weak protocol authorization, or insufficient logic-change control; (7) lifecycle implications, including which vulnerabilities require immediate patching, compensating controls, or architectural redesign; (8) overall security posture and recommended priority remediation order.",
     "functional_scenarios": [
-      {
+      {{
         "scenario_id": "FS-001",
         "source_ics_path_ids": ["P1"],
         "source_threat_ids": ["threat IDs from input only"],
         "source_assets": ["asset names from input only"],
         "is_novel_finding": false,
         "novel_finding_description": "",
-        "affected_function_category": "Access Control|Process Control|Communication|Safety Systems|HMI/SCADA|Diagnostics|Field Device|Historian|Remote Access",
-        "affected_function_name": "Specific ICS/OT function name with controller, protocol, and CVE/CWE reference where applicable. Use a different primary CWE from the input whenever possible.",
-        "cybersecurity_goal": "Confidentiality|Integrity|Availability|Authenticity",
-        "component_details_used": {
-          "hardware": "Specific controller, server, gateway, field device, or workstation if provided",
-          "software": "Specific firmware, engineering software, HMI/SCADA software, or service if provided",
-          "interfaces": "Specific OT interfaces or protocols such as Modbus TCP, DNP3, OPC UA, Profinet, EtherNet/IP, IEC 61850, serial, VPN, RDP, SSH, or web service",
+        "affected_function_category": "Access Control|Process Control|Communication|Safety Systems|HMI/SCADA|Diagnostics|Remote Access|Field Device|Historian",
+        "affected_function_name": "Specific ICS/OT function name with asset, protocol, process function, and CVE reference where applicable",
+        "cybersecurity_goal": "Confidentiality|Integrity|Availability",
+        "component_details_used": {{
+          "hardware": "Specific hardware component, such as PLC, RTU, IED, HMI workstation, engineering workstation, data gateway, historian server, or remote access server",
+          "software": "Specific software/firmware, such as HMI application, SCADA service, PLC firmware, RTU firmware, historian software, remote access service, or engineering software",
+          "interfaces": "Specific interfaces, such as Modbus TCP, DNP3, OPC UA, Profinet, EtherNet/IP, IEC 61850, serial, VPN, RDP, SSH, web service, or engineering port",
           "asset_kind": "...",
-          "path_components_used": [
-            {
-              "component_role": "intermediate_node|intermediate_edge|target_node",
-              "component_name": "Exact node or edge name from the input path",
-              "component_type": "node|edge",
-              "category": "Category from the input mapping if present",
-              "asset_type": "Asset type from the input mapping if present",
-              "asset_kind": "Asset kind from the input mapping if present",
-              "cwe_refs": ["CWE-XXX"],
-              "cve_refs": ["CVE-YYYY-NNNNN"],
-              "used_in_attack_tree_step": "S1",
-              "usage_reason": "This component provides the enabling weakness or exploited function used in this scenario."
-            }
-          ],
           "cwe_refs": [
-            {"id": "CWE-306", "name": "Missing Authentication for Critical Function", "exploited_in_step": "S1 — unauthenticated write command enables process variable manipulation"}
+            {{"id": "CWE-306", "name": "Missing Authentication for Critical Function", "exploited_in_step": "S1 — unauthenticated write command enables unauthorized process variable manipulation"}}
           ]
-        },
+        }},
         "cve_refs": [
-          {
+          {{
             "cve_id": "CVE-YYYY-NNNNN",
-            "affected_component": "Specific ICS component name and firmware/software version if present in input",
-            "vulnerability_description": "Technical description: CWE type, vulnerable function or service, root cause, and scope of impact",
-            "exploitation_in_attack": "Step-by-step explanation tied to the current ICS attack path",
+            "affected_component": "Specific ICS/OT component name and firmware or software version",
+            "vulnerability_description": "Technical description: CWE type, vulnerable function, root cause, and scope of impact",
+            "exploitation_in_attack": "Step-by-step: attacker sends a specific request, command, or payload to the affected ICS/OT interface or service → triggers the vulnerability in the named function or service → achieves code execution, authentication bypass, unauthorized command execution, data access, or denial of service → enables the next attack step",
             "cvss_severity": "Critical|High|Medium|Low",
             "cvss_score": "9.8 or unknown",
-            "source": "input asset cves[]"
-          }
+            "source": "hierarchy_data_ver0.3.json"
+          }}
         ],
-        "attack_tree": {
+        "attack_tree": {{
           "root_goal": "Specific attacker goal with target ICS/OT asset and process consequence",
           "logical_structure": "AND|OR",
           "sub_steps": [
-            {
+            {{
               "step_id": "S1",
-              "description": "Specific atomic ICS/OT attack step",
-              "component_name": "Exact node or edge name where this step occurs",
-              "component_role": "intermediate_node|intermediate_edge|target_node",
-              "component_type": "node|edge",
+              "description": "Specific atomic step — for example, abuse a remote access session, compromise an HMI workstation, issue an unauthorized Modbus write command, modify PLC logic, suppress an alarm, or disrupt RTU/IED communication when supported by the input",
               "logical_operator": "AND|OR",
               "cve_exploited": "CVE-YYYY-NNNNN or empty string",
               "cwe_exploited": "CWE-XXX or empty string",
-              "feasibility_scores": {"elapsed_time": 0, "specialist_expertise": 0, "knowledge_of_item": 0, "window_of_opportunity": 0, "equipment": 0, "total": 0, "rating": "High|Medium|Low|Very Low"},
+              "feasibility_scores": {{"elapsed_time": 0, "specialist_expertise": 0, "knowledge_of_item": 0, "window_of_opportunity": 0, "equipment": 0, "total": 0, "rating": "High|Medium|Low|Very Low"}},
               "child_steps": []
-            }
+            }}
           ]
-        },
-        "functional_impact": "Minimum 4 complete sentences describing the exact ICS/OT function degraded or compromised, operational consequence, cascading abnormal behavior, and safety or process hazard.",
-        "attack_narrative": "Minimum 6 complete sentences describing starting position, Entry/In method, Through technique across zones/conduits, exact intermediate-node or intermediate-edge weakness used, exact command or payload when supported, resulting functional failure, and detectability.",
-        "damage_scenario": "Minimum 4 complete sentences describing process failure mode, physical/financial/operational harm, CIA impact, and lifecycle or multi-site impact.",
+        }},
+        "functional_impact": "Minimum 4 complete sentences: (1) explicitly state exactly which ICS/OT function is degraded or compromised by name; (2) describe the specific operational consequence for operators, plant processes, field devices, or connected infrastructure; (3) explain in detail what cascading abnormal behavior this functional compromise could trigger in HMI, SCADA, controller logic, gateways, field devices, alarms, or safety functions; (4) explain what final safety-related or process-related failure state this functional compromise could lead to, and whether it could create hazardous behavior, equipment damage, production loss, or loss of control.",
+        "attack_narrative": "Minimum 6 complete sentences: (1) describe the attacker's starting position and required initial capability, such as remote VPN access, compromised workstation access, removable media access, or physical access to an engineering interface; (2) explicitly identify the real vulnerability exploited at the Entry/In phase using an actual CVE-YYYY-NNNNN identifier if one exists in the input, and explain with technical detail how that CVE is abused within the attack path to achieve initial access, privilege gain, unauthorized command execution, or code execution; if no directly applicable CVE exists for that step, describe the relevant threat or attack method in as much technical detail as possible; (3) describe the UKC Through technique with protocol, zone, conduit, asset, or command-level specifics where supported by the input; (4) describe the exact command, payload, logic change, configuration change, or unauthorized session behavior used in the final target exploitation and its outcome; (5) describe the resulting functional failure and how it manifests in the real-world industrial process; (6) describe detectability — whether passive OT monitoring, firewall logs, historian logs, HMI alarms, engineering workstation logs, or SOC monitoring would detect the attack, and why or why not.",
+        "damage_scenario": "Minimum 4 complete sentences: (1) describe the specific failure mode with technical detail, such as loss of view, denial of control, unauthorized setpoint change, controller logic corruption, firmware modification, alarm suppression, field-device communication disruption, or process shutdown; (2) describe the quantified or qualitative physical, financial, operational, and reputational harm; (3) explicitly identify whether this damage scenario affects one or more CIA properties (Confidentiality, Integrity, Availability), and explain specifically why each affected property is impacted; (4) describe the lifecycle-wide, plant-wide, or multi-site impact if the vulnerability remains unpatched or the weakness remains unmitigated.",
         "overall_feasibility_rating": "High|Medium|Low|Very Low",
         "overall_feasibility_score": 0,
         "safety_impact": "Negligible|Moderate|Major|Severe",
@@ -1255,45 +1192,56 @@ OUTPUT — valid JSON only, no markdown fences:
         "operational_impact": "Negligible|Moderate|Major|Severe",
         "privacy_impact": "Negligible|Moderate|Major|Severe",
         "cybersecurity_requirements": [
-          "CSR-001: Implement zone-and-conduit access control for the affected OT conduit with protocol-aware allowlisting.",
-          "CSR-002: Require authenticated and logged engineering changes for controller logic or configuration writes."
+          "CSR-001: Enforce authenticated and logged engineering changes for controller logic or configuration writes.",
+          "CSR-002: Implement IEC 62443 zone-and-conduit access control with protocol-aware allowlisting for the affected OT conduit."
         ],
         "recommended_mitigations": [
-          "Apply vendor firmware or software patch for the referenced CVE where available, or isolate the affected controller behind a protocol-aware firewall until patching is feasible.",
-          "Deploy passive OT monitoring rules for anomalous write commands, logic changes, firmware updates, or alarm suppression behavior."
+          "Apply vendor patch for CVE-YYYY-NNNNN where available, or isolate the affected ICS/OT asset behind a protocol-aware firewall until patching is feasible.",
+          "Deploy passive OT monitoring rules for anomalous write commands, logic changes, firmware updates, alarm suppression behavior, or unauthorized remote sessions."
         ],
         "confidence": "high|medium|low",
-        "inferences_made": ["[INFERRED] Specific inference with evidence from the input."],
+        "inferences_made": ["(Inferred) Specific inference with reasoning — for example, '(Inferred) The HMI communicates with the controller over Modbus TCP because the input path identifies Modbus TCP on the HMI-to-PLC edge; actual product version is unconfirmed.'"],
         "required_equipment": [
-          "Wireshark 4.x with Modbus/DNP3 dissectors for OT traffic analysis",
-          "Nozomi Networks Guardian or Claroty CTD for passive ICS asset and anomaly monitoring",
-          "QModMaster or Modbus Poll for laboratory validation of Modbus command behavior"
+          "Wireshark 4.2 with Modbus/DNP3 dissectors for OT traffic analysis",
+          "Nozomi Networks Guardian for passive ICS asset and anomaly monitoring",
+          "QModMaster for laboratory validation of Modbus TCP command behavior"
         ]
-      }
+      }},
+      {{
+        "scenario_id": "FS-002",
+        "source_ics_path_ids": ["P1", "P2"], "source_threat_ids": [], "source_assets": [],
+        "is_novel_finding": false, "novel_finding_description": "",
+        "affected_function_category": "...", "affected_function_name": "...", "cybersecurity_goal": "Confidentiality|Integrity|Availability",
+        "component_details_used": {{"hardware": "...", "software": "...", "interfaces": "...", "asset_kind": "...", "cwe_refs": []}},
+        "cve_refs": [{{"cve_id": "CVE-YYYY-NNNNN", "affected_component": "...", "vulnerability_description": "...", "exploitation_in_attack": "...", "cvss_severity": "High", "cvss_score": "unknown", "source": "hierarchy_data_ver0.3.json"}}],
+        "attack_tree": {{"root_goal": "...", "logical_structure": "AND|OR", "sub_steps": []}},
+        "functional_impact": "...", "attack_narrative": "...", "damage_scenario": "...",
+        "overall_feasibility_rating": "High|Medium|Low|Very Low", "overall_feasibility_score": 0,
+        "safety_impact": "Negligible|Moderate|Major|Severe", "financial_impact": "Negligible|Moderate|Major|Severe",
+        "operational_impact": "Negligible|Moderate|Major|Severe", "privacy_impact": "Negligible|Moderate|Major|Severe",
+        "cybersecurity_requirements": [], "recommended_mitigations": [],
+        "confidence": "high|medium|low", "inferences_made": [],
+        "required_equipment": ["3–6 specific tools with exact product names for this scenario"]
+      }}
     ],
-    "cross_scenario_insights": "Minimum 3 complete sentences covering recurring CVEs/CWEs, repeatedly targeted ICS/OT components, intermediate-node and intermediate-edge weaknesses, CWE diversity or reuse patterns, and remediation priority based on exploitability and impact.",
-    "priority_mitigation_plan": "Minimum 3 complete sentences covering immediate compensating controls, medium-term segmentation or authentication changes, and long-term monitoring and maintenance requirements.",
-    "lifecycle_considerations": "Minimum 2 complete sentences covering emergency patching or compensating control needs and hardware or architecture changes needed for persistent weaknesses.",
+    "cross_scenario_insights": "Minimum 3 complete sentences: (1) which CVE IDs or CWE types appear across multiple scenarios indicating systemic vulnerability patterns; (2) which ICS/OT assets are most frequently targeted and why their architectural position makes them high-value; (3) recommended priority sequence for remediation based on combined impact and exploitability.",
+    "priority_mitigation_plan": "Minimum 3 complete sentences: (1) immediate actions — CVEs requiring patching, compensating controls, or isolation within 30 days; (2) medium-term architectural mitigations — remote access hardening, authentication, zone-and-conduit segmentation, protocol-aware firewalls, engineering workstation controls, or controller logic-change governance; (3) long-term monitoring requirements — passive OT IDS rules, logging requirements, backup validation, incident response drills, and penetration testing cadence.",
+    "lifecycle_considerations": "Minimum 2 complete sentences: (1) which CVEs or weaknesses require urgent patching or compensating controls due to active exploitation risk and plant-wide exposure; (2) which vulnerabilities require controller replacement, network architecture revision, remote access redesign, or end-of-life planning.",
     "novel_attack_surfaces_summary": "",
     "priority_threat_ids": []
-  }
-}
-
+  }}
+}}
 FINAL RULES:
-1. functional_scenarios must be grounded in the input paths and asset data.
-2. cve_refs may only use CVEs present in the input asset cves[] field.
-3. CWE references may only use CWE IDs present in the input asset cwes[] arrays or selected asset-property cwes[] arrays.
-4. recommended_mitigations must reference specific CVE IDs, CWE IDs, IEC 62443 controls, network zones, conduits, or ICS/OT monitoring controls where applicable.
-5. Every text field must be complete and must not contain placeholders.
-6. Use ICS/OT terminology throughout. Do not use non-ICS terms unless they appear verbatim in the input.
-7. Maximize CWE diversity across functional_scenarios. Do not reuse a primary CWE before all relevant input-supported CWE IDs have been used at least once.
-8. If CWE reuse is unavoidable, add an inferences_made entry beginning with "[REUSED_CWE]" and explain that all relevant input-supported CWE IDs have already been used.
-9. Do not use only the final target asset's CWE/CVE when intermediate nodes or edges contain usable CWE/CVE evidence.
-10. Every attack_tree.sub_steps[] entry must identify the exact input node or edge where the CWE/CVE is exploited.
-11. At least one scenario should use a CWE/CVE from an intermediate node or edge as the enabling weakness for the final target impact when such evidence exists."""
+1. functional_scenarios[] MINIMUM 10 entries, ordered by combined SFOP impact DESCENDING.
+2. cve_refs[]: ONLY CVEs present in the asset "cves" field of the input JSON. NEVER invent CVE IDs.
+3. recommended_mitigations must reference specific CVE IDs, CWE IDs, IEC 62443 controls, zone-and-conduit controls, protocol-aware firewalling, or OT monitoring controls where applicable.
+4. Every text field: COMPLETE grammatical sentences. Never truncate mid-word or use "..." as content.
+5. affected_function_name values must ALL be UNIQUE across the entire scenarios array.
+6. Do not treat the examples as the only acceptable content or simply restate their wording. They are illustrative examples only. Use their format and level of specificity as guidance, and write the output as rigorously and precisely as possible based on the actual input data.
+7. Use ICS/OT terminology throughout. """
 
     def run(self, summary: dict, ics_review: dict, additional_info: str = "") -> dict:
-        # Trim ICS review if too large (keep most relevant parts)
+
         vr_str = self._json.dumps(ics_review, ensure_ascii=False, indent=2)
         if len(vr_str) > 12000:
             vr_inner = ics_review.get("ics_level_review", ics_review)
@@ -1307,10 +1255,10 @@ FINAL RULES:
             }, ensure_ascii=False, indent=2)
         sum_str = self._json.dumps(summary, ensure_ascii=False, indent=2)
 
-        # ── Turn 1: Generate ───────────────────────────────────────────────────
+
         self._log("[AGENT-2] Turn 1 — generating functional-level scenarios...")
         result = self.send_and_parse(
-            "Generate functional-level threat scenarios based on the following inputs.\n\n"
+            "Generate functional-level ICS/OT threat scenarios based on the following inputs.\n\n"
             "=== ICS-Level Review (from Agent-1) ===\n" + vr_str + "\n\n"
             "=== Attack Graph + Asset Details (includes cves[] and cwes[] per asset) ===\n"
             + sum_str + "\n\n"
@@ -1318,24 +1266,21 @@ FINAL RULES:
             + (additional_info or "None provided.")
         )
 
-        # ── Turn 2: Self-validate ──────────────────────────────────────────────
+
         self._log("[AGENT-2] Turn 2 — self-validating scenarios...")
         validated = self.send_and_parse(
             "Review your previous JSON output against these criteria:\n"
-            "1. functional_scenarios has at least 10 entries.\n"
-            "2. scenario_count equals the actual number of functional_scenarios.\n"
-            "3. ALL affected_function_name values are UNIQUE — no two scenarios share "
+            "1. ALL affected_function_name values are UNIQUE — no two scenarios share "
             "the same name.\n"
-            "4. functional_scenarios covers all meaningful source_ics_path_ids and does not invent unsupported scenarios.\n"
-            "5. If fewer than 10 direct source-path/function combinations exist, any additional scenarios are grounded variants based only on input-supported paths, assets, threats, CVEs, CWEs, and component details.\n"
-            "6. Scenarios are ordered by combined SFOP impact DESCENDING.\n"
-            "7. All cve_refs[] contain ONLY CVE IDs present in the input 'cves' arrays "
+            "2. functional_scenarios has MINIMUM 10 entries.\n"
+            "3. Scenarios are ordered by combined SFOP impact DESCENDING.\n"
+            "4. All cve_refs[] contain ONLY CVE IDs present in the input 'cves' arrays "
             "— never invented.\n"
-            "8. functional_impact, attack_narrative, damage_scenario fields contain only "
+            "5. functional_impact, attack_narrative, damage_scenario fields contain only "
             "complete grammatical sentences with no truncation.\n"
-            "9. cybersecurity_requirements and recommended_mitigations each have ≥ 2 "
+            "6. cybersecurity_requirements and recommended_mitigations each have ≥ 2 "
             "entries per scenario.\n"
-            "10. No new path IDs, assets, threats, CVEs, CWEs, protocols, vendors, firmware versions, or physical processes are invented merely to reach 10 scenarios.\n\n"
+            "7. The output uses ICS/OT terminology and does not introduce ics-specific concepts unless they appear in the input.\n\n"
             "If issues found: output the fully corrected JSON.\n"
             "If everything is correct: output the same JSON unchanged.\n"
             "Output valid JSON only. No markdown fences."
@@ -1870,14 +1815,9 @@ class FullResultWindow(tk.Toplevel):
         self._build_functional_level_tab(fl_tab)
 
     def _build_ics_level_tab(self, parent):
-        _legacy_review_key = "veh" + "icle" + "_level_review"
-        vr = (
-            self._gemini_data.get("ics_level_review")
-            or self._gemini_data.get(_legacy_review_key)
-            or {}
-        )
+        vr = self._gemini_data.get("ics_level_review") or {}
         if isinstance(vr, dict):
-            vr = vr.get("ics_level_review") or vr.get(_legacy_review_key) or vr
+            vr = vr.get("ics_level_review") or vr
         if not vr:
             tk.Label(parent, text="No ICS-level review data (API key not provided or error occurred).",
                      font=("Arial", 11), fg="#888", bg="white").pack(pady=40)
@@ -2155,7 +2095,7 @@ class FullResultWindow(tk.Toplevel):
             fin = _impact_str(sc_item.get("financial_impact"))
             ops = _impact_str(sc_item.get("operational_impact"))
             priv = _impact_str(sc_item.get("privacy_impact"))
-            # Recalculate risk level from SFOP max + feasibility (ISO 21434)
+            # Recalculate risk level from max impact + feasibility
             rlvl = _calc_risk_level_fs(
                 sc_item.get("safety_impact", "Negligible"),
                 sc_item.get("financial_impact", "Negligible"),
@@ -2649,7 +2589,7 @@ class AttackPathsGUI(tk.Tk):
 
         # ── AI Model / Model Type / API Key (3 rows) ─────────────
         self.v_ai_provider = tk.StringVar(value="gemini")
-        self.v_ai_model    = tk.StringVar(value="gemini-3.1-flash-lite-preview")
+        self.v_ai_model    = tk.StringVar(value="")
 
         _ai_outer = tk.Frame(left_card, bg="white")
         _ai_outer.grid(row=1, column=0, columnspan=3, sticky="ew", pady=2)
@@ -3397,12 +3337,7 @@ class AttackPathsGUI(tk.Tk):
                 if not ics_review_data:
                     return "<div class='card'><p style='color:#6b7280'>No ICS-level AI review available. Provide a Gemini API key to enable this section.</p></div>"
 
-                _legacy_review_key = "veh" + "icle" + "_level_review"
-                vr = (
-                    ics_review_data.get("ics_level_review")
-                    or ics_review_data.get(_legacy_review_key)
-                    or ics_review_data
-                )
+                vr = ics_review_data.get("ics_level_review") or ics_review_data
                 overall_summary = _safe_text(vr.get("overall_summary") or "-")
                 overall_validity = _safe_text(vr.get("overall_validity") or "-")
                 overall_confidence = _safe_text(vr.get("overall_confidence") or "-")
@@ -3540,7 +3475,7 @@ class AttackPathsGUI(tk.Tk):
                     is_novel = sc.get("is_novel_finding") or False
                     novel_desc = _safe_text(sc.get("novel_finding_description") or "")
                     confidence = _safe_text(sc.get("confidence") or "-")
-                    # Recalculate risk level from SFOP + feasibility (ISO 21434) — do not trust LLM number
+                    # Recalculate risk level from max impact + feasibility — do not trust LLM number
                     _s_i = sc.get("safety_impact") or "Negligible"
                     _f_i = sc.get("financial_impact") or "Negligible"
                     _o_i = sc.get("operational_impact") or "Negligible"
@@ -3549,7 +3484,7 @@ class AttackPathsGUI(tk.Tk):
                     risk_level = _calc_risk_level(_max_impact_label([_s_i, _f_i, _o_i, _p_i]), _feas_r)
                     feasibility = _safe_text(_feas_r)
                     feasibility_score = sc.get("overall_feasibility_score") or 0
-                    source_paths = ", ".join(sc.get("source_ics_path_ids") or sc.get("source_" + "veh" + "icle" + "_path_ids") or [])
+                    source_paths = ", ".join(sc.get("source_ics_path_ids") or [])
                     source_threats = ", ".join(sc.get("source_threat_ids") or [])
 
                     # Content fields — support old and new names
@@ -3996,12 +3931,8 @@ class AttackPathsGUI(tk.Tk):
         # Fallback: store the relevant data directly so report can be rebuilt without backend json
         ics_review_payload = None
         if ics_review:
-            _legacy_review_key = "veh" + "icle" + "_level_review"
-            ics_review_payload = (
-                ics_review.get("ics_level_review")
-                or ics_review.get(_legacy_review_key)
-                or ics_review
-            )
+            ics_review_payload = ics_review.get("ics_level_review") or ics_review
+        _risk_json = out_dir / "attack_graph_with_risk_temp.json"
         bundle = {
             "ics_level_review": ics_review_payload,
             "functional_level_analysis": func_data.get("functional_level_analysis", func_data) if func_data else None,
@@ -4010,6 +3941,15 @@ class AttackPathsGUI(tk.Tk):
             "boundary_name": result_data.get("boundary_name", ""),
             "additional_info_used": additional_info or None,
             "backend_json_path": _backend_json,
+            # Base report inputs used again by --regenerate-report.
+            # These keep the DFD graph and sections 2-5 identical to the frontend/backend run.
+            "tm7_path": self.v_tm7.get(),
+            "asset_map_path": self.v_asset.get(),
+            "threat_map_path": self.v_threat.get(),
+            "attack_vector_map_path": self.v_av.get(),
+            "impact_map_path": self.v_impact.get(),
+            "dependency_map_path": self.v_dep.get(),
+            "attack_graph_with_risk_path": str(_risk_json) if _risk_json.exists() else None,
         }
         gpath = out_dir / "gemini_analysis.json"
 
@@ -4058,7 +3998,7 @@ class AttackPathsGUI(tk.Tk):
         that the frontend loads.
 
         This is intentionally different from rerunning the full backend. It uses
-        parse_attack_graph_v37.py --regenerate-report so the report cannot pick up
+        parse_attack_graph_ics.py --regenerate-report so the report cannot pick up
         stale AI data from another output directory and cannot keep old embedded
         AI sections already present in the HTML.
         """
@@ -4086,6 +4026,16 @@ class AttackPathsGUI(tk.Tk):
                 "--regenerate-report",
                 "--gemini-analysis", str(gpath),
                 "--report-html", str(report_path),
+                "--tm7", self.v_tm7.get(),
+                "--type", self.v_mode.get(),
+                "--target", self.v_target.get().strip(),
+                "--boundary", self.v_boundary.get().strip(),
+                "--asset-map", self.v_asset.get(),
+                "--threat-map", self.v_threat.get(),
+                "--attack-vector-map", self.v_av.get(),
+                "--impact-map", self.v_impact.get(),
+                "--dependency-map", self.v_dep.get(),
+                "--max-depth", str(int(self.v_depth.get() or 30)),
             ]
             env = _os.environ.copy()
             env["TARA_GEMINI_ANALYSIS"] = str(gpath)
