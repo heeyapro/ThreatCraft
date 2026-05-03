@@ -1,6 +1,6 @@
 <p align="center"> 
   <!-- tool logo -->
-  <img src="asset/logo.png" width="30%">
+  <img src="asset/logo.png" width="40%">
 </p>
 
 <div align="center">
@@ -22,8 +22,7 @@
 <br/>
 
 <br>
-<img src="https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.gif" alt="Markdownify" width="100%">
-<img width="2520" height="1080" alt="Image" src="https://github.com/user-attachments/assets/ea3cccd9-7c30-48d4-8b33-b020f24b5cf2" />
+[![YouTube](https://img.shields.io/badge/YouTube-ThreatCraft%20Demo-red?logo=youtube)](https://youtu.be/d71FkS2jqmE)
 </br>
 </div>
 
