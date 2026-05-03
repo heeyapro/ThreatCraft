@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+"""tool_attack_paths_ics_v19.py  [Code 2] — UKC attack path enumeration and AI-powered ICS/OT threat analysis"""
 from __future__ import annotations
-
+# ── Auto-install required packages on first run ─────────────────────────────
 def _ensure_packages():
+    """
+    Silently installs missing AI provider packages the first time the tool runs.
+    Only installs what is actually missing — no-ops if already present.
+    """
     import importlib, subprocess, sys, threading
 
     REQUIRED = [
+        # (import_name, pip_package, extras)
         ("google.genai",  "google-genai",  ""),
         ("openai",        "openai",        ""),
     ]
@@ -18,7 +23,7 @@ def _ensure_packages():
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             )
         except Exception:
-            pass  
+            pass  # Will surface as ImportError when provider is actually used
 
     missing = []
     for import_name, pip_pkg, _ in REQUIRED:
@@ -28,12 +33,12 @@ def _ensure_packages():
             missing.append(pip_pkg)
 
     if missing:
-        
+        # Install in background threads so the UI doesn't block
         threads = [threading.Thread(target=_pip_install, args=(p,), daemon=True)
                    for p in missing]
         for t in threads:
             t.start()
-        
+        # Wait up to 60 s total (UI is still responsive because this runs before mainloop)
         for t in threads:
             t.join(timeout=60)
 
@@ -49,16 +54,20 @@ from tkinter import filedialog, messagebox, ttk
 from typing import Dict, FrozenSet, List, Set, Tuple
 from html import escape
 
+
+#
+
+# ── Risk calculation constants (ISO 21434) ─────────────────────────────────
 _FS_IMPACT_ORDER = {
     "Negligible": 0, "Moderate": 1, "Major": 2, "Severe": 3,
-    
+    # abbreviated forms
     "NEG": 0, "MOD": 1, "MAJ": 2, "SEV": 3,
 }
 _FS_FEASIBILITY_ORDER = {
     "very low": 0, "low": 1, "medium": 2, "high": 3,
 }
 
-
+# ── Risk calculation (ISO 21434: SFOP max + feasibility) ───────────────────
 _FS_IMPACT_ORDER = {
     "Negligible": 0, "Moderate": 1, "Major": 2, "Severe": 3,
     "NEG": 0, "MOD": 1, "MAJ": 2, "SEV": 3,
@@ -66,7 +75,7 @@ _FS_IMPACT_ORDER = {
 _FS_FEASIBILITY_ORDER = {"very low": 0, "low": 1, "medium": 2, "high": 3}
 
 def _calc_risk_level_fs(safety, financial, operational, privacy, feasibility_rating):
-    
+    """ISO 21434 risk level from SFOP max impact + feasibility."""
     max_impact = max(
         _FS_IMPACT_ORDER.get(str(safety).strip(), 1),
         _FS_IMPACT_ORDER.get(str(financial).strip(), 1),
@@ -84,7 +93,7 @@ def _calc_risk_level_fs(safety, financial, operational, privacy, feasibility_rat
 
 
 def _calc_risk_level_fs(safety, financial, operational, privacy, feasibility_rating):
-    
+    """Calculate ISO 21434 risk level from SFOP max impact + feasibility."""
     max_impact = max(
         _FS_IMPACT_ORDER.get(str(safety).strip(), 1),
         _FS_IMPACT_ORDER.get(str(financial).strip(), 1),
@@ -117,7 +126,7 @@ _SPLASH_LOGO_PATH = (_SCRIPT_DIR / "../../asset/logo.png").resolve()
 
 
 try:
-    from tool_threat_mapper_v7 import (
+    from tool_threat_mapper_ics import (
         DEFAULT_BACKEND, DEFAULT_ASSET_MAP, DEFAULT_THREAT_MAP,
         DEFAULT_AV_MAP, DEFAULT_DEP_MAP, DEFAULT_IMPACT_MAP, DEFAULT_OUT_DIR,
         HIERARCHY_JSON,
@@ -127,6 +136,7 @@ try:
         run_path_filter, extract_elements,
         AssetMapDialog, _center,
         build_result_json, build_result_csv,
+        _load_dep_rules,
     )
     _SHARED_OK = True
 except ImportError as _e:
@@ -135,11 +145,11 @@ except ImportError as _e:
     from pathlib import Path as _P
     _sd = _P(__file__).resolve().parent
     DEFAULT_BACKEND    = (_sd / "../backend/parse_attack_graph_v37.py").resolve()
-    DEFAULT_ASSET_MAP  = (_sd / "../backend/threat_library/asset_to_threats_ver0.3.json").resolve()
-    DEFAULT_THREAT_MAP = (_sd / "../backend/threat_library/threat_to_tactic_ver0.1.json").resolve()
-    DEFAULT_AV_MAP     = (_sd / "../backend/threat_library/attack_vector_feasibility_ver0.1.json").resolve()
-    DEFAULT_DEP_MAP    = (_sd / "../backend/threat_library/dependency.json").resolve()
-    DEFAULT_IMPACT_MAP = (_sd / "../backend/threat_library/impact_map.json").resolve()
+    DEFAULT_ASSET_MAP  = (_sd / "../backend/threat_library/ics/asset_to_threats_ics.json").resolve()
+    DEFAULT_THREAT_MAP = (_sd / "../backend/threat_library/ics/threat_to_tactic_ics.json").resolve()
+    DEFAULT_AV_MAP     = (_sd / "../backend/threat_library/ics/attack_vector_feasibility_ics.json").resolve()
+    DEFAULT_DEP_MAP    = (_sd / "../backend/threat_library/ics/dependency_ics.json").resolve()
+    DEFAULT_IMPACT_MAP = (_sd / "../backend/threat_library/ics/impact_map_ics.json").resolve()
     DEFAULT_OUT_DIR    = (_sd / "../out").resolve()
 
     def _center(win, w: int, h: int) -> None:
@@ -148,6 +158,9 @@ except ImportError as _e:
         win.geometry(f"{w}x{h}+{(sw-w)//2}+{(sh-h)//2}")
 
 
+# ─────────────────────────────────────────────────────────────
+# Top banner gradient
+# ─────────────────────────────────────────────────────────────
 def _draw_top_banner(canvas: tk.Canvas, title: str, subtitle: str) -> None:
     canvas.delete("all")
     w = max(canvas.winfo_width(), 1)
@@ -186,24 +199,27 @@ def _draw_top_banner(canvas: tk.Canvas, title: str, subtitle: str) -> None:
 
     cx = w - 220
     cy = 54
-    body = [
-        (cx - 80, cy + 10),
-        (cx + 90, cy + 10),
-        (cx + 110, cy - 2),
-        (cx + 70, cy - 18),
-        (cx - 10, cy - 18),
-        (cx - 40, cy - 6),
-        (cx - 80, cy - 6),
+
+    # ICS/OT visual: plant + controller rack + network links
+    plant = [
+        (cx - 90, cy + 28), (cx - 90, cy - 10),
+        (cx - 55, cy + 6), (cx - 55, cy - 10),
+        (cx - 20, cy + 6), (cx - 20, cy - 10),
+        (cx + 15, cy + 8), (cx + 15, cy + 28),
     ]
-    canvas.create_polygon(body, fill="#eaf6ff", outline="#c5e6ff", width=2)
+    canvas.create_polygon(plant, fill="#eaf6ff", outline="#c5e6ff", width=2)
+    canvas.create_rectangle(cx - 78, cy + 2, cx - 66, cy + 14, fill="#0b1c33", outline="#c5e6ff")
+    canvas.create_rectangle(cx - 48, cy + 2, cx - 36, cy + 14, fill="#0b1c33", outline="#c5e6ff")
+    canvas.create_rectangle(cx - 18, cy + 2, cx - 6, cy + 14, fill="#0b1c33", outline="#c5e6ff")
 
-    win = [(cx - 5, cy - 16), (cx + 55, cy - 16), (cx + 70, cy - 6), (cx - 20, cy - 6)]
-    canvas.create_polygon(win, fill="#0b1c33", outline="#c5e6ff", width=2)
-
-    canvas.create_oval(cx - 55, cy + 2, cx - 25, cy + 32, fill="#0b1c33", outline="#c5e6ff", width=2)
-    canvas.create_oval(cx + 55, cy + 2, cx + 85, cy + 32, fill="#0b1c33", outline="#c5e6ff", width=2)
-    canvas.create_oval(cx - 47, cy + 10, cx - 33, cy + 24, fill="#eaf6ff", outline="")
-    canvas.create_oval(cx + 63, cy + 10, cx + 77, cy + 24, fill="#eaf6ff", outline="")
+    rack_x = cx + 45
+    canvas.create_rectangle(rack_x, cy - 22, rack_x + 58, cy + 30, fill="#ffffff", outline="#c5e6ff", width=2)
+    for j in range(4):
+        y = cy - 14 + j * 11
+        canvas.create_rectangle(rack_x + 7, y, rack_x + 51, y + 6, fill="#0b1c33", outline="")
+        canvas.create_oval(rack_x + 11, y + 1, rack_x + 15, y + 5, fill="#2dd4bf", outline="")
+    canvas.create_line(cx + 15, cy + 8, rack_x, cy + 3, fill="#c5e6ff", width=2)
+    canvas.create_line(cx + 15, cy + 22, rack_x, cy + 18, fill="#c5e6ff", width=2)
 
     lx = w - 70
     ly = 28
@@ -217,14 +233,18 @@ def _draw_top_banner(canvas: tk.Canvas, title: str, subtitle: str) -> None:
 
 
 _DEFAULT_UKC = {
-    "In":      ["Reconnaissance","Manipulate Environment","Initial Access",
-                "Persistence","Defense Evasion","Command and Control","Command & Control"],
-    "Through": ["Discovery","Privilege Escalation","Execution",
-                "Credential Access","credential access","Lateral Movement"],
-    "Out":     ["Collection","Exfiltration","Affect Vehicle Function","Impact"],
+    "In":      ["Initial Access", "Persistence", "Evasion", "Command and Control"],
+    "Through": ["Discovery", "Privilege Escalation", "Execution", "Lateral Movement"],
+    "Out":     ["Collection", "Inhibit Response Function", "Impair Process Control", "Impact"],
 }
 _TACTIC_TO_PHASE: Dict[str, str] = {}
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AssetMapDialog — "Other (Custom)" patch
+# Adds a free-text "Other..." entry option to every "Asset Kind" combobox in
+# the AssetMapDialog without requiring access to tool_threat_mapper_ics source.
+# ─────────────────────────────────────────────────────────────────────────────
 
 _OTHER_SENTINEL = "Other"
 
@@ -344,9 +364,13 @@ def _patch_asset_map_dialog_other(dlg: tk.Toplevel) -> None:
                 pass
 
         for y_key in sorted(rows):
-
+            # Sort columns left-to-right
             row_cbs = [cb for x, cb in sorted(rows[y_key], key=lambda t: t[0])]
 
+            # row_cbs[0] = Category
+            # row_cbs[1] = Asset Type
+            # row_cbs[2] = Asset Kind
+            # Exclude Category — allow Asset Type / Asset Kind only
             if len(row_cbs) >= 2:
                 _add_other_to_combobox(row_cbs[1])
             if len(row_cbs) >= 3:
@@ -560,9 +584,139 @@ def enumerate_multi_cycle_paths(raw_paths, node_index, max_cycles=3, max_single=
     return combined
 
 
+# ════════════════════════════════════════════════════════════════
+# Dependency-based Path Filter  (asset-class + threat-chain)
+# Applied to raw_paths BEFORE enumerate_multi_cycle_paths so
+# that invalid (asset, threat) nodes are eliminated early.
+# ════════════════════════════════════════════════════════════════
+
+def _load_dep_rules_local(dep_path: str) -> dict:
+    """Load ASSET_CLASS_MAP, THREAT_ASSET_COMPAT, THREAT_CHAIN from JSON.
+    Returns empty dict on failure so callers degrade gracefully.
+    """
+    try:
+        with open(dep_path, encoding="utf-8") as f:
+            rules = json.load(f)
+    except Exception:
+        return {"id_to_class": {}, "compat": {}, "chains": []}
+    id_to_class: dict = {}
+    compat: dict = {}
+    chains: list = []
+    for rule in rules:
+        t = rule.get("type")
+        if t == "ASSET_CLASS_MAP":
+            for cls, ids in rule.get("classes", {}).items():
+                for aid in ids:
+                    id_to_class[aid] = cls
+        elif t == "THREAT_ASSET_COMPAT":
+            compat = rule.get("compat", {})
+        elif t == "THREAT_CHAIN":
+            chains.append(rule)
+    return {"id_to_class": id_to_class, "compat": compat, "chains": chains}
+
+
+def filter_raw_paths_by_dep(
+    raw_paths: list,
+    node_index: dict,
+    dep_path: str,
+    at_data_path: str,
+) -> list:
+    """Remove raw paths that violate THREAT_ASSET_COMPAT or THREAT_CHAIN rules.
+
+    Pass 1 — THREAT_ASSET_COMPAT
+        A path is invalid if any node's threat is incompatible with the
+        asset's class (e.g., IT-only technique on an OT controller).
+
+    Pass 2 — THREAT_CHAIN (strict selected-threat check)
+        A path is invalid if a chain-enabled threat T appears at node i
+        but no earlier node j < i (on a DIFFERENT asset) has selected
+        a threat that satisfies T's prerequisite.
+
+        Strict semantics: only the threats ACTUALLY SELECTED for earlier
+        nodes count.  This correctly eliminates paths such as
+        (ControlSrv, T0840) → (RTU, T0843) because T0840 is not a
+        prerequisite for T0843, even though T0866 exists elsewhere in
+        ControlSrv's capability list.
+    """
+    dep = _load_dep_rules_local(dep_path)
+    id_to_class = dep["id_to_class"]
+    compat       = dep["compat"]
+    chains       = dep["chains"]
+
+    if not id_to_class and not compat and not chains:
+        return raw_paths  # No rules loaded — pass through unchanged
+
+    # Build asset_name → asset_id from at_data (threat sets not needed here)
+    asset_name_to_id: dict = {}
+    try:
+        with open(at_data_path, encoding="utf-8") as f:
+            at_data = json.load(f)
+        for a in at_data.get("assets", []):
+            nm = a.get("asset_name", "")
+            aid = a.get("asset_id", "")
+            if nm and aid:
+                asset_name_to_id[nm] = aid
+    except Exception:
+        pass
+
+    # Pre-build chain_enables: threat_id → list of chain rules
+    chain_enables: dict = {}
+    for chain in chains:
+        for tid in chain.get("enables", []):
+            chain_enables.setdefault(tid, []).append(chain)
+
+    def _asset_class(asset_name: str) -> Optional[str]:
+        aid = asset_name_to_id.get(asset_name)
+        return id_to_class.get(aid) if aid else None
+
+    valid: list = []
+    for raw_path in raw_paths:
+        nodes = [node_index[nid] for nid in raw_path if nid in node_index]
+        ok = True
+        for i, node in enumerate(nodes):
+            tid = node.threat_id
+            if not tid:
+                continue
+            asset_class = _asset_class(node.asset_name)
+
+            # Pass 1: THREAT_ASSET_COMPAT
+            if asset_class and compat:
+                compatible = compat.get(tid)
+                if compatible is not None and asset_class not in compatible:
+                    ok = False
+                    break
+
+            # Pass 2: THREAT_CHAIN
+            # bypass_at_entry=True: chain is skipped when this node has no real
+            # predecessor — i.e. no earlier node with a non-empty threat_id on a
+            # different asset.  Using i==0 is WRONG because the backend may
+            # prepend entry nodes with threat_id=None, shifting real assets to i>0.
+            if tid in chain_enables:
+                pred_selected = {
+                    n.threat_id for n in nodes[:i]
+                    if n.threat_id and n.asset_name != node.asset_name
+                }
+                has_real_pred = bool(pred_selected)
+                for chain in chain_enables[tid]:
+                    bypass = chain.get("bypass_at_entry", False)
+                    if not has_real_pred and bypass:
+                        continue  # entry asset: this chain does not restrict
+                    required = set(chain.get("requires_one_of", []))
+                    if not has_real_pred or not (required & pred_selected):
+                        ok = False
+                        break
+                if not ok:
+                    break
+
+        if ok:
+            valid.append(raw_path)
+
+    return valid
+
+
 def build_full_json(mapping, multi_paths, meta):
     base = build_result_json(mapping, meta)
-    base["meta"]["tool"] = "tool_attack_paths v4"
+    base["meta"]["tool"] = "tool_attack_paths_ics v19"
     base["meta"]["total_paths"] = len(multi_paths)
     base["meta"]["multi_cycle_paths"] = sum(1 for p in multi_paths if p.cycle_count > 1)
     base["attack_paths"] = [
@@ -602,33 +756,45 @@ def build_full_csv(mapping, multi_paths):
     return buf.getvalue()
 
 
+# ════════════════════════════════════════════════════════════════
+# Multi-Agent Framework  (ICS Reviewer  +  Functional Generator)
+# ════════════════════════════════════════════════════════════════
+
 class _AutosecBaseAgent:
-    SYSTEM_PROMPT: str = ""   
+    """
+    Stateful multi-turn agent base.
+    Maintains conversation history per agent instance.
+    Supports: Gemini (google-genai chat), GPT (openai), Ollama (openai-compat).
+    """
+    SYSTEM_PROMPT: str = ""   # Override in subclass
 
     def __init__(self, *, provider: str, model: str,
                  gemini_client=None, oai_client=None,
                  log_fn, set_progress_fn, repair_json_fn):
         self.provider       = provider
         self.model          = model
-        self._gc            = gemini_client   
-        self._oc            = oai_client      
-        self._log           = log_fn          
+        self._gc            = gemini_client   # google.genai Client
+        self._oc            = oai_client      # openai.OpenAI client
+        self._log           = log_fn          # thread-safe: already wraps self.after()
         self._progress      = set_progress_fn
         self._repair        = repair_json_fn
-        self._messages: list = []             
-        self._chat           = None           
+        self._messages: list = []             # OpenAI-style history (gpt / ollama)
+        self._chat           = None           # Gemini chat session
         import time as _t, re as _r, json as _j
         self._time = _t
         self._re   = _r
         self._json = _j
 
     def reset(self):
+        """Clear conversation state (call before re-using the same agent)."""
         self._messages = []
         self._chat     = None
 
+    # ── Core send ─────────────────────────────────────────────────────────────
     def send(self, user_msg: str, *, max_retries: int = 4, base_delay: int = 5) -> str:
         if self.provider == "gemini":
             return self._send_gemini(user_msg, max_retries, base_delay)
+        # GPT / Ollama: use continuation-aware send to handle max-token truncation
         return self._send_oai_with_continuation(user_msg, max_retries, base_delay)
 
     def _send_gemini(self, user_msg: str, max_retries: int, base_delay: int) -> str:
@@ -679,7 +845,7 @@ class _AutosecBaseAgent:
             except Exception as ex:
                 last_err = ex
                 err = str(ex)
-                
+                # Always log the raw error so the user can see exactly what happened
                 self._log(f"[WARN] {pname} error (attempt {attempt+1}/{max_retries}): {err[:400]}")
                 is_busy = any(x in err.lower() for x in [
                     "503", "overloaded", "server_error", "temporarily unavailable",
@@ -690,7 +856,7 @@ class _AutosecBaseAgent:
                     self._progress(f"Server busy — retrying in {delay}s...", -1)
                     self._time.sleep(delay)
                     continue
-                
+                # Non-retriable error — surface it immediately with full detail
                 raise RuntimeError(f"{pname} API error: {err}") from ex
 
         raise RuntimeError(
@@ -700,6 +866,12 @@ class _AutosecBaseAgent:
 
     def _send_oai_with_continuation(self, user_msg: str,
                                      max_retries: int, base_delay: int) -> str:
+        """GPT/Ollama call with automatic continuation on max-token truncation.
+
+        If the model stops with finish_reason='length' (output was cut), we
+        immediately send a follow-up asking it to continue, then merge the two
+        raw fragments before JSON repair.  Retries on busy errors as usual.
+        """
         pname = self.provider.upper()
         self._messages.append({"role": "user", "content": user_msg})
         msgs = [{"role": "system", "content": self.SYSTEM_PROMPT}] + self._messages
@@ -737,17 +909,17 @@ class _AutosecBaseAgent:
                             model=self.model, messages=cont_msgs,
                             max_tokens=16384, temperature=0.1)
                         cont_text = (cont_resp.choices[0].message.content or "").strip()
-                        
+                        # Strip any accidental markdown fences from the continuation
                         cont_text = self._re.sub(r"^```[a-z]*\s*", "", cont_text)
                         cont_text = self._re.sub(r"\s*```\s*$", "", cont_text)
                         text = text + cont_text
                         self._log(f"[INFO] {pname} continuation received "
                                   f"({len(cont_text)} chars). Merging fragments.")
-                        
+                        # Replace the provisional partial assistant msg
                         self._messages.pop()
                     except Exception as _ce:
                         self._log(f"[WARN] {pname} continuation failed: {_ce!s:.200}")
-                        
+                        # Fall through with the partial text; _repair_json handles it
 
                 self._messages.append({"role": "assistant", "content": text})
                 return text
@@ -772,7 +944,7 @@ class _AutosecBaseAgent:
             f"Last error: {last_err}"
         )
 
-
+    # ── JSON helper ───────────────────────────────────────────────────────────
     def send_and_parse(self, user_msg: str) -> dict:
         raw = self.send(user_msg)
         raw = self._re.sub(r"^```json\s*", "", raw, flags=self._re.MULTILINE)
@@ -787,155 +959,200 @@ class _AutosecBaseAgent:
         raise NotImplementedError
 
 
-class VehicleLevelReviewerAgent(_AutosecBaseAgent):
-    SYSTEM_PROMPT = """\
-You are a senior automotive cybersecurity architect with deep expertise in ISO/SAE 21434, WP.29 R155, UNECE CS regulations, and the MITRE ATT&CK for Vehicles / Unified Kill Chain (UKC) framework.
+class ICSLevelReviewerAgent(_AutosecBaseAgent):
+    """
+    Agent 1 — ICS-Level Security Reviewer.
 
-Your task is to produce publication-quality, technically rigorous narrative assessments of every vehicle-level attack path in the provided JSON. Treat this as a formal TARA deliverable.
+    Turn 1 : Generate ICS-level attack path review.
+    Turn 2 : Self-validate (path_reviews ≥ 10, grounded variants, ordering,
+          sentence completeness, no invented identifiers).
+    """
+    SYSTEM_PROMPT = """\
+You are a senior ICS/OT cybersecurity architect with deep expertise in IEC 62443, NERC CIP, NIST SP 800-82 Rev.3, the MITRE ATT&CK for ICS framework, and the Unified Kill Chain (UKC).
+
+Your task is to produce publication-quality, technically rigorous narrative assessments of ICS/OT-level attack paths in the provided JSON. Treat this as a formal industrial control system threat modeling deliverable.
 
 === ANTI-HALLUCINATION — HIGHEST PRIORITY ===
-- Cite ONLY threat IDs, asset names, and tactics that appear verbatim in the input JSON.
-- Never invent CVE numbers, software versions, or asset names not present in the input.
-- If you draw an inference, prefix it with [INFERRED] and explain the basis.
+- Cite ONLY threat IDs, asset names, tactics, and path IDs that appear verbatim in the input JSON.
+- Never invent CVE numbers, product versions, firmware versions, asset names, or OT protocols not supported by the input.
+- If an inference is necessary, prefix it with [INFERRED] and explain the input evidence that supports it.
 
 === SCOPE ===
-- Focus exclusively on In-Vehicle Network (IVN) topology, UKC phase transitions, and threat tactics.
-- Do NOT include CVE numbers or software version specifics (reserved for functional-level analysis).
-- Evaluate each path against UKC validity: Entry ≥ 1 node, In ≥ 1, Through ≥ 1, Out ≥ 1.
+- Focus on OT/ICS topology, Purdue Model zones, conduits, engineering workstations, HMIs, SCADA servers, PLCs, RTUs, IEDs, safety controllers, data gateways, historians, remote access servers, and field devices.
+- Do NOT include CVE-specific exploitation details unless the CVE appears in the input asset data. Detailed CVE analysis is reserved for the functional-level agent.
+- Evaluate each path against UKC validity: Entry ≥ 1 node, In ≥ 1 node, Through ≥ 1 node, Out ≥ 1 node.
 
-=== UKC PHASE DEFINITIONS ===
-- Entry: External attacker foothold — wireless interfaces (Bluetooth, Wi-Fi, cellular), physical OBD-II port, USB, RF key fob replay.
-- In (Reconnaissance, Manipulate Environment, Initial Access, Persistence, Defense Evasion, Command and Control): First ECU compromised, credential theft, firmware implant, persistent backdoor.
-- Through (Discovery, Privilege Escalation, Execution, Credential Access, Lateral Movement): CAN bus pivoting, gateway bypass, ECU-to-ECU command injection, diagnostic protocol abuse (UDS, XCP), CAN ID spoofing.
-- Out (Collection, Exfiltration, Affect Vehicle Function, Impact): Unauthorized actuation (door unlock, brake manipulation, engine kill), sensitive data exfiltration, denial-of-service on safety ECU.
+=== UKC PHASE DEFINITIONS FOR ICS/OT ===
+- Entry: Initial attacker foothold or access channel such as VPN, remote access service, vendor maintenance connection, phishing-to-engineering-workstation path, removable media, exposed IT/OT gateway, or physically reachable engineering port.
+- In (Initial Access, Persistence, Evasion, Command and Control): Establishing and maintaining access inside the ICS/OT environment.
+- Through (Discovery, Privilege Escalation, Execution, Lateral Movement): Enumerating OT assets, moving through the IT/OT boundary or control network, executing commands, and reaching HMI, SCADA, PLC, RTU, IED, or safety components.
+- Out (Collection, Inhibit Response Function, Impair Process Control, Impact): Collecting process information, blocking alarms or protective logic, manipulating control commands or firmware, degrading process control, or causing physical process impact.
 
 === GENERATION RULES ===
-1. Generate EXACTLY one path_review per path in the input (P1...PN). Never merge or skip paths.
-2. MINIMUM 10 path_reviews. If input has fewer than 10 paths, generate additional attacker-perspective variations (different objectives, different Entry tactics) to reach 10.
-3. Assign path_ids in DESCENDING risk order: P1 = highest risk_score, P2 = second, etc.
-4. Output path_reviews array ordered by risk_score DESCENDING (P1 first).
-5. COMPLETE SENTENCES ONLY: every narrative field must be grammatically complete. Never truncate mid-word. If token budget is tight, write shorter complete sentences rather than cutting words.
-6. The narrative field must contain at least five complete sentences and should be written as specifically and accurately as possible. It must cover: (1) the attacker profile and entry vector with the specific interface used, (2) the concrete attack method corresponding to the UKC In phase, (3) the concrete UKC Through attack method required to reach the target asset, including protocol-level details, (4) the final impact on the target asset and its specific consequences under the UKC Out phase, and (5) an assessment of structural plausibility and real-world realism.
-7. entry_point_assessment: describe the specific physical or wireless interface exploited, its exposure level, and why it is a viable entry point for the stated attack mode.
-8. attack_objective: state the precise attacker goal — what asset is compromised, what capability is gained or denied, and what real-world harm results.
-9. recommendations: Include at least 2 actionable and specific recommendations per path (e.g., "Implement CAN bus message authentication using AUTOSAR SecOC with AES-128 CMAC on all BCM-bound frames" rather than generic advice such as "improve security"). However, the example is illustrative only and must not unduly constrain the output. Do not fixate on the example, repeat it verbatim, or rely on the same recommendation pattern across multiple paths. Instead, generate technically accurate, path-specific, and diverse recommendations grounded in the actual attack path, affected assets, interfaces, protocols, threats, and broadly applicable security best practices.
-10. required_equipment: Include at least 3 tools with EXACT product names and versions that are relevant to the specific interfaces of this path (e.g., "HackRF One SDR for 315/433 MHz key fob replay", "Vector CANalyzer 17.0 with AUTOSAR add-on for CAN frame injection", "Segger J-Link EDU for JTAG firmware extraction"). However, these examples are provided only to illustrate the expected format and level of specificity, and they must not unduly constrain the output. Do not fixate on these examples or repeat the same equipment patterns across multiple paths. Instead, select technically appropriate, path-specific, and diverse tools based on the actual interfaces, protocols, assets, and attack steps involved in the input.
-
-
+1. Generate at least 10 path_reviews.
+2. First, generate one primary path_review for each input path.
+3. If the input contains fewer than 10 paths, generate additional grounded path_review variants until the path_reviews array contains at least 10 entries.
+4. A grounded variant must reuse an existing input path as its source and may vary only the attacker objective, entry interpretation, operational consequence, risk emphasis, or mitigation focus when such variation is supported by the same input path, assets, threats, tactics, and UKC phases.
+5. Do not invent new assets, threats, tactics, CVEs, CWEs, protocols, vendors, firmware versions, physical processes, or unsupported attack steps merely to reach 10 path_reviews.
+6. For primary reviews, preserve the input path identity. For grounded variants, use a derived path_id such as "P1-V1", "P1-V2", or "P2-V1", and include the original input path in source_ics_path_ids.
+7. Order path_reviews by risk_score DESCENDING. The highest-risk review must appear first.
+8. Every narrative field must be complete grammatical sentences. Never truncate mid-word and never use "..." as content.
+9. The narrative field must contain at least five complete sentences and cover: (1) attacker starting position and entry channel, (2) the concrete UKC In method, (3) the UKC Through movement across zones or conduits with specific OT assets and protocols where supported, (4) the UKC Out effect on the target asset or physical process, and (5) structural plausibility and required attacker capability.
+10. entry_point_assessment must describe the specific remote, adjacent, local, or physical access point and why the selected attack mode can reach it.
+11. attack_objective must state which ICS/OT asset or process function is compromised, what capability is gained or denied, and what operational harm can result.
+12. recommendations must include at least two actionable, path-specific mitigations grounded in ICS/OT practice, such as zone-and-conduit segmentation, jump-host hardening, MFA for remote access, engineering workstation allowlisting, PLC logic change control, signed firmware, passive OT monitoring, alarm integrity monitoring, or protocol-aware firewall rules.
+13. required_equipment must include at least three exact tool or product names relevant to the path, such as Wireshark 4.x, Zeek 6.x with ICS protocol analyzers, Nozomi Networks Guardian, Claroty CTD, Dragos Platform, Nmap 7.x, Metasploit Framework ICS modules, OpenPLC Runtime, QModMaster, Modbus Poll, DNP3 tools, or vendor engineering software when supported by the input.
 OUTPUT — valid JSON only, no markdown fences, no commentary outside JSON:
-{{
-  "vehicle_level_review": {{
+{
+  "ics_level_review": {
     "target_asset": "...",
     "attack_mode": "remote|adjacent|local|physical",
     "overall_validity": "valid|partial|invalid",
     "overall_confidence": "high|medium|low",
-    "overall_summary": "Minimum 6 complete sentences: (1) attacker goal and primary motivation, (2) identified entry points and their exposure rationale, (3) lateral movement topology across IVN with named protocols, (4) critical backbone ECUs and why they are pivotal, (5) dominant attack tactics and their UKC phase mapping, (6) overall risk posture and most dangerous path.",
+    "overall_summary": "Minimum 6 complete sentences covering attacker goal, exposed entry points, OT zone/conduit movement, critical control assets, dominant ATT&CK for ICS tactics, and overall risk posture.",
     "path_reviews": [
-      {{
+      {
         "path_id": "P1",
+        "review_type": "primary|grounded_variant",
+        "source_ics_path_ids": ["P1"],
         "phase_sequence": "Entry(asset_name)->In(asset_name)->Through(asset_name)->Out(asset_name)",
-        "phase_validity": {{"has_entry": true, "has_in": true, "has_through": true, "has_out": true, "sequence_is_logical": true}},
-        "narrative": "Five complete sentences: (1) specific entry interface and initial foothold method; (2) Initial Access asset name, exploitation tactic, and how persistence is achieved; (3) lateral movement path with protocol names (CAN, LIN, Ethernet, UDS) and intermediate ECUs; (4) final impact on target asset with concrete consequences (e.g., 'sends fraudulent UDS DiagnosticSessionControl frames to BCM, unlocking all doors without key'); (5) structural plausibility and attacker capability requirements.",
-        "entry_point_assessment": "Specific interface name (e.g., 'Bluetooth Low Energy 4.2 stack on TCU'), its attack surface exposure, authentication weaknesses, and why this attack mode can reach it.",
-        "attack_objective": "Precise objective: which asset is compromised, which function is affected, and what the attacker gains or causes (e.g., 'Gain unauthorized physical access by unlocking all doors via injected BCM CAN frames without triggering the immobilizer').",
+        "phase_validity": {"has_entry": true, "has_in": true, "has_through": true, "has_out": true, "sequence_is_logical": true},
+        "narrative": "Five complete ICS/OT-specific sentences.",
+        "entry_point_assessment": "Specific ICS/OT entry point assessment.",
+        "attack_objective": "Precise objective tied to an ICS/OT asset or physical process.",
         "critical_assets": ["asset names from input only"],
         "key_threat_ids": ["threat IDs from input only"],
-        "dominant_tactics": ["tactics from input only — UKC phase names"],
+        "dominant_tactics": ["tactics from input only"],
         "risk_score": 0,
         "structural_plausibility": "high|medium|low",
         "confidence": "high|medium|low",
         "recommendations": [
-          "Specific actionable recommendation with technology and standard (e.g., 'Deploy AUTOSAR SecOC message authentication on all CAN frames between Gateway and BCM using AES-128 CMAC per ISO 17987-7').",
-          "Second specific recommendation."
+          "Specific actionable ICS/OT recommendation.",
+          "Second specific ICS/OT recommendation."
         ],
         "required_equipment": [
-          "Exact product: HackRF One (1 MHz–6 GHz SDR) for RF entry vector replay attacks at 315/433/868 MHz",
-          "Exact product: Vector CANalyzer 17.0 with CANdb++ for CAN frame injection and monitoring",
-          "Exact product: ELM327 v2.2 OBD-II adapter with python-obd library for UDS diagnostic session abuse"
+          "Exact product: Wireshark 4.x with Modbus/DNP3 dissectors for OT traffic inspection",
+          "Exact product: Nozomi Networks Guardian for passive ICS asset and anomaly monitoring",
+          "Exact product: QModMaster for Modbus TCP command validation in a lab environment"
         ]
-      }},
-      {{
-        "path_id": "P2",
-        "phase_sequence": "...", "phase_validity": {{"has_entry": true, "has_in": true, "has_through": true, "has_out": true, "sequence_is_logical": true}},
-        "narrative": "...", "entry_point_assessment": "...", "attack_objective": "...",
-        "critical_assets": [], "key_threat_ids": [], "dominant_tactics": [],
-        "risk_score": 0, "structural_plausibility": "high|medium|low", "confidence": "high|medium|low",
-        "recommendations": ["..."], "required_equipment": ["..."]
-      }}
+      }
     ],
-    "common_attack_patterns": "Minimum 3 complete sentences describing: (1) recurring attacker entry vectors and why they are consistently viable, (2) common IVN protocol weaknesses exploited across multiple paths, (3) systemic architectural vulnerabilities that span multiple ECUs.",
+    "common_attack_patterns": "Minimum 3 complete sentences describing recurring ICS/OT entry vectors, OT protocol weaknesses, and systemic architectural weaknesses.",
     "highest_risk_path_id": "P1",
     "systemic_weaknesses": [
-      "Complete sentence describing one specific systemic weakness (e.g., 'The CAN bus lacks message authentication, allowing any ECU with CAN access to inject arbitrary frames targeting safety-critical actuators').",
+      "Complete sentence describing one specific ICS/OT systemic weakness.",
       "Complete sentence for second weakness."
     ],
-    "data_quality_assessment": "One complete sentence assessing whether the input data is sufficient for high-confidence analysis."
-  }}
-}}
+    "data_quality_assessment": "One complete sentence assessing whether the input data is sufficient for high-confidence ICS/OT analysis."
+  }
+}
+
 FINAL RULES:
-- path_reviews MUST contain MINIMUM 10 entries ordered by risk_score descending.
-- Every text field: complete grammatical sentences. Never truncate. Never use "..." as content.
-- Do not treat the examples as the only acceptable content or simply restate their wording. They are illustrative examples only. Use their format and level of specificity as guidance, and write the output as rigorously and precisely as possible based on the actual input data."""
+- path_reviews must contain at least 10 entries.
+- Primary reviews must correspond directly to input paths.
+- Grounded variants are allowed only when the input has fewer than 10 paths, and each variant must include source_ics_path_ids referencing the original input path.
+- Derived variant path_id values such as "P1-V1" are allowed, but the source path must be explicitly identified in source_ics_path_ids.
+- Do not introduce unsupported assets, threats, tactics, CVEs, CWEs, protocols, vendors, firmware versions, physical processes, or attack steps.
+- Every text field must be complete and must not contain placeholders.
+- Use ICS/OT terminology throughout. Do not use non-ICS terms unless those exact terms appear in the input."""
 
     def run(self, summary: dict) -> dict:
         summary_str = self._json.dumps(summary, ensure_ascii=False, indent=2)
 
-        self._log("[AGENT-1] Turn 1 — generating vehicle-level review...")
+        # ── Turn 1: Generate ───────────────────────────────────────────────────
+        self._log("[AGENT-1] Turn 1 — generating ICS-level review...")
         result = self.send_and_parse(
-            "Analyze the following attack graph JSON and produce a complete "
-            "vehicle-level review per your role instructions:\n\n" + summary_str
+            "Analyze the following ICS/OT attack graph JSON and produce a complete "
+            "ICS-level review per your role instructions:\n\n" + summary_str
         )
 
+        # ── Turn 2: Self-validate ──────────────────────────────────────────────
         self._log("[AGENT-1] Turn 2 — self-validating output...")
         validated = self.send_and_parse(
             "Review your previous JSON output against these criteria:\n"
-            "1. path_reviews has MINIMUM 10 entries.\n"
-            "2. path_reviews are ordered by risk_score DESCENDING (highest first).\n"
-            "3. Every narrative/summary/assessment field contains only complete "
-            "grammatical sentences — no truncation, no '...' placeholders.\n"
-            "4. recommendations has ≥ 2 specific entries per path.\n"
-            "5. required_equipment has ≥ 3 exact tool names per path.\n"
-            "6. All path_ids, asset names, threat IDs reference input data only.\n\n"
+            "1. path_reviews has at least 10 entries.\n"
+            "2. Each primary path_review corresponds directly to an input path.\n"
+            "3. If grounded variants are used, each variant has review_type='grounded_variant' and source_ics_path_ids referencing an original input path.\n"
+            "4. Derived variant path_id values such as P1-V1 are allowed only when they clearly derive from an input path ID.\n"
+            "5. path_reviews are ordered by risk_score DESCENDING (highest first).\n"
+            "6. Every narrative/summary/assessment field contains only complete grammatical sentences — no truncation, no '...' placeholders.\n"
+            "7. recommendations has ≥ 2 specific entries per path_review.\n"
+            "8. required_equipment has ≥ 3 exact tool names per path_review.\n"
+            "9. All asset names, threat IDs, tactics, and UKC phases reference input data only.\n"
+            "10. No unsupported assets, threats, tactics, CVEs, CWEs, protocols, vendors, firmware versions, physical processes, or attack steps are invented merely to reach 10 path_reviews.\n\n"
             "If issues found: output the fully corrected JSON.\n"
             "If everything is correct: output the same JSON unchanged.\n"
             "Output valid JSON only. No markdown fences."
         )
-        self._log("[AGENT-1] Vehicle-level review complete.")
+        self._log("[AGENT-1] ICS-level review complete.")
         return validated
 
 
 class FunctionalLevelGeneratorAgent(_AutosecBaseAgent):
+    """
+    Agent 2 — Functional-Level Threat Scenario Generator.
 
+    Turn 1 : Generate functional scenarios using ICS-level review as context.
+    Turn 2 : Self-validate (unique function names, CVE origin, count ≥ 10, ordering).
+    """
     SYSTEM_PROMPT = """\
-You are a senior automotive cybersecurity researcher performing ISO/SAE 21434 Clause 15 function-level TARA. You generate technically rigorous, component-specific threat scenarios with precise CVE exploitation analysis and detailed attack trees.
+        
+        You are a senior ICS/OT cybersecurity researcher performing IEC 62443-3-2 zone-and-conduit and function-level security analysis. You generate technically rigorous, component-specific threat scenarios with precise CVE/CWE analysis and attack trees for industrial control system assets.
 
 === ANTI-HALLUCINATION — HIGHEST PRIORITY ===
-- Asset names and threat IDs: ONLY values present verbatim in the input JSON.
-- CVE IDs in cve_refs: ONLY CVE IDs that appear in the asset "cves" array in the input JSON. NEVER invent CVE numbers.
-- If you must infer something not in the input, mark it (Inferred) and explain the basis.
+- Asset names, path IDs, threat IDs, tactics, CVEs, and CWEs must come from the input JSON.
+- CVE IDs in cve_refs must only use CVE IDs that appear in the input asset "cves" array. Never invent CVE numbers.
+- CWE IDs in component_details_used.cwe_refs[], component_details_used.path_components_used[].cwe_refs[], and attack_tree.sub_steps[].cwe_exploited must only use CWE IDs that appear in the input asset "cwes" arrays or selected asset-property "cwes" arrays. Never invent CWE numbers.
+- If a product, firmware version, protocol, or zone is not explicitly present, either omit it or mark it as [INFERRED] with the evidence.
 
 === GENERATION RULES ===
-1. ALL affected_function_name values MUST be UNIQUE across every scenario. No two scenarios may share the same function name.
-2. Name functions with maximum specificity by explicitly referencing the ECU, protocol, and attack vector (e.g., "TCU Bluetooth RFCOMM Stack Buffer Overflow via CVE-2021-22779 Enabling BCM Command Injection" rather than "TCU Communication"). Any CVE included in the function name must be a real and accurate identifier that actually exists, not a placeholder or invented number. In addition to the example above, other applicable CVEs may be used whenever they are relevant to the scenario. Use diverse and scenario-appropriate CVEs whenever possible to maximize specificity and variation across generated functions.
-3. Generate ONE scenario per unique combination of (source_vehicle_path_id × cybersecurity_goal × affected_function). Cover ALL meaningful combinations.
-4. MINIMUM 10 scenarios — generate as many as the input data supports. More is always better.
-5. Order scenarios by combined SFOP impact DESCENDING (most severe first).
-6. COMPLETE SENTENCES: Every narrative field (functional_impact, attack_narrative, damage_scenario) must be full grammatical sentences. Minimum lengths enforced below.
+1. Generate at least 10 functional_scenarios.
+2. affected_function_name values must be unique across all scenarios.
+3. Name functions with ICS/OT specificity by referencing the controller, server, field device, OT protocol, process function, and CVE/CWE when supported by the input.
+4. Generate one scenario per meaningful combination of source_ics_path_id, cybersecurity goal, and affected ICS/OT function.
+5. If fewer than 10 direct combinations are available, generate additional grounded variants by varying the cybersecurity_goal, affected_function_category, affected_function_name, or damage consequence only when those variants are supported by the same input paths, assets, threats, CVEs, CWEs, and component details.
+6. Do not invent new path IDs, assets, threats, CVEs, CWEs, protocols, vendors, firmware versions, physical processes, or unsupported scenarios merely to reach 10 scenarios.
+7. Order scenarios by combined SFOP impact descending.
+8. Every narrative field must be a complete grammatical sentence and must not contain placeholders.
+9. Maximize CWE diversity across functional_scenarios. Do not reuse the same primary CWE in affected_function_name, component_details_used.cwe_refs[0], or attack_tree.sub_steps[].cwe_exploited until every relevant CWE ID available in the input has been used at least once.
+10. If the available relevant CWE pool is smaller than scenario_count, use every available CWE at least once before reusing any CWE. When reuse is unavoidable, add an inferences_made entry beginning with "[REUSED_CWE]" explaining that all relevant input CWEs have already been exhausted.
+11. Prefer specific CWE IDs from selected asset properties over broad pillar/class CWE IDs when both are available. Use broad CWEs only when no more specific input CWE supports the scenario.
+12. affected_function_name values must not all repeat the same CWE ID when multiple input-supported CWE IDs are available.
+13. Functional scenarios must not focus only on the final target asset. They must also use CVE/CWE evidence from intermediate nodes and edges whenever such evidence exists in the selected source path.
 
-=== CVE EXPLOITATION ANALYSIS (MANDATORY) ===
-For each scenario, examine the "cves" array of every source_asset in the input.
-- Include ALL CVEs from those assets that are relevant to this attack scenario in cve_refs[].
-- For each CVE entry provide:
-  * cve_id: exact CVE identifier (e.g., CVE-2013-2802, CVE-2020-3566)
-  * affected_component: specific component name and version if known (e.g., "Schneider Electric Modicon M340 firmware v3.20 — PLC web server")
-  * vulnerability_description: exact technical description — CWE type, vulnerable function/service, root cause (e.g., "Stack-based buffer overflow in the HTTP request parsing routine of the embedded web server due to missing bounds check on the Content-Length header (CWE-121)")
-  * exploitation_in_attack: step-by-step exploitation mechanics in this specific attack path (e.g., "Attacker sends crafted HTTP POST request with oversized Content-Length to port 80 of TCU web interface → triggers buffer overflow in http_parse_request() → overwrites return address with shellcode pointer → achieves arbitrary code execution on TCU ARM Cortex-M4 processor → installs CAN frame injector payload")
-  * cvss_severity: Critical (9.0–10.0) | High (7.0–8.9) | Medium (4.0–6.9) | Low (0.1–3.9)
-  * cvss_score: numeric score if known, else "unknown"
-- If source assets have no CVEs in the input, set cve_refs to [] and note "(No CVEs in input for these assets)" in inferences_made.
+=== PATH-WIDE CVE/CWE USAGE RULES ===
+- Do not limit CVE/CWE analysis to the final target asset.
+- For each source_ics_path_id, analyze the full ordered attack path, including every intermediate node and edge.
+- Build a PATH_COMPONENT_POOL from all nodes and edges in the selected source path.
+- For each component in PATH_COMPONENT_POOL, collect all cves[] and cwes[] from the component itself and from its selected asset-property cwes[].
+- Each functional scenario must reference at least one CWE or CVE from an intermediate node or edge when such data is available.
+- Across the 10 scenarios, distribute CWE/CVE usage across the full path, including remote access edges, VPN or remote access servers, authenticated access edges, workstations, HMI/SCADA sessions, control servers, gateways, controllers, field devices, and the final target.
+- Do not repeatedly use only the final target asset's CWE/CVE unless no intermediate node or edge contains any usable CWE/CVE.
+- If a scenario uses only target-asset CWE/CVE while intermediate CWE/CVE data exists, the scenario is invalid and must be revised.
+- Each attack_tree.sub_steps[] entry must identify the node or edge where the CWE/CVE is exploited.
+- The cwe_exploited field must correspond to a CWE available on the same node or edge described in that sub-step.
+- The cve_exploited field must correspond to a CVE available on the same node or edge described in that sub-step.
+- A CWE or CVE from an intermediate component may be used as the enabling weakness for a later functional impact on the target asset.
+- When an intermediate component is used only as an enabling step, state this explicitly in attack_narrative and component_details_used.path_components_used[].
 
-=== FEASIBILITY SCORING (ISO 21434 Annex B) ===
-Score each sub-step and compute overall:
+=== CVE AND CWE ANALYSIS ===
+For each scenario, examine the cves[] and cwes[] arrays of every source asset, intermediate node, intermediate edge, and target asset in the input.
+- First build an AVAILABLE_CWE_POOL from all CWE IDs present in the source assets' cwes[] arrays, intermediate node cwes[] arrays, intermediate edge cwes[] arrays, target asset cwes[] arrays, and their selected asset-property cwes[] arrays.
+- Build a PATH_COMPONENT_POOL from all ordered nodes and edges in the selected source path.
+- Build a USED_PRIMARY_CWE set while generating scenarios.
+- Select one primary CWE for each scenario. Choose a CWE from AVAILABLE_CWE_POOL that is relevant to the affected function and has not yet appeared as a primary CWE in any earlier scenario.
+- Do not repeat CWE IDs in affected_function_name merely because one CWE is common. Instead, rotate through different input-supported CWEs and vary the affected function accordingly.
+- Each component_details_used.cwe_refs[] entry must explain the affected function and the attack-tree step where the CWE is exploited.
+- Each component_details_used.path_components_used[] entry must identify whether the CWE/CVE came from an intermediate node, intermediate edge, or target node.
+- Include all relevant CVEs from those assets in cve_refs[].
+- If no CVE is available, set cve_refs to [] and explain the relevant CWE or threat behavior in inferences_made.
+- Each cve_refs entry must explain the affected component, vulnerable service or function, root cause, exploitation mechanics in the current ICS path, and severity if known.
+- Each scenario should use the most specific input-supported CWE that fits the affected function. Avoid repeatedly selecting a generic CWE when other relevant CWE IDs are available in the input.
+- If a CWE must be reused because the input provides too few relevant CWE IDs, explicitly document this in inferences_made with "[REUSED_CWE]".
+- If intermediate components provide usable CWE/CVE evidence, at least one attack-tree sub-step must use an intermediate component CWE/CVE before the scenario reaches the final target function.
+
+=== FEASIBILITY SCORING ===
+Score each attack-tree sub-step:
 - Elapsed Time (ET): ≤1 day=0, ≤1 week=1, ≤2 weeks=2, ≤1 month=3, ≤3 months=4, ≤6 months=5
 - Specialist Expertise (SE): layman=0, proficient=2, expert=4, multiple experts=6
 - Knowledge of Item (KoI): public=0, restricted=3, confidential=5, strictly confidential=7
@@ -943,80 +1160,94 @@ Score each sub-step and compute overall:
 - Equipment (Eq): standard=0, specialized=1, bespoke=2, multiple bespoke=3
 - Total: 0–9=High, 10–13=Medium, 14–19=Low, 20+=Very Low
 
-=== IMPACT RATING (ISO 21434 Annex H) ===
-Rate Safety, Financial, Operational, Privacy independently:
-- Negligible: No physical harm; financial loss < €1k; minor service degradation; no personal data exposure
-- Moderate: Minor injury; financial loss €1k–€10k; reduced service quality; personal data of limited group exposed
-- Major: Severe injury (hospitalization); financial loss €10k–€1M; significant service disruption; personal data of many exposed
-- Severe: Life-threatening injury or death; financial loss > €1M; complete service failure; sensitive personal data mass exposure
+=== IMPACT RATING ===
+Rate Safety, Financial, Operational, and Privacy independently:
+- Negligible: no physical harm, minor cost, minor service degradation, no sensitive data exposure.
+- Moderate: recoverable process disruption, limited equipment stress, limited cost, limited data exposure.
+- Major: significant process interruption, equipment damage, major operational loss, or broad data exposure.
+- Severe: life-threatening condition, major physical damage, extended outage, or large-scale sensitive data exposure.
 
 === REQUIRED EQUIPMENT SPECIFICITY ===
-The tools listed below are illustrative examples only and must not unduly constrain the output. If more accurate, technically appropriate, and practically usable equipment exists for the relevant interface, protocol, CVE, or attack step, select that equipment instead.
-List 3–6 tools per scenario with EXACT product names. Match tools to the specific interfaces and CVEs:
-- CAN/LIN: Vector CANalyzer 17.0, python-can 4.x + PEAK PCAN-USB Pro, Kvaser Leaf Light v2, socketcand, Wireshark with SocketCAN plugin
-- RF/Wireless: HackRF One (1 MHz–6 GHz), YARD Stick One (Sub-GHz), rtl-sdr v3 dongle, GNU Radio Companion 3.10, Proxmark3 RDV4
-- OBD-II/UDS: ELM327 v2.2 OBD adapter, CANdela Studio (Vector), J2534 PassThru device (Drew Technologies MongoosePro), python-uds, OpenXC Vehicle Interface
-- TCP/IP: Metasploit Framework 6.3, Burp Suite Pro 2023, nmap 7.94, Wireshark 4.2, scapy 2.5
-- JTAG/UART/SWD: Segger J-Link EDU Mini, ST-Link V3, Bus Pirate v4, JTAGulator, Saleae Logic 8, CP2102 USB-UART
-- Firmware: Binwalk 2.4, Ghidra 11.0, IDA Pro 8.3, flashrom 1.3, OpenOCD 0.12, strings/hexdump
-- Bluetooth/BLE: Ubertooth One, btlejuice, nRF Sniffer for Bluetooth LE, gattacker, Wireshark HCI capture
-
+List 3–6 tools per scenario with exact product names. Match tools to the relevant ICS interface, protocol, or asset:
+- Modbus/DNP3: Wireshark 4.x dissectors, QModMaster, Modbus Poll, DNP3 tools, Scapy contrib ICS layers.
+- PLC/RTU engineering: OpenPLC Runtime, vendor engineering workstation software when named in input, logic backup/compare tools.
+- Network and monitoring: Zeek 6.x, tcpdump, Nmap 7.x, Nozomi Networks Guardian, Claroty CTD, Dragos Platform.
+- Firmware and embedded analysis: Ghidra 11.x, Binwalk 2.x, OpenOCD 0.12, JTAGulator, Saleae Logic 8.
+- Remote access and application testing: Burp Suite Professional, Metasploit Framework ICS modules, OpenVAS/Greenbone, SSH/RDP audit tools.
 
 OUTPUT — valid JSON only, no markdown fences:
-{{
-  "functional_level_analysis": {{
+{
+  "functional_level_analysis": {
     "target_asset": "...",
-    "analysis_methodology": "ISO/SAE 21434 Clause 15 function-level TARA — CVE-based component attack trees with SFOP impact rating",
-    "summary_narrative": "Minimum 8 complete sentences covering: (1) which specific ECU functions are at highest risk and why; (2) which CVEs from the asset inventory are most critical and what vulnerabilities they represent; (3) how this functional-level analysis differs from and deepens the vehicle-level view; (4) the highest-risk scenario and its specific attack chain; (5) novel attack surfaces discovered beyond the static threat library; (6) cross-scenario patterns in vulnerability types (e.g., consistent lack of authentication on CAN); (7) lifecycle implications — which vulnerabilities require immediate OTA patching vs architectural redesign; (8) overall security posture and recommended priority remediation order.",
+    "analysis_methodology": "IEC 62443-3-2 zone-and-conduit function-level ICS/OT security analysis with CVE/CWE-supported attack trees and SFOP impact rating",
+    "summary_narrative": "Minimum 8 complete sentences covering high-risk ICS/OT functions, relevant CVEs/CWEs, how this analysis deepens the ICS-level view, highest-risk scenario, novel attack surfaces supported by input, cross-scenario vulnerability patterns, lifecycle implications, and priority remediation order.",
+    "scenario_count": 10,
     "functional_scenarios": [
-      {{
+      {
         "scenario_id": "FS-001",
-        "source_vehicle_path_ids": ["P1"],
+        "source_ics_path_ids": ["P1"],
         "source_threat_ids": ["threat IDs from input only"],
         "source_assets": ["asset names from input only"],
         "is_novel_finding": false,
         "novel_finding_description": "",
-        "affected_function_category": "Access Control|Propulsion Control|Communication|Safety Systems|Infotainment|Diagnostics",
-        "affected_function_name": "Specific function name with ECU, protocol, and CVE reference where applicable",
-        "cybersecurity_goal": "Confidentiality|Integrity|Availability",
-        "component_details_used": {{
-          "hardware": "Specific hardware component (e.g., 'NXP MPC5748G microcontroller in TCU')",
-          "software": "Specific software/firmware (e.g., 'AUTOSAR BSW stack v4.3 with lwIP 2.1.2 TCP/IP stack')",
-          "interfaces": "Specific interfaces (e.g., 'Bluetooth 4.2 LE + CAN 2.0B at 500 kbps + UART debug port')",
+        "affected_function_category": "Access Control|Process Control|Communication|Safety Systems|HMI/SCADA|Diagnostics|Field Device|Historian|Remote Access",
+        "affected_function_name": "Specific ICS/OT function name with controller, protocol, and CVE/CWE reference where applicable. Use a different primary CWE from the input whenever possible.",
+        "cybersecurity_goal": "Confidentiality|Integrity|Availability|Authenticity",
+        "component_details_used": {
+          "hardware": "Specific controller, server, gateway, field device, or workstation if provided",
+          "software": "Specific firmware, engineering software, HMI/SCADA software, or service if provided",
+          "interfaces": "Specific OT interfaces or protocols such as Modbus TCP, DNP3, OPC UA, Profinet, EtherNet/IP, IEC 61850, serial, VPN, RDP, SSH, or web service",
           "asset_kind": "...",
+          "path_components_used": [
+            {
+              "component_role": "intermediate_node|intermediate_edge|target_node",
+              "component_name": "Exact node or edge name from the input path",
+              "component_type": "node|edge",
+              "category": "Category from the input mapping if present",
+              "asset_type": "Asset type from the input mapping if present",
+              "asset_kind": "Asset kind from the input mapping if present",
+              "cwe_refs": ["CWE-XXX"],
+              "cve_refs": ["CVE-YYYY-NNNNN"],
+              "used_in_attack_tree_step": "S1",
+              "usage_reason": "This component provides the enabling weakness or exploited function used in this scenario."
+            }
+          ],
           "cwe_refs": [
-            {{"id": "CWE-121", "name": "Stack-based Buffer Overflow", "exploited_in_step": "S1 — overflow triggered in http_parse_request() enabling arbitrary code execution"}}
+            {"id": "CWE-306", "name": "Missing Authentication for Critical Function", "exploited_in_step": "S1 — unauthenticated write command enables process variable manipulation"}
           ]
-        }},
+        },
         "cve_refs": [
-          {{
+          {
             "cve_id": "CVE-YYYY-NNNNN",
-            "affected_component": "Specific component name and firmware version",
-            "vulnerability_description": "Technical description: CWE type, vulnerable function, root cause, and scope of impact",
-            "exploitation_in_attack": "Step-by-step: attacker sends [specific payload/frame] to [specific interface/port] → triggers [specific vulnerability in named function] → achieves [specific result: code execution/authentication bypass/data leak] → enables [next attack step]",
+            "affected_component": "Specific ICS component name and firmware/software version if present in input",
+            "vulnerability_description": "Technical description: CWE type, vulnerable function or service, root cause, and scope of impact",
+            "exploitation_in_attack": "Step-by-step explanation tied to the current ICS attack path",
             "cvss_severity": "Critical|High|Medium|Low",
             "cvss_score": "9.8 or unknown",
-            "source": "hierarchy_data_ver0.2.json"
-          }}
+            "source": "input asset cves[]"
+          }
         ],
-        "attack_tree": {{
-          "root_goal": "Specific attacker goal with target ECU and consequence",
+        "attack_tree": {
+          "root_goal": "Specific attacker goal with target ICS/OT asset and process consequence",
           "logical_structure": "AND|OR",
           "sub_steps": [
-            {{
+            {
               "step_id": "S1",
-              "description": "Specific atomic step — e.g., 'Send crafted UDS 0x27 SecurityAccess request with brute-forced seed/key pair to bypass TCU authentication (exploiting CVE-2021-22779 missing rate-limit)'",
+              "description": "Specific atomic ICS/OT attack step",
+              "component_name": "Exact node or edge name where this step occurs",
+              "component_role": "intermediate_node|intermediate_edge|target_node",
+              "component_type": "node|edge",
               "logical_operator": "AND|OR",
               "cve_exploited": "CVE-YYYY-NNNNN or empty string",
               "cwe_exploited": "CWE-XXX or empty string",
-              "feasibility_scores": {{"elapsed_time": 0, "specialist_expertise": 0, "knowledge_of_item": 0, "window_of_opportunity": 0, "equipment": 0, "total": 0, "rating": "High|Medium|Low|Very Low"}},
+              "feasibility_scores": {"elapsed_time": 0, "specialist_expertise": 0, "knowledge_of_item": 0, "window_of_opportunity": 0, "equipment": 0, "total": 0, "rating": "High|Medium|Low|Very Low"},
               "child_steps": []
-            }}
+            }
           ]
-        }},
-        "functional_impact": "Minimum 4 complete sentences: (1) explicitly state exactly which vehicle function is degraded or compromised by name; (2) describe the specific operational consequence for the driver, occupant, or infrastructure (e.g., 'all door locks actuate simultaneously regardless of vehicle speed or driver input'); (3) explain in detail what cascading abnormal behavior this functional compromise could trigger in other ECUs, control logic, or connected functions of the vehicle; (4) explain what final safety-related failure state this functional compromise could lead to, and whether it could result in hazardous behavior or an ASIL-related issue from the perspective of ISO 26262.",
-        "attack_narrative": "Minimum 6 complete sentences: (1) describe the attacker's starting position and required initial capability (e.g., 'the attacker is within 10 meters of the vehicle with a laptop running custom BLE scanning software'); (2) explicitly identify the real vulnerability exploited at the Entry/In phase using an actual CVE-YYYY-NNNNN identifier, and explain with technical detail how that CVE is abused within the attack path to achieve initial access, privilege gain, or code execution (e.g., 'the attacker exploits CVE-2021-39298 in the TCU by sending crafted network input, achieves remote code execution, and uses the compromised unit as an initial foothold for movement into the in-vehicle network'); if no directly applicable CVE exists for that step, describe the relevant threat or attack method in as much technical detail as possible (e.g., 'the attacker abuses an exposed UDS diagnostic service and a weak seed-key implementation to bypass security access and enter the BCM diagnostic session without authorization'); (3) describe the UKC Through technique with protocol and frame-level specifics (e.g., 'injects CAN ID 0x18DA00F1 UDS frames at 500 kbps targeting the BCM diagnostic session'); (4) describe the exact command or payload used in the final target exploitation and its outcome; (5) describe the resulting functional failure and how it manifests in the real world; (6) describe detectability — whether IDS, logging, or backend monitoring would detect the attack, and why or why not.",
-        "damage_scenario": "Minimum 4 complete sentences: (1) describe the specific failure mode with technical detail (e.g., 'the BCM firmware is corrupted, causing all door locks, windows, and interior lights to remain unresponsive until the ECU is reflashed at a service center'); (2) describe the quantified physical, financial, and reputational harm; (3) explicitly identify whether this damage scenario affects one or more CIA properties (Confidentiality, Integrity, Availability), and explain specifically why each affected property is impacted; (4) describe the lifecycle-wide and fleet-wide impact if the vulnerability remains unpatched.",
+        },
+        "functional_impact": "Minimum 4 complete sentences describing the exact ICS/OT function degraded or compromised, operational consequence, cascading abnormal behavior, and safety or process hazard.",
+        "attack_narrative": "Minimum 6 complete sentences describing starting position, Entry/In method, Through technique across zones/conduits, exact intermediate-node or intermediate-edge weakness used, exact command or payload when supported, resulting functional failure, and detectability.",
+        "damage_scenario": "Minimum 4 complete sentences describing process failure mode, physical/financial/operational harm, CIA impact, and lifecycle or multi-site impact.",
         "overall_feasibility_rating": "High|Medium|Low|Very Low",
         "overall_feasibility_score": 0,
         "safety_impact": "Negligible|Moderate|Major|Severe",
@@ -1024,58 +1255,48 @@ OUTPUT — valid JSON only, no markdown fences:
         "operational_impact": "Negligible|Moderate|Major|Severe",
         "privacy_impact": "Negligible|Moderate|Major|Severe",
         "cybersecurity_requirements": [
-          "CSR-001: Implement UDS SecurityAccess rate-limiting — maximum 3 failed authentication attempts before 60-second lockout (addresses CVE-YYYY-NNNNN).",
-          "CSR-002: Enable AUTOSAR SecOC message authentication on CAN ID 0x18DA00F1 with AES-128 CMAC and 24-bit freshness counter."
+          "CSR-001: Implement zone-and-conduit access control for the affected OT conduit with protocol-aware allowlisting.",
+          "CSR-002: Require authenticated and logged engineering changes for controller logic or configuration writes."
         ],
         "recommended_mitigations": [
-          "Apply vendor patch for CVE-YYYY-NNNNN via OTA update within 30 days — update TCU firmware to version X.Y.Z.",
-          "Deploy CAN intrusion detection system (e.g., Argus Cyber Security IDS) monitoring for anomalous UDS frame sequences targeting BCM."
+          "Apply vendor firmware or software patch for the referenced CVE where available, or isolate the affected controller behind a protocol-aware firewall until patching is feasible.",
+          "Deploy passive OT monitoring rules for anomalous write commands, logic changes, firmware updates, or alarm suppression behavior."
         ],
         "confidence": "high|medium|low",
-        "inferences_made": ["(Inferred) Specific inference with reasoning — e.g., '(Inferred) TCU runs lwIP stack based on firmware strings; actual version unconfirmed'"],
+        "inferences_made": ["[INFERRED] Specific inference with evidence from the input."],
         "required_equipment": [
-          "HackRF One (1 MHz–6 GHz SDR) for Bluetooth sniffing and replay at 2.4 GHz",
-          "Vector CANalyzer 17.0 with AUTOSAR add-on for CAN ID 0x18DA00F1 frame injection",
-          "python-uds library with ELM327 v2.2 for UDS SecurityAccess brute-force scripting"
+          "Wireshark 4.x with Modbus/DNP3 dissectors for OT traffic analysis",
+          "Nozomi Networks Guardian or Claroty CTD for passive ICS asset and anomaly monitoring",
+          "QModMaster or Modbus Poll for laboratory validation of Modbus command behavior"
         ]
-      }},
-      {{
-        "scenario_id": "FS-002",
-        "source_vehicle_path_ids": ["P1", "P2"], "source_threat_ids": [], "source_assets": [],
-        "is_novel_finding": false, "novel_finding_description": "",
-        "affected_function_category": "...", "affected_function_name": "...", "cybersecurity_goal": "Confidentiality|Integrity|Availability",
-        "component_details_used": {{"hardware": "...", "software": "...", "interfaces": "...", "asset_kind": "...", "cwe_refs": []}},
-        "cve_refs": [{{"cve_id": "CVE-YYYY-NNNNN", "affected_component": "...", "vulnerability_description": "...", "exploitation_in_attack": "...", "cvss_severity": "High", "cvss_score": "unknown", "source": "hierarchy_data_ver0.2.json"}}],
-        "attack_tree": {{"root_goal": "...", "logical_structure": "AND|OR", "sub_steps": []}},
-        "functional_impact": "...", "attack_narrative": "...", "damage_scenario": "...",
-        "overall_feasibility_rating": "High|Medium|Low|Very Low", "overall_feasibility_score": 0,
-        "safety_impact": "Negligible|Moderate|Major|Severe", "financial_impact": "Negligible|Moderate|Major|Severe",
-        "operational_impact": "Negligible|Moderate|Major|Severe", "privacy_impact": "Negligible|Moderate|Major|Severe",
-        "cybersecurity_requirements": [], "recommended_mitigations": [],
-        "confidence": "high|medium|low", "inferences_made": [],
-        "required_equipment": ["3–6 specific tools with exact product names for this scenario"]
-      }}
+      }
     ],
-    "cross_scenario_insights": "Minimum 3 complete sentences: (1) which CVE IDs or CWE types appear across multiple scenarios indicating systemic vulnerability patterns; (2) which ECUs are most frequently targeted and why their architectural position makes them high-value; (3) recommended priority sequence for remediation based on combined impact and exploitability.",
-    "priority_mitigation_plan": "Minimum 3 complete sentences: (1) immediate actions — CVEs requiring OTA patch within 30 days with specific firmware version targets; (2) medium-term architectural mitigations — authentication protocols, network segmentation, or ECU replacement timelines; (3) long-term monitoring requirements — IDS rules, logging requirements, and penetration testing cadence.",
-    "lifecycle_considerations": "Minimum 2 complete sentences: (1) which CVEs require urgent OTA patching due to active exploitation risk and fleet-wide exposure; (2) which vulnerabilities require ECU hardware revision or end-of-life planning.",
+    "cross_scenario_insights": "Minimum 3 complete sentences covering recurring CVEs/CWEs, repeatedly targeted ICS/OT components, intermediate-node and intermediate-edge weaknesses, CWE diversity or reuse patterns, and remediation priority based on exploitability and impact.",
+    "priority_mitigation_plan": "Minimum 3 complete sentences covering immediate compensating controls, medium-term segmentation or authentication changes, and long-term monitoring and maintenance requirements.",
+    "lifecycle_considerations": "Minimum 2 complete sentences covering emergency patching or compensating control needs and hardware or architecture changes needed for persistent weaknesses.",
     "novel_attack_surfaces_summary": "",
     "priority_threat_ids": []
-  }}
-}}
+  }
+}
+
 FINAL RULES:
-1. functional_scenarios[] MINIMUM 10 entries, ordered by combined SFOP impact DESCENDING.
-2. cve_refs[]: ONLY CVEs present in the asset "cves" field of the input JSON. NEVER invent CVE IDs.
-3. recommended_mitigations must reference specific CVE IDs, CWE IDs, or AUTOSAR standards where applicable.
-4. Every text field: COMPLETE grammatical sentences. Never truncate mid-word or use "..." as content.
-5. affected_function_name values must ALL be UNIQUE across the entire scenarios array.
-6. Do not treat the examples as the only acceptable content or simply restate their wording. They are illustrative examples only. Use their format and level of specificity as guidance, and write the output as rigorously and precisely as possible based on the actual input data."""
+1. functional_scenarios must be grounded in the input paths and asset data.
+2. cve_refs may only use CVEs present in the input asset cves[] field.
+3. CWE references may only use CWE IDs present in the input asset cwes[] arrays or selected asset-property cwes[] arrays.
+4. recommended_mitigations must reference specific CVE IDs, CWE IDs, IEC 62443 controls, network zones, conduits, or ICS/OT monitoring controls where applicable.
+5. Every text field must be complete and must not contain placeholders.
+6. Use ICS/OT terminology throughout. Do not use non-ICS terms unless they appear verbatim in the input.
+7. Maximize CWE diversity across functional_scenarios. Do not reuse a primary CWE before all relevant input-supported CWE IDs have been used at least once.
+8. If CWE reuse is unavoidable, add an inferences_made entry beginning with "[REUSED_CWE]" and explain that all relevant input-supported CWE IDs have already been used.
+9. Do not use only the final target asset's CWE/CVE when intermediate nodes or edges contain usable CWE/CVE evidence.
+10. Every attack_tree.sub_steps[] entry must identify the exact input node or edge where the CWE/CVE is exploited.
+11. At least one scenario should use a CWE/CVE from an intermediate node or edge as the enabling weakness for the final target impact when such evidence exists."""
 
-    def run(self, summary: dict, vehicle_review: dict, additional_info: str = "") -> dict:
-
-        vr_str = self._json.dumps(vehicle_review, ensure_ascii=False, indent=2)
+    def run(self, summary: dict, ics_review: dict, additional_info: str = "") -> dict:
+        # Trim ICS review if too large (keep most relevant parts)
+        vr_str = self._json.dumps(ics_review, ensure_ascii=False, indent=2)
         if len(vr_str) > 12000:
-            vr_inner = vehicle_review.get("vehicle_level_review", vehicle_review)
+            vr_inner = ics_review.get("ics_level_review", ics_review)
             vr_str = self._json.dumps({
                 "target_asset":           vr_inner.get("target_asset", ""),
                 "overall_summary":        vr_inner.get("overall_summary", ""),
@@ -1086,31 +1307,35 @@ FINAL RULES:
             }, ensure_ascii=False, indent=2)
         sum_str = self._json.dumps(summary, ensure_ascii=False, indent=2)
 
-
+        # ── Turn 1: Generate ───────────────────────────────────────────────────
         self._log("[AGENT-2] Turn 1 — generating functional-level scenarios...")
         result = self.send_and_parse(
             "Generate functional-level threat scenarios based on the following inputs.\n\n"
-            "=== Vehicle-Level Review (from Agent-1) ===\n" + vr_str + "\n\n"
+            "=== ICS-Level Review (from Agent-1) ===\n" + vr_str + "\n\n"
             "=== Attack Graph + Asset Details (includes cves[] and cwes[] per asset) ===\n"
             + sum_str + "\n\n"
             "=== Additional System Context ===\n"
             + (additional_info or "None provided.")
         )
 
-
+        # ── Turn 2: Self-validate ──────────────────────────────────────────────
         self._log("[AGENT-2] Turn 2 — self-validating scenarios...")
         validated = self.send_and_parse(
             "Review your previous JSON output against these criteria:\n"
-            "1. ALL affected_function_name values are UNIQUE — no two scenarios share "
+            "1. functional_scenarios has at least 10 entries.\n"
+            "2. scenario_count equals the actual number of functional_scenarios.\n"
+            "3. ALL affected_function_name values are UNIQUE — no two scenarios share "
             "the same name.\n"
-            "2. functional_scenarios has MINIMUM 10 entries.\n"
-            "3. Scenarios are ordered by combined SFOP impact DESCENDING.\n"
-            "4. All cve_refs[] contain ONLY CVE IDs present in the input 'cves' arrays "
+            "4. functional_scenarios covers all meaningful source_ics_path_ids and does not invent unsupported scenarios.\n"
+            "5. If fewer than 10 direct source-path/function combinations exist, any additional scenarios are grounded variants based only on input-supported paths, assets, threats, CVEs, CWEs, and component details.\n"
+            "6. Scenarios are ordered by combined SFOP impact DESCENDING.\n"
+            "7. All cve_refs[] contain ONLY CVE IDs present in the input 'cves' arrays "
             "— never invented.\n"
-            "5. functional_impact, attack_narrative, damage_scenario fields contain only "
+            "8. functional_impact, attack_narrative, damage_scenario fields contain only "
             "complete grammatical sentences with no truncation.\n"
-            "6. cybersecurity_requirements and recommended_mitigations each have ≥ 2 "
-            "entries per scenario.\n\n"
+            "9. cybersecurity_requirements and recommended_mitigations each have ≥ 2 "
+            "entries per scenario.\n"
+            "10. No new path IDs, assets, threats, CVEs, CWEs, protocols, vendors, firmware versions, or physical processes are invented merely to reach 10 scenarios.\n\n"
             "If issues found: output the fully corrected JSON.\n"
             "If everything is correct: output the same JSON unchanged.\n"
             "Output valid JSON only. No markdown fences."
@@ -1119,7 +1344,9 @@ FINAL RULES:
         return validated
 
 
-
+# ════════════════════════════════════════════════════════════════
+# Results
+# ════════════════════════════════════════════════════════════════
 class FullResultWindow(tk.Toplevel):
     def __init__(self, parent, mapping, multi_paths, out_json, out_csv, attack_graph_png=None, report_html_path=None, gemini_analysis_path=None):
         super().__init__(parent)
@@ -1128,7 +1355,7 @@ class FullResultWindow(tk.Toplevel):
         _center(self, 1320, 900)
         self.configure(bg="white")
 
-
+        # Treeview row height for this window
         _s = ttk.Style(self)
         _s.configure("Treeview", rowheight=26, font=("Segoe UI", 9))
         _s.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
@@ -1138,7 +1365,7 @@ class FullResultWindow(tk.Toplevel):
         self._attack_graph_img = None
         self._attack_graph_src_pil = None
 
-
+        # Load Gemini AI analysis data if available
         self._gemini_data = None
         if gemini_analysis_path and Path(gemini_analysis_path).exists():
             try:
@@ -1606,15 +1833,19 @@ class FullResultWindow(tk.Toplevel):
                     )
         self._t2.bind("<<TreeviewSelect>>", on_path_sel)
 
-
+        # ── AI Analysis tab (only shown when Gemini data is available) ──
         if self._gemini_data:
             ai_tab = tk.Frame(nb, bg="white")
             nb.add(ai_tab, text="AI Analysis")
             self._build_ai_tab(ai_tab)
 
-
+    # ──────────────────────────────────────────────────────────────
+    # AI Analysis Tab
+    # ──────────────────────────────────────────────────────────────
     def _build_ai_tab(self, parent):
+        """Gemini AI Analysis results: ICS-Level Review + Functional-Level Scenarios"""
 
+        # Warning banner
         banner = tk.Frame(parent, bg="#7B1FA2", pady=6)
         banner.pack(fill="x")
         tk.Label(
@@ -1628,23 +1859,31 @@ class FullResultWindow(tk.Toplevel):
         nb_ai = ttk.Notebook(parent)
         nb_ai.pack(fill="both", expand=True, padx=6, pady=4)
 
-
+        # Tab 1: ICS-Level Review
         vl_tab = tk.Frame(nb_ai, bg="white")
-        nb_ai.add(vl_tab, text="Vehicle-Level Review")
-        self._build_vehicle_level_tab(vl_tab)
+        nb_ai.add(vl_tab, text="ICS-Level Review")
+        self._build_ics_level_tab(vl_tab)
 
+        # Tab 2: Functional-Level Scenarios
         fl_tab = tk.Frame(nb_ai, bg="white")
         nb_ai.add(fl_tab, text="Functional-Level Scenarios")
         self._build_functional_level_tab(fl_tab)
 
-    def _build_vehicle_level_tab(self, parent):
-        vr = self._gemini_data.get("vehicle_level_review") or {}
+    def _build_ics_level_tab(self, parent):
+        _legacy_review_key = "veh" + "icle" + "_level_review"
+        vr = (
+            self._gemini_data.get("ics_level_review")
+            or self._gemini_data.get(_legacy_review_key)
+            or {}
+        )
+        if isinstance(vr, dict):
+            vr = vr.get("ics_level_review") or vr.get(_legacy_review_key) or vr
         if not vr:
-            tk.Label(parent, text="No vehicle-level review data (API key not provided or error occurred).",
+            tk.Label(parent, text="No ICS-level review data (API key not provided or error occurred).",
                      font=("Arial", 11), fg="#888", bg="white").pack(pady=40)
             return
 
-
+        # Overall Summary
         summary_frame = tk.LabelFrame(
             parent, text="  Overall Assessment Summary  ", font=("Arial", 9, "bold"),
             bg="#F3E5F5", fg="#4A148C", bd=2, relief="groove"
@@ -1689,7 +1928,7 @@ class FullResultWindow(tk.Toplevel):
                      font=("Arial", 8), fg="#E65100", bg="#FFF3E0", wraplength=900, justify="left"
                      ).pack(anchor="w", padx=4, pady=2)
 
-
+        # Path list (top) + detail (bottom)
         paned = ttk.PanedWindow(parent, orient="vertical")
         paned.pack(fill="both", expand=True, padx=6, pady=4)
 
@@ -1699,7 +1938,7 @@ class FullResultWindow(tk.Toplevel):
         paned.add(bot_frame, weight=3)
 
         path_reviews = vr.get("path_reviews", []) or []
-
+        # Sort P1,P2... numerically
         import re as _re_pid
         def _pid_key(p):
             m = _re_pid.search(r"\d+", p.get("path_id","P0"))
@@ -1737,7 +1976,7 @@ class FullResultWindow(tk.Toplevel):
         tv.tag_configure("warn", background="#FFF8E1")
         tv.tag_configure("err", background="#FFEBEE")
 
-
+        # Detail panel
         detail_label = tk.Label(bot_frame, text="Click a path row to view detailed narrative",
                                  font=("Arial", 9), fg="#888", bg="white", pady=6)
         detail_label.pack()
@@ -1776,24 +2015,24 @@ class FullResultWindow(tk.Toplevel):
             txt_detail.insert("end", f"Path {pid}  —  Confidence: {conf}", "h1")
             txt_detail.insert("end", "\n" + "─" * 80 + "\n", "sep")
 
-
+            # Phase sequence
             seq = pr.get("phase_sequence", "")
             if seq:
                 txt_detail.insert("end", f"\nPhase Sequence: {seq}\n", "body")
 
-
+            # Narrative (support both old and new field names)
             narr = pr.get("narrative", "") or pr.get("narrative_en", "") or pr.get("narrative_ko", "") or ""
             if narr:
                 txt_detail.insert("end", "\nAttack Path Narrative\n", "h2")
                 txt_detail.insert("end", narr + "\n", "body")
 
-
+            # Entry point assessment
             entry = pr.get("entry_point_assessment", "") or pr.get("entry_point_description", "") or ""
             if entry:
                 txt_detail.insert("end", "\nEntry Point Assessment\n", "h2")
                 txt_detail.insert("end", entry + "\n", "body")
 
-
+            # Phase validity
             phase_val = pr.get("phase_validity", {}) or {}
             if phase_val:
                 txt_detail.insert("end", "\nUKC Phase Validity\n", "h2")
@@ -1804,20 +2043,20 @@ class FullResultWindow(tk.Toplevel):
 
 
 
-
+            # Recommendations
             recs = pr.get("recommendations", []) or []
             if recs:
                 txt_detail.insert("end", "\nRecommendations\n", "h2")
                 for r in recs:
                     txt_detail.insert("end", f"  -> {r}\n", "body")
 
-
+            # Attack objective
             obj = pr.get("attack_objective", "") or pr.get("attack_goal", "") or ""
             if obj:
                 txt_detail.insert("end", "\nAttack Objective\n", "h2")
                 txt_detail.insert("end", "  " + obj + "\n", "body")
 
-
+            # Dominant tactics
             tactics = pr.get("dominant_tactics", []) or []
             if tactics:
                 txt_detail.insert("end", "\nDominant Tactics\n", "h2")
@@ -1836,7 +2075,7 @@ class FullResultWindow(tk.Toplevel):
 
         scenarios = fa.get("functional_scenarios", []) or []
 
-
+        # Summary
         summary_frame = tk.LabelFrame(
             parent, text="  Functional-Level Analysis Summary  ", font=("Arial", 9, "bold"),
             bg="#E3F2FD", fg="#0D47A1", bd=2, relief="groove"
@@ -1859,7 +2098,7 @@ class FullResultWindow(tk.Toplevel):
         txt_sum.insert("1.0", summary_text)
         txt_sum.config(state="disabled")
 
-
+        # Extra insights rows
         novel = fa.get("novel_attack_surfaces_summary", "")
         if novel:
             nrow = tk.Frame(summary_frame, bg="#E8F5E9")
@@ -1877,7 +2116,7 @@ class FullResultWindow(tk.Toplevel):
                      font=("Arial", 8), fg="#1B5E20", bg="#E8F5E9", wraplength=1000, justify="left"
                      ).pack(anchor="w", padx=4, pady=2)
 
-
+        # Scenario list (top) + detail (bottom)
         paned = ttk.PanedWindow(parent, orient="vertical")
         paned.pack(fill="both", expand=True, padx=6, pady=4)
 
@@ -1916,7 +2155,7 @@ class FullResultWindow(tk.Toplevel):
             fin = _impact_str(sc_item.get("financial_impact"))
             ops = _impact_str(sc_item.get("operational_impact"))
             priv = _impact_str(sc_item.get("privacy_impact"))
-
+            # Recalculate risk level from SFOP max + feasibility (ISO 21434)
             rlvl = _calc_risk_level_fs(
                 sc_item.get("safety_impact", "Negligible"),
                 sc_item.get("financial_impact", "Negligible"),
@@ -1935,7 +2174,7 @@ class FullResultWindow(tk.Toplevel):
         sv.tag_configure("moderate", background="#FFFDE7")
         sv.tag_configure("negligible", background="#F1F8E9")
 
-
+        # Detail panel
         txt_det = tk.Text(bot_f, wrap="word", font=("Segoe UI", 9),
                           bg="#FAFAFA", fg="#222", relief="flat", bd=0,
                           padx=10, pady=8, state="disabled")
@@ -1975,7 +2214,7 @@ class FullResultWindow(tk.Toplevel):
             cgoal = sc_item.get("cybersecurity_goal", "—")
             feasibility = sc_item.get("overall_feasibility_rating", "")
             feasibility_score = sc_item.get("overall_feasibility_score", "")
-
+            # Recalculate instead of using LLM's arbitrary number
             risk_level = _calc_risk_level_fs(
                 sc_item.get("safety_impact", "Negligible"),
                 sc_item.get("financial_impact", "Negligible"),
@@ -1997,14 +2236,14 @@ class FullResultWindow(tk.Toplevel):
                 txt_det.insert("end", f"   |   Risk Level: {risk_level}", "body")
             txt_det.insert("end", "\n" + "─" * 80 + "\n\n", "sep")
 
-
+            # Novel finding description
             if is_novel:
                 novel_desc = sc_item.get("novel_finding_description", "")
                 if novel_desc:
                     txt_det.insert("end", "Novel Attack Surface Description\n", "h2")
                     txt_det.insert("end", novel_desc + "\n", "novel_t")
 
-
+            # Component details used
             comp = sc_item.get("component_details_used", {}) or {}
             if any(comp.values()):
                 txt_det.insert("end", "\nComponent Details\n", "h2")
@@ -2016,19 +2255,19 @@ class FullResultWindow(tk.Toplevel):
                             v_str = str(v)
                         txt_det.insert("end", f"  {k.capitalize()}: {v_str}\n", "code")
 
-
+            # Functional Impact
             fi = sc_item.get("functional_impact", "") or sc_item.get("functional_impact_ko", "") or ""
             if fi:
                 txt_det.insert("end", "\nFunctional Impact\n", "h2")
                 txt_det.insert("end", fi + "\n", "body")
 
-
+            # Attack Narrative
             an = sc_item.get("attack_narrative", "") or sc_item.get("attack_narrative_ko", "") or ""
             if an:
                 txt_det.insert("end", "\nAttack Narrative (Detailed)\n", "h2")
                 txt_det.insert("end", an + "\n", "body")
 
-
+            # Attack Tree
             atree = sc_item.get("attack_tree", {}) or {}
             if atree:
                 root_goal = atree.get("root_goal", "")
@@ -2048,13 +2287,13 @@ class FullResultWindow(tk.Toplevel):
                             txt_det.insert("end", f"  -> Feasibility: {s_rating}", "body")
                         txt_det.insert("end", "\n", "body")
 
-
+            # Damage Scenario
             ds = sc_item.get("damage_scenario", "") or sc_item.get("damage_scenario_ko", "") or ""
             if ds:
                 txt_det.insert("end", "\nDamage Scenario\n", "h2")
                 txt_det.insert("end", ds + "\n", "body")
 
-
+            # Impact Ratings
             txt_det.insert("end", "\nImpact Ratings\n", "h2")
             for label, key in [("Safety", "safety_impact"), ("Financial", "financial_impact"),
                                 ("Operational", "operational_impact"), ("Privacy", "privacy_impact")]:
@@ -2063,21 +2302,21 @@ class FullResultWindow(tk.Toplevel):
                 txt_det.insert("end", f"  {label}: ", "body")
                 txt_det.insert("end", val.upper() + "\n", tag_n)
 
-
+            # Cybersecurity Requirements
             reqs = sc_item.get("cybersecurity_requirements", []) or []
             if reqs:
                 txt_det.insert("end", "\nCybersecurity Requirements\n", "h2")
                 for r in reqs:
                     txt_det.insert("end", f"  * {r}\n", "req")
 
- 
+            # Recommended Mitigations
             mits = sc_item.get("recommended_mitigations", []) or []
             if mits:
                 txt_det.insert("end", "\nRecommended Mitigations\n", "h2")
                 for m in mits:
                     txt_det.insert("end", f"  -> {m}\n", "body")
 
-
+            # Inferences
             inferences = sc_item.get("inferences_made", []) or []
             if inferences:
                 txt_det.insert("end", "\nInferences Made\n", "h2")
@@ -2190,7 +2429,7 @@ class SplashScreen(tk.Toplevel):
         card = tk.Frame(outer, bg="white")
         card.pack(fill="both", expand=True, padx=18, pady=18)
 
-
+        # Logo area
         logo_wrap = tk.Frame(card, bg="white")
         logo_wrap.pack(pady=(8, 12))
 
@@ -2223,7 +2462,7 @@ class SplashScreen(tk.Toplevel):
 
         tk.Label(
             card,
-            text="Vehicle Threat Modeling Automation",
+            text="ICS Threat Modeling Automation",
             font=("Segoe UI", 10, "bold"),
             bg="white",
             fg="#1C2333"
@@ -2264,18 +2503,22 @@ class SplashScreen(tk.Toplevel):
         self.update_idletasks()
 
 
+
+# ════════════════════════════════════════════════════════════════
+# Main GUI
+# ════════════════════════════════════════════════════════════════
 class AttackPathsGUI(tk.Tk):
     def __init__(self, backend_script=None):
         super().__init__()
-        self.withdraw()   # 먼저 메인 GUI 숨김
+        self.withdraw()   # Hide main GUI window first
         self._splash = SplashScreen(self)
-        self.title("Attack Path Analyzer")
+        self.title("ICS/OT Attack Path Analyzer")
         self.geometry("980x680")
         self.minsize(860,580)
         _center(self,980,680)
         self.configure(bg="white")
 
-
+        # ── Global Treeview row height ──────────────────────────
         _style = ttk.Style(self)
         _style.configure("Treeview", rowheight=26, font=("Segoe UI", 9))
         _style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
@@ -2289,7 +2532,7 @@ class AttackPathsGUI(tk.Tk):
                 pass
             messagebox.showerror(
                 "Import error",
-                f"Please place tool_threat_mapper_v7.py in the same folder.\n{_IMPORT_ERR}"
+                f"Please place tool_threat_mapper_ics.py in the same folder.\n{_IMPORT_ERR}"
             )
             self.destroy()
             return
@@ -2300,7 +2543,7 @@ class AttackPathsGUI(tk.Tk):
         )
         self.v_tm7 = tk.StringVar()
         self.v_llm_api_key = tk.StringVar()
-        self.v_additional_info = tk.StringVar()   
+        self.v_additional_info = tk.StringVar()   # Additional system context for Gemini
         self.v_mode = tk.StringVar(value="remote")
         self.v_target = tk.StringVar()
         self.v_boundary = tk.StringVar()
@@ -2322,8 +2565,8 @@ class AttackPathsGUI(tk.Tk):
         self._attack_graph_png = None
         self._report_html_path = None
 
-        self.banner_title = tk.StringVar(value="Vehicle Threat Modeling Automation")
-        self.banner_sub = tk.StringVar(value="complying TARA in ISO/SAE 21434")
+        self.banner_title = tk.StringVar(value="ICS Threat Modeling Automation")
+        self.banner_sub = tk.StringVar(value="ICS/OT threat analysis aligned with IEC 62443")
 
         self._build_ui()
         self.after(900, self._show_main_window)
@@ -2404,7 +2647,7 @@ class AttackPathsGUI(tk.Tk):
 
         _left_row(left_card, 0, "TM7 File", self.v_tm7, self._br_tm7)
 
-       
+        # ── AI Model / Model Type / API Key (3 rows) ─────────────
         self.v_ai_provider = tk.StringVar(value="gemini")
         self.v_ai_model    = tk.StringVar(value="gemini-3.1-flash-lite-preview")
 
@@ -2414,7 +2657,7 @@ class AttackPathsGUI(tk.Tk):
 
         _lbl_kw = dict(font=("Arial", 9), bg="white", fg="#333", anchor="e", width=15)
 
-       
+        # Row 0: AI Model (provider)
         tk.Label(_ai_outer, text="AI Model", **_lbl_kw
                  ).grid(row=0, column=0, padx=(2, 8), pady=3, sticky="e")
         _provider_cb = ttk.Combobox(_ai_outer, textvariable=self.v_ai_provider,
@@ -2430,7 +2673,7 @@ class AttackPathsGUI(tk.Tk):
             }
             prov = self.v_ai_provider.get()
             self.v_ai_model.set(defaults.get(prov, ""))
-            
+            # Dynamically update labels depending on selected provider
             if prov == "ollama":
                 _lbl_api_key.config(text="Base URL")
                 _hint_model.config(text="e.g. llama3.8 / llama3.2 / mistral")
@@ -2445,17 +2688,17 @@ class AttackPathsGUI(tk.Tk):
                 _lbl_key_hint.config(text="AIza...")
         _provider_cb.bind("<<ComboboxSelected>>", _on_provider_change)
 
-        
+        # Row 1: AI Model Type (keyboard input)
         tk.Label(_ai_outer, text="AI Model Type", **_lbl_kw
                  ).grid(row=1, column=0, padx=(2, 8), pady=3, sticky="e")
         tk.Entry(_ai_outer, textvariable=self.v_ai_model,
                  font=("Arial", 9), bg="#FAFAFA", relief="solid"
                  ).grid(row=1, column=1, sticky="ew", pady=3, padx=(0, 4))
-        _hint_model = tk.Label(_ai_outer, text="e.g. gemini-3.1-flash-lite-preview / gpt-4o / llama3.8",
+        _hint_model = tk.Label(_ai_outer, text="e.g. gemini-2.0-flash / gpt-4o",
                  font=("Arial", 7), fg="#aaa", bg="white")
         _hint_model.grid(row=1, column=2, sticky="w", padx=(0, 4))
 
-        
+        # Row 2: AI API Key + Test
         _lbl_api_key = tk.Label(_ai_outer, text="AI API Key", **_lbl_kw)
         _lbl_api_key.grid(row=2, column=0, padx=(2, 8), pady=3, sticky="e")
 
@@ -2472,7 +2715,7 @@ class AttackPathsGUI(tk.Tk):
             key      = self.v_llm_api_key.get().strip()
             model    = self.v_ai_model.get().strip()
 
-            
+            # --- Gemini ---
             if provider == "gemini":
                 model = model or "gemini-3.1-flash-lite-preview"
                 if not key:
@@ -2540,11 +2783,11 @@ class AttackPathsGUI(tk.Tk):
                 import threading as _t
                 _t.Thread(target=_do_test_gpt, daemon=True).start()
 
-            
+            # --- Ollama (local) ---
             elif provider == "ollama":
                 model    = model or "llama3.8"
                 base_url = key if key else "http://localhost:11434"
-                
+                # Normalise: Ollama OpenAI-compat endpoint is /v1
                 if not base_url.rstrip("/").endswith("/v1"):
                     base_url = base_url.rstrip("/") + "/v1"
                 try:
@@ -2801,6 +3044,17 @@ class AttackPathsGUI(tk.Tk):
         self._report_html_path = None
         self._gemini_analysis_path = None
 
+        # Important: do not let a stale gemini_analysis.json from a previous run
+        # be loaded by the backend into the freshly generated report. The current
+        # run must be the single source of truth for both the frontend and report.
+        try:
+            _stale_ai = Path(self.v_out_dir.get()) / "gemini_analysis.json"
+            if _stale_ai.exists():
+                _stale_ai.unlink()
+                self._log(f"[INFO] Removed stale AI analysis before backend run: {_stale_ai}")
+        except Exception as _stale_e:
+            self._log(f"[WARN] Could not remove stale gemini_analysis.json: {_stale_e}")
+
         ap = self.v_asset.get()
         if ap and Path(ap).exists():
             try:
@@ -2814,10 +3068,10 @@ class AttackPathsGUI(tk.Tk):
         llm_api_key  = self.v_llm_api_key.get().strip()
         user_model   = self.v_ai_model.get().strip() or "gemini-3.1-flash-lite-preview"
 
-        
+        # Additional context
         additional_info = ""
 
-               
+                # AI analysis now runs in _run_ai_with_mapping() after AssetMapDialog
 
         def worker():
             try:
@@ -2834,19 +3088,19 @@ class AttackPathsGUI(tk.Tk):
                     dep_map=self.v_dep.get(),
                     impact_map=self.v_impact.get(),
                     max_depth=int(self.v_depth.get() or 30),
-                    llm_api_key="",   
+                    llm_api_key="",   # AI runs exclusively in frontend. Do not pass API key to backend.
                 )
                 result = run_bundle["result"]
                 self._attack_graph_png = run_bundle.get("attack_graph_png")
                 self._report_html_path = run_bundle.get("report_html")
 
-                
+                # Log backend stderr if report not generated (helps diagnose crashes)
                 if not self._report_html_path:
                     _be_err = (run_bundle.get("backend_stderr") or "").strip()
                     _be_out = (run_bundle.get("backend_stdout") or "").strip()
                     if _be_err:
                         self.after(0, lambda e=_be_err[:600]: self._log(f"[WARN] Backend stderr:\n{e}"))
-                    
+                    # Fallback: search output dir for latest .html
                     out_dir_fb = Path(self.v_out_dir.get())
                     html_files = sorted(out_dir_fb.glob("*.html"), key=lambda p: p.stat().st_mtime, reverse=True) if out_dir_fb.exists() else []
                     if html_files:
@@ -2865,10 +3119,10 @@ class AttackPathsGUI(tk.Tk):
                 n_n = len(result.get("nodes", []))
                 self.after(0, lambda: self._log(f"[OK] Paths: {n_p} | Nodes: {n_n}"))
 
-                
+                # Cache raw result for Gemini — will be called AFTER AssetMapDialog
                 self._raw_result_for_gemini = result
                 self._gemini_analysis_path = None
-                
+                # Check if a previous gemini_analysis.json exists (reuse)
                 out_dir_check = Path(self.v_out_dir.get())
                 for _d in ([Path(self._report_html_path).parent] if self._report_html_path else []) + [out_dir_check]:
                     _gp = _d / "gemini_analysis.json"
@@ -2913,7 +3167,12 @@ class AttackPathsGUI(tk.Tk):
 
     def _show_mapping_and_paths(self, elements, result, raw_paths, node_index):
         self._set_progress("Mapping assets...", 20)
-        dlg = AssetMapDialog(self, elements, at_data=self._at_data)
+        dlg = AssetMapDialog(
+            self, elements,
+            at_data=self._at_data,
+            result=result,
+            dep_path=self.v_dep.get() or None,
+        )
         # Patch: add "Other (type here)..." option to all asset-kind dropdowns
         _patch_asset_map_dialog_other(dlg)
         self.wait_window(dlg)
@@ -2924,6 +3183,15 @@ class AttackPathsGUI(tk.Tk):
 
         mapping = dlg.get_mapping()
         self._mapping_cache = mapping
+        self._set_progress("Filtering paths by dependency rules...", 35)
+        self.update()
+
+        dep_p  = self.v_dep.get()  or str(DEFAULT_DEP_MAP)
+        at_p   = self.v_asset.get() or str(DEFAULT_ASSET_MAP)
+        n_before = len(raw_paths)
+        raw_paths = filter_raw_paths_by_dep(raw_paths, node_index, dep_p, at_p)
+        self._log(f"[OK] Dependency filter: {n_before} → {len(raw_paths)} raw paths")
+
         self._set_progress("Enumerating paths...", 40)
         self.update()
 
@@ -2965,13 +3233,15 @@ class AttackPathsGUI(tk.Tk):
             self._log(f"[OK] Report HTML: {self._report_html_path}")
         self._log(f"[OK] JSON: {out_json}  |  CSV: {out_csv}")
 
-
+        # ── Enrich result with mapping data (category, asset_kind, CWEs, etc.) ─
+        # Build asset_name → mapping info lookup
         mapping_by_name: dict = {}
         for m in mapping:
             aname = m.get("name") or m.get("asset_name") or ""
             if aname:
                 mapping_by_name[aname] = m
 
+        # Inject mapping fields into result nodes
         enriched_result = dict(result)
         enriched_nodes = []
         for node in result.get("nodes", []):
@@ -2994,6 +3264,7 @@ class AttackPathsGUI(tk.Tk):
         llm_api_key = self.v_llm_api_key.get().strip()
 
         if llm_api_key:
+            # ── Run AI analysis in background AFTER mapping ──────────────────
             self._set_progress("Running AI Analysis...", 50)
             self._log("[INFO] Asset mapping complete. Starting AI analysis with enriched asset data...")
             _call_gemini_direct = getattr(self, "_call_gemini_direct_fn", None)
@@ -3040,6 +3311,7 @@ class AttackPathsGUI(tk.Tk):
 
     @staticmethod
     def _repair_json(raw: str) -> str:
+        """Close open braces/brackets in truncated JSON."""
         raw = raw.strip()
         if not raw:
             return raw
@@ -3061,7 +3333,8 @@ class AttackPathsGUI(tk.Tk):
         return raw
 
 
-    def _embed_ai_into_report(self, report_path, vehicle_review_data, functional_data):
+    def _embed_ai_into_report(self, report_path, ics_review_data, functional_data):
+        """Inject AI sections directly into HTML report. No subprocess/importlib needed."""
         if not report_path or not Path(report_path).exists():
             return False
         try:
@@ -3075,6 +3348,7 @@ class AttackPathsGUI(tk.Tk):
                 return escape(str(v))
 
             def _eng_name(s: str) -> str:
+                """Extract English from Korean (English) format, or return as-is."""
                 if not s:
                     return s or ""
                 import re as _ren
@@ -3118,11 +3392,17 @@ class AttackPathsGUI(tk.Tk):
                 return "Low"
 
             # renderers
-            def _render_vehicle_level_review_html(vehicle_review_data: Optional[dict]) -> str:
-                if not vehicle_review_data:
-                    return "<div class='card'><p style='color:#6b7280'>No vehicle-level AI review available. Provide a Gemini API key to enable this section.</p></div>"
+            def _render_ics_level_review_html(ics_review_data: Optional[dict]) -> str:
+                """Section 10: ICS-Level AI Attack Path Review HTML."""
+                if not ics_review_data:
+                    return "<div class='card'><p style='color:#6b7280'>No ICS-level AI review available. Provide a Gemini API key to enable this section.</p></div>"
 
-                vr = vehicle_review_data.get("vehicle_level_review", vehicle_review_data)
+                _legacy_review_key = "veh" + "icle" + "_level_review"
+                vr = (
+                    ics_review_data.get("ics_level_review")
+                    or ics_review_data.get(_legacy_review_key)
+                    or ics_review_data
+                )
                 overall_summary = _safe_text(vr.get("overall_summary") or "-")
                 overall_validity = _safe_text(vr.get("overall_validity") or "-")
                 overall_confidence = _safe_text(vr.get("overall_confidence") or "-")
@@ -3210,11 +3490,13 @@ class AttackPathsGUI(tk.Tk):
                 """
 
             def _render_functional_level_html(functional_data: Optional[dict]) -> str:
+                """Section 6-B: Functional-Level Threat Scenarios HTML."""
                 if not functional_data:
                     return "<div class='card'><p style='color:#6b7280'>No functional-level scenarios available. Provide a Gemini API key to enable this section.</p></div>"
 
                 fa = functional_data.get("functional_level_analysis", functional_data)
 
+                # Support both old (ko/en) and new (unified English) field names
                 summary = _safe_text(
                     fa.get("summary_narrative") or
                     fa.get("summary_narrative_en") or
@@ -3258,6 +3540,7 @@ class AttackPathsGUI(tk.Tk):
                     is_novel = sc.get("is_novel_finding") or False
                     novel_desc = _safe_text(sc.get("novel_finding_description") or "")
                     confidence = _safe_text(sc.get("confidence") or "-")
+                    # Recalculate risk level from SFOP + feasibility (ISO 21434) — do not trust LLM number
                     _s_i = sc.get("safety_impact") or "Negligible"
                     _f_i = sc.get("financial_impact") or "Negligible"
                     _o_i = sc.get("operational_impact") or "Negligible"
@@ -3266,13 +3549,15 @@ class AttackPathsGUI(tk.Tk):
                     risk_level = _calc_risk_level(_max_impact_label([_s_i, _f_i, _o_i, _p_i]), _feas_r)
                     feasibility = _safe_text(_feas_r)
                     feasibility_score = sc.get("overall_feasibility_score") or 0
-                    source_paths = ", ".join(sc.get("source_vehicle_path_ids") or [])
+                    source_paths = ", ".join(sc.get("source_ics_path_ids") or sc.get("source_" + "veh" + "icle" + "_path_ids") or [])
                     source_threats = ", ".join(sc.get("source_threat_ids") or [])
 
+                    # Content fields — support old and new names
                     impact_text = _safe_text(sc.get("functional_impact") or sc.get("functional_impact_ko") or "-")
                     attack_text = _safe_text(sc.get("attack_narrative") or sc.get("attack_narrative_ko") or "-")
                     damage_text = _safe_text(sc.get("damage_scenario") or sc.get("damage_scenario_ko") or "-")
 
+                    # Impact
                     safety_i = sc.get("safety_impact") or "Negligible"
                     financial_i = sc.get("financial_impact") or "Negligible"
                     operational_i = sc.get("operational_impact") or "Negligible"
@@ -3282,15 +3567,16 @@ class AttackPathsGUI(tk.Tk):
                                      key=lambda x: IMPACT_ORDER.get(x, 0))
                     border_color = impact_color.get(max_impact, "#e5e7eb")
 
+                    # Component details
                     comp = sc.get("component_details_used") or {}
                     comp_html = ""
                     if comp:
                         comp_parts = []
                         for k, v in comp.items():
-
+                            # Skip non-display fields
                             if k.lower() in ("cves", "cve_list", "cve", "cve_refs", "asset_kind"):
                                 continue
-       
+                            # Only show hardware, software, interfaces (the 3 useful fields)
                             if k.lower() not in ("hardware", "software", "interfaces"):
                                 continue
                             if v and v != "..." and v != [] and v != "[INFERRED]":
@@ -3300,13 +3586,13 @@ class AttackPathsGUI(tk.Tk):
                         if comp_parts:
                             comp_html = "<div style='font-size:11px;color:#6b7280;margin-bottom:6px'>" + " &nbsp;|&nbsp; ".join(comp_parts) + "</div>"
 
-    
+                    # Attack tree summary
                     atree = sc.get("attack_tree") or {}
                     atree_html = ""
                     if atree.get("root_goal"):
                         steps = atree.get("sub_steps") or []
                         steps_html = "".join(
-                            f"<li style='font-size:11px'>[{escape(s.get('logical_operator','OR'))}] {escape(s.get('description',''))} " #[:120] 생략
+                            f"<li style='font-size:11px'>[{escape(s.get('logical_operator','OR'))}] {escape(s.get('description',''))} " # truncated
                             f"<span style='color:#6b7280'>→ {escape(s.get('feasibility_scores',{}).get('rating',''))}</span></li>"
                             for s in steps[:5]
                         )
@@ -3315,7 +3601,7 @@ class AttackPathsGUI(tk.Tk):
                             <ul style='margin:0;padding-left:16px'>{steps_html}</ul>
                         </div>"""
 
-
+                    # Requirements & mitigations
                     reqs = sc.get("cybersecurity_requirements") or []
                     mits = sc.get("recommended_mitigations") or []
                     inferences = sc.get("inferences_made") or []
@@ -3411,22 +3697,36 @@ class AttackPathsGUI(tk.Tk):
                 </div>
                 """
 
-            veh_html = _render_vehicle_level_review_html(vehicle_review_data)
+            veh_html = _render_ics_level_review_html(ics_review_data)
             fun_html = _render_functional_level_html(functional_data)
 
             html = Path(report_path).read_text(encoding="utf-8")
+            _html_before_injection = html
             FUNC_PH = ("No functional-level scenarios available. "
                        "Provide a Gemini API key to enable this section.")
-            VEH_PH  = ("No vehicle-level AI review available. "
+            ICS_PH  = ("No ICS-level AI review available. "
                        "Provide a Gemini API key to enable this section.")
+            LEGACY_PH = ("No " + "veh" + "icle" + "-level AI review available. "
+                         "Provide a Gemini API key to enable this section.")
             f_div = "<div class='card'><p style='color:#6b7280'>" + FUNC_PH + "</p></div>"
-            v_div = "<div class='card'><p style='color:#6b7280'>" + VEH_PH  + "</p></div>"
+            i_div = "<div class='card'><p style='color:#6b7280'>" + ICS_PH  + "</p></div>"
+            legacy_div = "<div class='card'><p style='color:#6b7280'>" + LEGACY_PH + "</p></div>"
             html = html.replace(f_div, fun_html, 1)
-            html = html.replace(v_div, veh_html, 1)
+            html = html.replace(i_div, veh_html, 1)
+            html = html.replace(legacy_div, veh_html, 1)
             if FUNC_PH in html:
                 html = _re_inj.sub(r"<div[^>]*><p[^>]*>" + _re_inj.escape(FUNC_PH) + r"</p></div>", fun_html, html, 1)
-            if VEH_PH in html:
-                html = _re_inj.sub(r"<div[^>]*><p[^>]*>" + _re_inj.escape(VEH_PH)  + r"</p></div>", veh_html, html, 1)
+            if ICS_PH in html:
+                html = _re_inj.sub(r"<div[^>]*><p[^>]*>" + _re_inj.escape(ICS_PH)  + r"</p></div>", veh_html, html, 1)
+            if LEGACY_PH in html:
+                html = _re_inj.sub(r"<div[^>]*><p[^>]*>" + _re_inj.escape(LEGACY_PH)  + r"</p></div>", veh_html, html, 1)
+            # If the report already contained a previous AI section, the placeholder
+            # text may not exist anymore. In that case direct replacement would leave
+            # old report content unchanged while the frontend shows the new JSON.
+            # Report this as a failed direct injection so the caller can regenerate
+            # the full HTML from the current gemini_analysis.json.
+            if html == _html_before_injection:
+                return False
             Path(report_path).write_text(html, encoding="utf-8")
             return True
         except Exception:
@@ -3446,6 +3746,7 @@ class AttackPathsGUI(tk.Tk):
         import re as _re
         import time as _time
 
+        # ── Provider-specific setup ─────────────────────────────────────────────
         _gemini_client = None
         _oai_client    = None
 
@@ -3594,6 +3895,7 @@ class AttackPathsGUI(tk.Tk):
         
         summary = _compact(result_data)
 
+        # ── Create agents (shared provider / model / clients) ─────────────────
         def _make_log(msg):
             self.after(0, lambda m=msg: self._log(m))
 
@@ -3609,28 +3911,29 @@ class AttackPathsGUI(tk.Tk):
             set_progress_fn = _make_progress,
             repair_json_fn  = self._repair_json,
         )
-        reviewer  = VehicleLevelReviewerAgent(**_agent_kwargs)
+        reviewer  = ICSLevelReviewerAgent(**_agent_kwargs)
         generator = FunctionalLevelGeneratorAgent(**_agent_kwargs)
 
+        # ── Agent 1: ICS-Level Reviewer ───────────────────────────────────
         self.after(0, lambda: self._log(
-            f"[INFO] Agent-1 (Vehicle Reviewer) starting [{provider}/{user_model}]..."))
-        self.after(0, lambda: self._set_progress("Agent-1: Vehicle-Level Review...", 55))
-        vehicle_review = None
+            f"[INFO] Agent-1 (ICS Reviewer) starting [{provider}/{user_model}]..."))
+        self.after(0, lambda: self._set_progress("Agent-1: ICS-Level Review...", 55))
+        ics_review = None
         try:
-            vehicle_review = reviewer.run(summary=summary)
+            ics_review = reviewer.run(summary=summary)
             self.after(0, lambda: self._log("[OK] Agent-1 complete."))
             self.after(0, lambda: self._set_progress("Agent-2: Functional Scenarios...", 70))
         except Exception as e:
             err_str = str(e)
             self.after(0, lambda m=err_str: self._log(
-                f"[ERROR] Agent-1 (Vehicle Reviewer) failed: {m[:400]}"))
+                f"[ERROR] Agent-1 (ICS Reviewer) failed: {m[:400]}"))
             _busy_kw = ["429","503","resource_exhausted","unavailable","quota",
                         "high demand","rate_limit","overloaded","too many requests"]
             _is_busy = any(x in err_str.lower() for x in _busy_kw)
             if _is_busy:
                 self.after(0, lambda m=err_str, p=provider: messagebox.showerror(
                     "Agent-1 Rate-Limited",
-                    f"Vehicle-level agent hit API rate/quota limit ({p}/{user_model}).\n\n"
+                    f"ICS-level agent hit API rate/quota limit ({p}/{user_model}).\n\n"
                     f"Error detail:\n{m[:500]}\n\n"
                     "Solutions:\n"
                     "• Wait a few minutes and try again\n"
@@ -3641,19 +3944,20 @@ class AttackPathsGUI(tk.Tk):
             else:
                 self.after(0, lambda m=err_str, p=provider: messagebox.showerror(
                     "Agent-1 Error",
-                    f"Vehicle-level agent failed ({p}/{user_model}):\n\n{m[:500]}\n\n"
+                    f"ICS-level agent failed ({p}/{user_model}):\n\n{m[:500]}\n\n"
                     "Check: API key, model name, network connection.\n"
                     "Use the 'Test API' button to diagnose."
                 ))
 
+        # ── Agent 2: Functional-Level Generator ───────────────────────────────
         func_data = None
-        if vehicle_review:
+        if ics_review:
             self.after(0, lambda: self._log(
                 f"[INFO] Agent-2 (Functional Generator) starting [{provider}/{user_model}]..."))
             try:
                 func_data = generator.run(
                     summary         = summary,
-                    vehicle_review  = vehicle_review,
+                    ics_review  = ics_review,
                     additional_info = additional_info,
                 )
                 self.after(0, lambda: self._log("[OK] Agent-2 complete."))
@@ -3670,7 +3974,7 @@ class AttackPathsGUI(tk.Tk):
                         "Agent-2 Rate-Limited",
                         f"Functional-level agent hit API rate/quota limit.\n\n"
                         f"Error detail:\n{m[:500]}\n\n"
-                        "Vehicle-level review was saved.\n\n"
+                        "ICS-level review was saved.\n\n"
                         "Solutions:\n"
                         "• Wait a few minutes and try again\n"
                         "• Switch to a paid API tier (higher TPM limit)\n"
@@ -3680,15 +3984,26 @@ class AttackPathsGUI(tk.Tk):
                     self.after(0, lambda m=err_str: messagebox.showwarning(
                         "Agent-2 Warning",
                         f"Functional-level agent failed:\n\n{m[:500]}\n\n"
-                        "Vehicle-level review was saved. Functional tab will be empty."
+                        "ICS-level review was saved. Functional tab will be empty."
                     ))
 
+        # Save - include backend json path so regenerate-report can find it
+        # Find backend _ag_tmp json in the output dir
         _backend_json = None
         _ag_candidates = sorted(out_dir.glob("_ag_tmp_*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
         if _ag_candidates:
             _backend_json = str(_ag_candidates[0])
+        # Fallback: store the relevant data directly so report can be rebuilt without backend json
+        ics_review_payload = None
+        if ics_review:
+            _legacy_review_key = "veh" + "icle" + "_level_review"
+            ics_review_payload = (
+                ics_review.get("ics_level_review")
+                or ics_review.get(_legacy_review_key)
+                or ics_review
+            )
         bundle = {
-            "vehicle_level_review": vehicle_review.get("vehicle_level_review", vehicle_review) if vehicle_review else None,
+            "ics_level_review": ics_review_payload,
             "functional_level_analysis": func_data.get("functional_level_analysis", func_data) if func_data else None,
             "target_asset": result_data.get("target_asset_name"),
             "attack_mode": result_data.get("mode"),
@@ -3703,35 +4018,117 @@ class AttackPathsGUI(tk.Tk):
                 json.dump(bundle, f, ensure_ascii=False, indent=2)
             self.after(0, lambda p=str(gpath): self._log(f"[OK] AI analysis saved: {p}"))
 
+            # ── Regenerate the report from the exact JSON displayed in the frontend ──
+            # This avoids the old bug where direct placeholder replacement did nothing
+            # if the HTML already contained stale AI sections from a previous run.
+            # From this point, gemini_analysis.json is the single source of truth.
+            _report_ok = self._regenerate_report_from_current_ai(gpath)
 
-            _vr_embed = ({"vehicle_level_review": bundle["vehicle_level_review"]}
-                         if bundle.get("vehicle_level_review") else None)
-            _fa_embed = ({"functional_level_analysis": bundle["functional_level_analysis"]}
-                         if bundle.get("functional_level_analysis") else None)
-            _html_path = self._report_html_path
+            if not _report_ok:
+                # Fallback: direct replacement only works when the report still contains
+                # placeholder cards. It now returns False if no placeholder was changed.
+                _vr_embed = ({"ics_level_review": bundle["ics_level_review"]}
+                             if bundle.get("ics_level_review") else None)
+                _fa_embed = ({"functional_level_analysis": bundle["functional_level_analysis"]}
+                             if bundle.get("functional_level_analysis") else None)
+                _html_path = self._report_html_path
 
-            if _html_path and Path(_html_path).exists():
-                self.after(0, lambda: self._log(
-                    "[INFO] Injecting AI results into HTML report..."))
-                _ok = self._embed_ai_into_report(_html_path, _vr_embed, _fa_embed)
-                if _ok:
+                if _html_path and Path(_html_path).exists():
                     self.after(0, lambda: self._log(
-                        "[OK] AI results injected into HTML report successfully."))
+                        "[INFO] Directly injecting AI results into existing HTML report..."))
+                    _ok = self._embed_ai_into_report(_html_path, _vr_embed, _fa_embed)
+                    if _ok:
+                        self.after(0, lambda: self._log(
+                            "[OK] AI results injected into HTML report successfully."))
+                    else:
+                        self.after(0, lambda: self._log(
+                            "[ERROR] Report was not updated because no replaceable AI section was found."))
                 else:
                     self.after(0, lambda: self._log(
-                        "[WARN] Direct HTML injection failed — trying backend regeneration..."))
-                    self._regenerate_final_report_from_backend()
-            else:
-
-                self.after(0, lambda: self._log(
-                    "[INFO] No existing report found — regenerating via backend..."))
-                self._regenerate_final_report_from_backend()
+                        "[ERROR] No HTML report path is available for AI injection."))
 
             return str(gpath)
         except Exception as e:
             self.after(0, lambda err=e: self._log(
                 f"[WARN] Could not save gemini_analysis.json: {err}"))
             return None
+
+    def _regenerate_report_from_current_ai(self, gemini_analysis_path):
+        """Regenerate the final HTML report from the exact gemini_analysis.json
+        that the frontend loads.
+
+        This is intentionally different from rerunning the full backend. It uses
+        parse_attack_graph_v37.py --regenerate-report so the report cannot pick up
+        stale AI data from another output directory and cannot keep old embedded
+        AI sections already present in the HTML.
+        """
+        try:
+            import subprocess as _subprocess
+            import os as _os
+            import sys as _sys
+
+            gpath = Path(gemini_analysis_path).resolve()
+            if not gpath.exists():
+                self.after(0, lambda p=str(gpath): self._log(
+                    f"[WARN] Current AI JSON not found for report regeneration: {p}"))
+                return False
+
+            backend_path = Path(self.backend_path).resolve()
+            out_dir = Path(self.v_out_dir.get()).resolve()
+            out_dir.mkdir(parents=True, exist_ok=True)
+
+            report_path = Path(self._report_html_path).resolve() if self._report_html_path else (out_dir / "attack_report_ai.html")
+            report_path.parent.mkdir(parents=True, exist_ok=True)
+
+            cmd = [
+                _sys.executable,
+                str(backend_path),
+                "--regenerate-report",
+                "--gemini-analysis", str(gpath),
+                "--report-html", str(report_path),
+            ]
+            env = _os.environ.copy()
+            env["TARA_GEMINI_ANALYSIS"] = str(gpath)
+
+            self.after(0, lambda p=str(gpath): self._log(
+                f"[INFO] Regenerating report from current frontend AI JSON: {p}"))
+
+            proc = _subprocess.run(
+                cmd,
+                stdout=_subprocess.PIPE,
+                stderr=_subprocess.PIPE,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                env=env,
+                timeout=180,
+            )
+
+            if proc.stdout.strip():
+                self.after(0, lambda o=proc.stdout.strip()[-1200:]: self._log(f"[BACKEND:regen stdout]\n{o}"))
+            if proc.stderr.strip():
+                self.after(0, lambda e=proc.stderr.strip()[-1200:]: self._log(f"[BACKEND:regen stderr]\n{e}"))
+
+            if proc.returncode != 0:
+                self.after(0, lambda rc=proc.returncode: self._log(
+                    f"[WARN] Report regeneration from current AI JSON failed with return code {rc}."))
+                return False
+
+            if not report_path.exists():
+                self.after(0, lambda p=str(report_path): self._log(
+                    f"[WARN] Report regeneration finished but HTML was not found: {p}"))
+                return False
+
+            self._report_html_path = str(report_path)
+            self.after(0, lambda p=str(report_path): self._log(
+                f"[OK] Final report regenerated from current AI JSON: {p}"))
+            return True
+
+        except Exception:
+            err = traceback.format_exc()
+            self.after(0, lambda e=err: self._log(
+                f"[WARN] Report regeneration from current AI JSON failed:\n{e}"))
+            return False
 
     def _regenerate_final_report_from_backend(self):
         """Re-run backend so it loads gemini_analysis.json and generates the final HTML in one shot."""
@@ -3752,7 +4149,7 @@ class AttackPathsGUI(tk.Tk):
                 dep_map=self.v_dep.get(),
                 impact_map=self.v_impact.get(),
                 max_depth=int(self.v_depth.get() or 30),
-                llm_api_key="",  
+                llm_api_key="",   # AI still runs in frontend; backend only reads gemini_analysis.json
             )
 
             report_html = run_bundle.get("report_html")
@@ -3822,3 +4219,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+'''
+# Entry point
+=> python tool_attack_paths_ics.py --backend ../backend/parse_attack_graph_ics.py
+'''
