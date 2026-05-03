@@ -22,7 +22,11 @@
 <br/>
 
 <br>
-[![ThreatCraft Demo]([https://youtu.be/d71FkS2jqmE](https://youtu.be/d71FkS2jqmE?si=UIQMLLt3rHCo-rlo))
+## Demo Video
+
+Click the thumbnail below to watch the ThreatCraft demo video.
+
+[![ThreatCraft Demo Video](https://img.youtube.com/vi/d71FkS2jqmE/hqdefault.jpg)](https://youtu.be/d71FkS2jqmE?si=UIQMLLt3rHCo-rlo)
 </br>
 </div>
 
