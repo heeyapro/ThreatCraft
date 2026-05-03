@@ -3278,16 +3278,32 @@ def main():
                 _imgs = sorted(list(_ga_dir.glob("*.png")) + list(_ga_dir.glob("*.pdf")), key=lambda p: p.stat().st_mtime, reverse=True)
                 if _imgs: _ag_img = str(_imgs[0])
 
+            # Reuse the same base inputs that were used for the frontend run.
+            # Without these paths, the regenerated report can include the AI JSON
+            # but lose the original asset map, impact map, DFD model, and graph data.
+            _tm7_path = _gb.get("tm7_path") or args.tm7 or ""
+            _asset_map_path = _gb.get("asset_map_path") or args.asset_map or ""
+            _threat_map_path = _gb.get("threat_map_path") or args.threat_map or ""
+            _attack_vector_path = _gb.get("attack_vector_map_path") or args.attack_vector_map or ""
+            _impact_map_path = _gb.get("impact_map_path") or args.impact_map or ""
+
+            _risk_candidates = [
+                _gb.get("attack_graph_with_risk_path") or "",
+                str(_ga_dir / "attack_graph_with_risk_temp.json"),
+                str(Path(_out_path).parent / "attack_graph_with_risk_temp.json") if _out_path else "",
+            ]
+            _risk_path = next((str(p) for p in _risk_candidates if p and Path(str(p)).exists()), "")
+
             generate_html_report(
                 report_path=_report_path,
                 attack_graph_path=_ag_img,
                 out_path=_out_path or "",
-                threat_cti_path="",
-                asset_map_path="",
-                attack_vector_path="",
-                impact_map_path="",
+                threat_cti_path=_threat_map_path,
+                asset_map_path=_asset_map_path,
+                attack_vector_path=_attack_vector_path,
+                impact_map_path=_impact_map_path,
                 attack_graph_with_risk_path=_risk_path,
-                tm7_path="",
+                tm7_path=_tm7_path,
                 gemini_ics_review=_gemini_ics,
                 gemini_functional=_gemini_func,
             )
