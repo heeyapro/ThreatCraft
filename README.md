@@ -97,22 +97,16 @@ The system-level outputs are not final results. They are used as grounded constr
 
 </p>
 
-- 📌 <b>Reviewer Agent</b>  
-  → Converts structured attack paths into natural-language reasoning  
-  → Validates logical consistency against attack knowledge base  
-  → (Figure: LLM block – “Reviewer”)
-
 - 📌 <b>Generator Agent</b>  
   → Expands system-level paths into function-level attack scenarios  
   → Injects vulnerability context (CWE / CVE / EMB3D mapping)  
   → (Figure: LLM block – “Generator”)
-
-- 📌 <b>Component-Specific Knowledge Injection</b>  
-  → Embeds real-world vulnerability context:
-  - MITRE EMB3D (hardware/software/network/application mapping)
-  - CWE / CVE enrichment  
-  → (Figure: CWE/CVE Mapping feeding LLM layer)
-
+  
+- 📌 <b>Reviewer Agent</b>  
+  → Converts structured attack paths into natural-language reasoning  
+  → Validates logical consistency against attack knowledge base  
+  → (Figure: LLM block – “Reviewer”)
+  
 ---
 
 ### 📊 3. Output 
