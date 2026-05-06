@@ -24,9 +24,9 @@
 <br>
 ## Demo Video
 
-Click the thumbnail below to watch the ThreatCraft demo video.
+[![ThreatCraft Demo](https://img.youtube.com/vi/Y_zLKnvmh_I/maxresdefault.jpg)](https://youtu.be/Y_zLKnvmh_I?si=wdbQ34fPg2MI5QPw)
 
-[![ThreatCraft Demo Video]([https://youtu.be/d71FkS2jqmE?si=UIQMLLt3rHCo-rlo)](https://youtu.be/Y_zLKnvmh_I](https://youtu.be/Y_zLKnvmh_I?si=rqreW4Dy_oUI-PJD))
+Watch the demo video: https://youtu.be/Y_zLKnvmh_I?si=wdbQ34fPg2MI5QPw
 </br>
 </div>
 
