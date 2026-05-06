@@ -59,7 +59,7 @@
 
 <p align="justify">
 
-ThreatCraft is a hybrid threat modeling framework that integrates a rule-based attack reasoning engine with LLM-based scenario generation. The system is designed to address two fundamental limitations in existing approaches: (i) rule-based systems require extensive manual rule engineering, and (ii) LLM-based approaches suffer from hallucinated or structurally invalid attack paths.
+ThreatCraft is an automated attack scenario generation framework that combines a rule-based attack reasoning engine with LLM-based scenario generation. It is designed to address two key limitations of existing approaches: (i) rule-based systems rely on extensive manual rule engineering, and (ii) LLM-based approaches may generate hallucinated or structurally invalid attack scenarios.
 
 </p>
 
@@ -148,40 +148,84 @@ ThreatCraft is not a pure LLM system nor a pure rule engine. Instead, it is a <b
 ```bash
 ThreatCraft/
 ├── asset/                          # Static assets (figures, logo, references)
-│   ├── logo_temp.png               # Project logo used in README/UI
+│   ├── logo.png                    # Project logo used in README/UI
 │   ├── WorkFlow-1.png              # System architecture diagram (paper figure)
 │   └── UKC_document.pdf            # Unified Kill Chain reference document
 │
 ├── code/                           # Core implementation directory
 │   │
 │   ├── frontend/                   # GUI + orchestration layer
-│   │   ├── tool_attack_paths_v19.py        # Main entry point (GUI launcher)
-│   │   ├── tool_threat_mapper_v7.py        # Middleware between GUI and backend
-│   │   └── hierarchy_data_ver0.3.json      # CVE–CWE–EMB3D mapping dataset
+│       ├── tool_attack_paths.py           # main entry point (GUI launcher)
+│       ├── automotive/                    # automotive Domain frontend
+│           ├── tool_attack_paths_automotive.py         # Automotive entry point (GUI launcher)
+│           ├── tool_threat_mapper_automotive.py        # Automotive Middleware between GUI and backend
+│           ├── hierarchy_data_automotive.json          # Automotive CVE–CWE–EMB3D mapping dataset
+│       ├── ics/                           # ics Domain frontend
+│           ├── tool_attack_paths_ics.py                # ics entry point (GUI launcher)
+│           ├── tool_threat_mapper_ics.py               # ics Middleware between GUI and backend
+│           ├── hierarchy_data_ics.json                 # ics CVE–CWE–EMB3D mapping dataset
+│       ├── enterprise/                    # enterprise Domain frontend
+│           ├── tool_attack_paths_enterprise.py         # enterprise entry point (GUI launcher)
+│           ├── tool_threat_mapper_enterprise.py        # enterprise Middleware between GUI and backend
+│           ├── hierarchy_data_enterprise.json          # enterprise CVE–CWE–EMB3D mapping dataset
 │   │
 │   └── backend/                    # Threat reasoning & attack graph engine
-│       ├── parse_attack_graph_v37.py       # Core attack scenario generator
+│       ├── parse_attack_graph_automotive.py       # automotive attack scenario generator
+│       ├── parse_attack_graph_ics.py              # ics attack scenario generator
+│       ├── parse_attack_graph_enterprise.py       # enterprise attack scenario generator
 │       │
 │       └── threat_library/         # Structured threat intelligence database
-│           ├── asset_to_threats_ver0.3.json
-│           │   # Maps assets → applicable threats & tactics
-│           │
-│           ├── attack_vector_feasibility_ver0.1.json
-│           │   # Threat metadata (tactic, feasibility, attack vector)
-│           │
-│           ├── dependency.json
-│           │   # Asset/threat dependency constraints for attack chaining
-│           │
-│           ├── impact_feasability_map.json
-│           │   # Risk scoring model (severity × feasibility)
-│           │
-│           ├── impact_map.json
-│           │   # SFOP impact model (Safety / Financial / Operational / Privacy)
-│           │
-│           └── threat_to_tactic_ver0.1.json
-│               # Threat → MITRE ATT&CK tactic mapping & ordering logic
+│           ├── impact_feasability_map.json        # Risk scoring model (severity × feasibility)
+│           ├── automotive/                        # automotive json
+│               ├── asset_to_threats_automotive.json
+│               │   # Maps assets → applicable threats & tactics
+│               │
+│               ├── attack_vector_feasibility_automotive.json
+│               │   # Threat metadata (tactic, feasibility, attack vector)
+│               │
+│               ├── dependency_automotive.json
+│               │   # Asset/threat dependency constraints for attack chaining
+│               │
+│               ├── impact_map_automotive.json
+│               │   # SFOP impact model (Safety / Financial / Operational / Privacy)
+│               │
+│               └── threat_to_tactic_automotive.json
+│                   # Threat → MITRE ATT&CK tactic mapping & ordering logic
+│           ├── ics/                              # ics json
+│               ├── asset_to_threats_ics.json
+│               │   # Maps assets → applicable threats & tactics
+│               │
+│               ├── attack_vector_feasibility_ics.json
+│               │   # Threat metadata (tactic, feasibility, attack vector)
+│               │
+│               ├── dependency_ics.json
+│               │   # Asset/threat dependency constraints for attack chaining
+│               │
+│               ├── impact_map_ics.json
+│               │   # SFOP impact model (Safety / Financial / Operational / Privacy)
+│               │
+│               └── threat_to_tactic_ics.json
+│                   # Threat → MITRE ATT&CK tactic mapping & ordering logic
+│           ├── enterprise/                        # enterprise json
+│               ├── asset_to_threats_enterprise.json
+│               │   # Maps assets → applicable threats & tactics
+│               │
+│               ├── attack_vector_feasibility_enterprise.json
+│               │   # Threat metadata (tactic, feasibility, attack vector)
+│               │
+│               ├── dependency_enterprise.json
+│               │   # Asset/threat dependency constraints for attack chaining
+│               │
+│               ├── impact_map_enterprise.json
+│               │   # SFOP impact model (Safety / Financial / Operational / Privacy)
+│               │
+│               └── threat_to_tactic_enterprise.json
+│                   # Threat → MITRE ATT&CK tactic mapping & ordering logic
+
 └── example/
-        ├── Automotive DFD_B.tm7       # Example DFD
+        ├── Automotive_DFD.tm7         # Example DFD
+        ├── ICS_DFD_B.tm7              # Example DFD
+        ├── Enterprise_DFD.tm7         # Example DFD
         ├── _ag_tmp_184849195185.html  # Output Report in FTML format
         └── _ag_tmp_184849195185.pdf   # Output Report in PDF format
 ```
@@ -219,7 +263,7 @@ ThreatCraft/
     <b>Run ThreatCraft</b><br/>
     Navigate to the frontend directory and execute:
     <pre><code>cd code/frontend
-python tool_attack_paths_v19.py --backend ../backend/parse_attack_graph_v37.py</code></pre>
+python tool_attack_paths.py</code></pre>
   </li>
 </ol>
 
