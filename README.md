@@ -18,11 +18,11 @@
       <img src="https://img.shields.io/badge/Graphviz-v14.1.5-green?style=for-the-badge&logo=diagrams.net&logoColor=white">
     </a>
   </p>
-<br><b>ThreatCraft</b> is a hybrid threat modeling tool that combines rule-based reasoning with large language models to generate structurally valid and realistic attack paths, addressing limitations of prior approaches such as expert dependency, inconsistency, and hallucinated scenarios.
+<br><b>ThreatCraft</b> is an automated attack scenario generation tool that combines rule-based reasoning with large language models to produce structurally valid and realistic attack scenarios while reducing expert dependency, inconsistency, and hallucinated outputs.
 <br/>
 
 <br>
-## Demo Video
+<b>## Demo Video</b>
 
 [![ThreatCraft Demo](https://img.youtube.com/vi/Y_zLKnvmh_I/maxresdefault.jpg)](https://youtu.be/Y_zLKnvmh_I?si=wdbQ34fPg2MI5QPw)
 
@@ -44,7 +44,6 @@
     <li><a href="#project-files-description"> ➤ Project Files Description</a></li>
     <li><a href="#installation"> ➤ Installation</a></li>
     <li><a href="#usage-example"> ➤ Usage Example </a></li>
-    <li><a href="#contributors"> ➤ Contributors </a></li>
   </ol>
 </details>
 
