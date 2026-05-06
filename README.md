@@ -26,7 +26,7 @@
 
 Click the thumbnail below to watch the ThreatCraft demo video.
 
-[![ThreatCraft Demo Video](https://img.youtube.com/vi/d71FkS2jqmE/hqdefault.jpg)](https://youtu.be/d71FkS2jqmE?si=UIQMLLt3rHCo-rlo)
+[![ThreatCraft Demo Video][(https://img.youtube.com/vi/d71FkS2jqmE/hqdefault.jpg)](https://youtu.be/d71FkS2jqmE?si=UIQMLLt3rHCo-rlo)](https://youtu.be/Y_zLKnvmh_I)
 </br>
 </div>
 
@@ -342,36 +342,3 @@ The tool evaluates the most critical vulnerabilities within each asset in the ag
   
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
-
-
-<!-- OVERVIEW -->
-<h2 id="contributors"> :busts_in_silhouette: Contributors</h2>
-
-<div align="center">
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/heeyapro">
-        <img src="https://github.com/heeyapro.png" width="90px;" style="border-radius:50%;" />
-      </a>
-      <br />
-      <b>Heeyapro</b>
-      <hr style="margin:3px 0; border:0.5px solid #444; opacity:0.4;">
-      🧠 Project Lead
-      <hr style="margin:3px 0; border:0.5px solid #444; opacity:0.4;">
-      📧 kangdohee1211@korea.ac.kr
-    </td>
-    <td align="center">
-      <a href="https://github.com/sinse100">
-        <img src="https://github.com/sinse100.png" width="90px;" style="border-radius:50%;" />
-      </a>
-      <br />
-      <b>sinse100</b>
-      <hr style="margin:3px 0; border:0.5px solid #444; opacity:0.4;">
-      🔬 Co-Researcher
-      <hr style="margin:3px 0; border:0.5px solid #444; opacity:0.4;">
-      📧 sinse100@korea.ac.kr
-    </td>
-  </tr>
-</table>
-</div>
