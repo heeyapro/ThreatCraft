@@ -39,12 +39,6 @@ FEASIBILITY_ORDER = {
 FEASIBILITY_BY_SCORE = {v: k.title() for k, v in FEASIBILITY_ORDER.items()}
 
 
-ICS_REVIEW_KEY = "ics_level_review"
-LEGACY_REVIEW_KEY = "veh" + "icle_level_review"
-ICS_PATH_IDS_KEY = "source_ics_path_ids"
-LEGACY_PATH_IDS_KEY = "source_" + "veh" + "icle_path_ids"
-
-
 def _read_json(path_like) -> dict | list:
     with open(path_like, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -255,7 +249,7 @@ def _build_path_descriptions_for_path_with_risk(data: dict) -> List[List[dict]]:
     return rendered
 
 
-## Path description builder
+
 def _format_path(path_rows: List[dict]) -> str:
     chunks = []
     for step in path_rows:
@@ -281,8 +275,7 @@ def _format_path_fixed(path_rows: List[dict]) -> str:
 
 OUT_TACTICS = {
     "impact",
-    "impair process control",
-    "inhibit response function",
+    "affect vehicle function",
     "collection",
     "exfiltration",
 }
@@ -537,15 +530,11 @@ def _build_cytoscape_dfd_model(tm7_path: Path, attack_graph_result: dict) -> dic
     }
 
 
-def _render_ics_level_review_html(ics_review_data: Optional[dict]) -> str:
-    if not ics_review_data:
-        return "<div class='card'><p style='color:#6b7280'>No ICS-level AI review available. Provide a Gemini API key to enable this section.</p></div>"
+def _render_vehicle_level_review_html(vehicle_review_data: Optional[dict]) -> str:
+    if not vehicle_review_data:
+        return "<div class='card'><p style='color:#6b7280'>No vehicle-level AI review available. Provide a Gemini API key to enable this section.</p></div>"
 
-    vr = (
-        ics_review_data.get(ICS_REVIEW_KEY)
-        or ics_review_data.get(LEGACY_REVIEW_KEY)
-        or ics_review_data
-    )
+    vr = vehicle_review_data.get("vehicle_level_review", vehicle_review_data)
     overall_summary = _safe_text(vr.get("overall_summary") or "-")
     overall_validity = _safe_text(vr.get("overall_validity") or "-")
     overall_confidence = _safe_text(vr.get("overall_confidence") or "-")
@@ -693,7 +682,7 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
         risk_level = _calc_risk_level(_max_impact_label([_s_i, _f_i, _o_i, _p_i]), _feas_r)
         feasibility = _safe_text(_feas_r)
         feasibility_score = sc.get("overall_feasibility_score") or 0
-        source_paths = ", ".join(sc.get(ICS_PATH_IDS_KEY) or sc.get(LEGACY_PATH_IDS_KEY) or [])
+        source_paths = ", ".join(sc.get("source_vehicle_path_ids") or [])
         source_threats = ", ".join(sc.get("source_threat_ids") or [])
 
         
@@ -715,52 +704,31 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
         comp = sc.get("component_details_used") or {}
         comp_html = ""
         if comp:
-            # Keep the report content aligned with the frontend detail panel.
-            # Do not silently drop path_components_used, cwe_refs, cve_refs, or asset_kind.
             comp_parts = []
             for k, v in comp.items():
-                if not v or v == "..." or v == [] or v == "[INFERRED]":
+                
+                if k.lower() in ("cves", "cve_list", "cve", "cve_refs", "asset_kind"):
                     continue
-                try:
-                    if isinstance(v, (list, dict)):
-                        v_str = json.dumps(v, ensure_ascii=False)
-                    else:
-                        v_str = str(v)
-                except Exception:
-                    v_str = str(v)
-                if v_str.strip() and v_str.strip() != "...":
-                    comp_parts.append(
-                        f"<div style='font-size:11px;color:#374151;margin:2px 0'><b>{escape(k.title())}:</b> {escape(v_str[:1200])}</div>"
-                    )
+                
+                if k.lower() not in ("hardware", "software", "interfaces"):
+                    continue
+                if v and v != "..." and v != [] and v != "[INFERRED]":
+                    v_str = ", ".join(str(x) for x in v) if isinstance(v, list) else str(v)
+                    if v_str.strip() and v_str.strip() != "...":
+                        comp_parts.append(f"<b>{escape(k.title())}:</b> {escape(v_str[:150])}")
             if comp_parts:
-                comp_html = "<div style='background:#f8fafc;border:1px solid #e5e7eb;border-radius:6px;padding:8px;margin-bottom:8px'><p style='font-size:11px;font-weight:bold;color:#374151;margin:0 0 4px 0'>Component Details</p>" + "".join(comp_parts) + "</div>"
+                comp_html = "<div style='font-size:11px;color:#6b7280;margin-bottom:6px'>" + " &nbsp;|&nbsp; ".join(comp_parts) + "</div>"
 
         
         atree = sc.get("attack_tree") or {}
         atree_html = ""
         if atree.get("root_goal"):
             steps = atree.get("sub_steps") or []
-            def _render_step(_s):
-                _rating = escape(_s.get('feasibility_scores',{}).get('rating',''))
-                _component = escape(str(_s.get('component_name') or ''))
-                _role = escape(str(_s.get('component_role') or ''))
-                _ctype = escape(str(_s.get('component_type') or ''))
-                _cve = escape(str(_s.get('cve_exploited') or ''))
-                _cwe = escape(str(_s.get('cwe_exploited') or ''))
-                _meta = []
-                if _component: _meta.append(f"Component: {_component}")
-                if _role: _meta.append(f"Role: {_role}")
-                if _ctype: _meta.append(f"Type: {_ctype}")
-                if _cve: _meta.append(f"CVE: {_cve}")
-                if _cwe: _meta.append(f"CWE: {_cwe}")
-                if _rating: _meta.append(f"Feasibility: {_rating}")
-                _meta_html = ("<br><span style='color:#6b7280'>" + " | ".join(_meta) + "</span>") if _meta else ""
-                return (
-                    f"<li style='font-size:11px;margin-bottom:4px'>"
-                    f"[{escape(_s.get('logical_operator','OR'))}] {escape(_s.get('description','')[:240])}"
-                    f"{_meta_html}</li>"
-                )
-            steps_html = "".join(_render_step(s) for s in steps[:8])
+            steps_html = "".join(
+                f"<li style='font-size:11px'>[{escape(s.get('logical_operator','OR'))}] {escape(s.get('description','')[:120])} "
+                f"<span style='color:#6b7280'>→ {escape(s.get('feasibility_scores',{}).get('rating',''))}</span></li>"
+                for s in steps[:5]
+            )
             atree_html = f"""<div style='background:#f8fafc;border-radius:6px;padding:8px;margin-bottom:8px'>
                 <p style='font-size:11px;font-weight:bold;color:#374151;margin:0 0 4px 0'>Attack Tree [{escape(atree.get('logical_structure','OR'))}]: {escape(atree.get('root_goal','')[:100])}</p>
                 <ul style='margin:0;padding-left:16px'>{steps_html}</ul>
@@ -775,17 +743,6 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
         mit_html = "".join(f"<li style='font-size:11px'>{escape(str(m))}</li>" for m in mits) if mits else ""
         inf_html = "".join(f"<li style='font-size:11px;color:#d97706'>{escape(str(i))}</li>" for i in inferences) if inferences else ""
         eq_func_html = "".join(f"<li style='font-size:11px'><span style='background:#1e3a8a;color:white;padding:1px 6px;border-radius:3px;font-size:9px;margin-right:4px'>EQ</span>{escape(str(e))}</li>" for e in equipment) if equipment else ""
-        cve_refs = sc.get("cve_refs") or []
-        cve_refs_html = ""
-        if cve_refs:
-            _cve_items = []
-            for _cv in cve_refs:
-                try:
-                    _cv_txt = json.dumps(_cv, ensure_ascii=False) if isinstance(_cv, dict) else str(_cv)
-                except Exception:
-                    _cv_txt = str(_cv)
-                _cve_items.append(f"<li style='font-size:11px'>{escape(_cv_txt[:1000])}</li>")
-            cve_refs_html = "".join(_cve_items)
 
         cs_badge_color = cs_color.get(cs_goal, "#6b7280")
         novel_badge = f"<span style='background:#16a34a;color:white;padding:2px 8px;border-radius:4px;font-size:10px;margin-left:6px'>NOVEL FINDING</span>" if is_novel else ""
@@ -838,7 +795,6 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
                 </div>
                 {f"<div><p style='font-size:11px;font-weight:bold;color:#374151;margin:0 0 4px 0'>Recommended Mitigations</p><ul style='margin:0;padding-left:16px'>{mit_html}</ul></div>" if mit_html else ""}
             </div>
-            {f"<div style='margin-top:6px'><p style='font-size:11px;font-weight:bold;color:#7c3aed;margin:0 0 2px 0'>CVE References</p><ul style='margin:0;padding-left:16px'>{cve_refs_html}</ul></div>" if cve_refs_html else ""}
             {f"<div style='margin-top:6px'><p style='font-size:11px;font-weight:bold;color:#d97706;margin:0 0 2px 0'>Inferences Made</p><ul style='margin:0;padding-left:16px'>{inf_html}</ul></div>" if inf_html else ""}
             {f"<div style='margin-top:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px'><p style='font-size:11px;font-weight:bold;color:#1e40af;margin:0 0 4px 0'>Required Attack Equipment</p><ul style='margin:0;padding-left:16px'>{eq_func_html}</ul></div>" if eq_func_html else ""}
         </div>
@@ -885,7 +841,7 @@ def generate_html_report(
     impact_map_path,
     attack_graph_with_risk_path,
     tm7_path,
-    gemini_ics_review=None,
+    gemini_vehicle_review=None,
     gemini_functional=None,
 ):
 
@@ -1079,11 +1035,11 @@ def generate_html_report(
             attack_graph_img_html = f"<p>Could not embed attack graph image: {_ie}</p>" 
 
     
-    ics_review_html = _render_ics_level_review_html(gemini_ics_review)
+    vehicle_review_html = _render_vehicle_level_review_html(gemini_vehicle_review)
     functional_level_html = _render_functional_level_html(gemini_functional)
 
     ai_badge = ""
-    if gemini_ics_review or gemini_functional:
+    if gemini_vehicle_review or gemini_functional:
         ai_badge = "<span style='background:#8b5cf6;color:white;padding:2px 10px;border-radius:4px;font-size:11px;margin-left:8px'>Included AI analysis</span>"
 
     html = f"""
@@ -1224,7 +1180,7 @@ def generate_html_report(
     <div class=\"section\">
     <h2>6. Attack Path Analysis</h2>
 
-    <h3 style=\"border-left:5px solid #1e40af;padding-left:10px;margin-top:16px\">6-A. ICS-Level Attack Paths <span style=\"font-size:11px;color:#8b5cf6;font-weight:normal\">(AI-Generated)</span></h3>
+    <h3 style=\"border-left:5px solid #1e40af;padding-left:10px;margin-top:16px\">6-A. Vehicle-Level Attack Paths <span style=\"font-size:11px;color:#8b5cf6;font-weight:normal\">(AI-Generated)</span></h3>
     <p class=\"small\" style=\"color:#374151\">AI-generated attack path assessments for each UKC path. Each entry includes an attacker-perspective narrative, phase sequence, key assets, tactics, recommendations and required equipment.</p>
 
     <div class=\"diagram-section\">
@@ -1251,10 +1207,10 @@ def generate_html_report(
         </div>
     </div>
 
-    {ics_review_html}
+    {vehicle_review_html}
 
     <h3 style=\"border-left:5px solid #7c3aed;padding-left:10px;margin-top:28px\">6-B. Functional-Level Threat Scenarios <span style=\"font-size:11px;color:#7c3aed;font-weight:normal\">(AI-Generated)</span></h3>
-    <p class=\"small\" style=\"color:#374151\">Function-level threat scenarios derived from ICS-level paths. Each scenario maps an attack path to a specific ICS function or control process, with feasibility ratings and SFOP impact assessment.</p>
+    <p class=\"small\" style=\"color:#374151\">Function-level threat scenarios derived from vehicle-level paths. Each scenario maps an attack path to a specific vehicle function, with feasibility ratings and SFOP impact assessment per ISO/SAE 21434.</p>
     {functional_level_html}
 
     </div>
@@ -1484,7 +1440,7 @@ def generate_html_report(
     with open(report_path, "w", encoding="utf-8") as f:
         f.write(html)
 
-    print(f"[+] Annex H styled HTML report generated: {report_path}")
+    print(f"[+] HTML report generated: {report_path}")
 
 
 def local(tag: str) -> str:
@@ -1560,7 +1516,7 @@ class ThreatInfo:
     threat_id: str
     threat_name: str
     tactic: str
-    phase: str  # In/Through/Out
+    phase: str  
 
 PHASE_ORDER = {"In": 0, "Through": 1, "Out": 2}
 
@@ -3192,11 +3148,11 @@ def main():
     ap.add_argument("--type", default="remote", choices=["remote", "adjacent", "local", "physical"])
     ap.add_argument("--target", default="")
     ap.add_argument("--boundary", default="")
-    ap.add_argument("--asset-map", default="asset_to_threats_ver0.3.json")
-    ap.add_argument("--threat-map", default="threat_to_tactic_ver0.1.json")
-    ap.add_argument("--attack-vector-map", default="attack_vector_feasability_ver0.1.json")
-    ap.add_argument("--impact-map", default="impact_map.json")
-    ap.add_argument("--dependency-map", default="dependency.json")
+    ap.add_argument("--asset-map", default="asset_to_threats_automotive.json")
+    ap.add_argument("--threat-map", default="threat_to_tactic_automotive.json")
+    ap.add_argument("--attack-vector-map", default="attack_vector_feasability_automotive.json")
+    ap.add_argument("--impact-map", default="impact_map_automotive.json")
+    ap.add_argument("--dependency-map", default="dependency_map_automotive.json")
     ap.add_argument("--max-depth", type=int, default=30)
     ap.add_argument("--out", default="attack_graph.json")
     ap.add_argument("--render-merged-graph", action=argparse.BooleanOptionalAction, default=True)
@@ -3234,9 +3190,9 @@ def main():
         try:
             with open(_ga_path, encoding="utf-8") as _f:
                 _gb = json.load(_f)
-            _vr = _gb.get(ICS_REVIEW_KEY) or _gb.get(LEGACY_REVIEW_KEY)
+            _vr = _gb.get("vehicle_level_review")
             _fa = _gb.get("functional_level_analysis")
-            _gemini_ics  = {ICS_REVIEW_KEY: _vr} if _vr else None
+            _gemini_vr   = {"vehicle_level_review": _vr} if _vr else None
             _gemini_func = _fa
             _ga_dir = Path(_ga_path).parent
 
@@ -3277,31 +3233,17 @@ def main():
                 _imgs = sorted(list(_ga_dir.glob("*.png")) + list(_ga_dir.glob("*.pdf")), key=lambda p: p.stat().st_mtime, reverse=True)
                 if _imgs: _ag_img = str(_imgs[0])
 
-
-            _tm7_path = _gb.get("tm7_path") or args.tm7 or ""
-            _asset_map_path = _gb.get("asset_map_path") or args.asset_map or ""
-            _threat_map_path = _gb.get("threat_map_path") or args.threat_map or ""
-            _attack_vector_path = _gb.get("attack_vector_map_path") or args.attack_vector_map or ""
-            _impact_map_path = _gb.get("impact_map_path") or args.impact_map or ""
-
-            _risk_candidates = [
-                _gb.get("attack_graph_with_risk_path") or "",
-                str(_ga_dir / "attack_graph_with_risk_temp.json"),
-                str(Path(_out_path).parent / "attack_graph_with_risk_temp.json") if _out_path else "",
-            ]
-            _risk_path = next((str(p) for p in _risk_candidates if p and Path(str(p)).exists()), "")
-
             generate_html_report(
                 report_path=_report_path,
                 attack_graph_path=_ag_img,
                 out_path=_out_path or "",
-                threat_cti_path=_threat_map_path,
-                asset_map_path=_asset_map_path,
-                attack_vector_path=_attack_vector_path,
-                impact_map_path=_impact_map_path,
+                threat_cti_path="",
+                asset_map_path="",
+                attack_vector_path="",
+                impact_map_path="",
                 attack_graph_with_risk_path=_risk_path,
-                tm7_path=_tm7_path,
-                gemini_ics_review=_gemini_ics,
+                tm7_path="",
+                gemini_vehicle_review=_gemini_vr,
                 gemini_functional=_gemini_func,
             )
             print(f"[OK] Report regenerated: {_report_path}")
@@ -3419,7 +3361,7 @@ def main():
             print(f"[WARN] attack tree rendering failed: {e}", file=sys.stderr)
 
 
-    gemini_ics_review = None
+    gemini_vehicle_review = None
     gemini_functional = None
 
     report_path = Path(args.detection_report)
@@ -3430,7 +3372,7 @@ def main():
     else:
         attack_graph_path = args.merged_graph_out + "." + args.merged_graph_format
 
-    if not gemini_ics_review and not gemini_functional:
+    if not gemini_vehicle_review and not gemini_functional:
         _search_dirs = []
         _search_dirs.append(Path(args.out).parent)
         if args.detection_report:
@@ -3453,11 +3395,11 @@ def main():
                     with open(_gp, encoding="utf-8") as _f:
                         _gb = json.load(_f)
 
-                    _vr = _gb.get(ICS_REVIEW_KEY) or _gb.get(LEGACY_REVIEW_KEY)
+                    _vr = _gb.get("vehicle_level_review")
                     _fa = _gb.get("functional_level_analysis")
 
                     if _vr:
-                        gemini_ics_review = {ICS_REVIEW_KEY: _vr}
+                        gemini_vehicle_review = {"vehicle_level_review": _vr}
                     if _fa:
                         gemini_functional = {"functional_level_analysis": _fa}
 
@@ -3486,7 +3428,7 @@ def main():
                 impact_map_path=str(impact_map),
                 attack_graph_with_risk_path=risk_path,
                 tm7_path=str(tm7_path),
-                gemini_ics_review=gemini_ics_review,
+                gemini_vehicle_review=gemini_vehicle_review,
                 gemini_functional=gemini_functional,
             )
 

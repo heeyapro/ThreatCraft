@@ -39,12 +39,6 @@ FEASIBILITY_ORDER = {
 FEASIBILITY_BY_SCORE = {v: k.title() for k, v in FEASIBILITY_ORDER.items()}
 
 
-ICS_REVIEW_KEY = "ics_level_review"
-LEGACY_REVIEW_KEY = "veh" + "icle_level_review"
-ICS_PATH_IDS_KEY = "source_ics_path_ids"
-LEGACY_PATH_IDS_KEY = "source_" + "veh" + "icle_path_ids"
-
-
 def _read_json(path_like) -> dict | list:
     with open(path_like, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -255,7 +249,7 @@ def _build_path_descriptions_for_path_with_risk(data: dict) -> List[List[dict]]:
     return rendered
 
 
-## Path description builder
+
 def _format_path(path_rows: List[dict]) -> str:
     chunks = []
     for step in path_rows:
@@ -281,8 +275,6 @@ def _format_path_fixed(path_rows: List[dict]) -> str:
 
 OUT_TACTICS = {
     "impact",
-    "impair process control",
-    "inhibit response function",
     "collection",
     "exfiltration",
 }
@@ -443,6 +435,100 @@ def _build_asset_detail_text(asset_name: str, threats: List[dict]) -> str:
     return "\n".join(lines)
 
 
+def _build_cytoscape_fallback_model(attack_graph_result: dict) -> dict:
+    attack_nodes = attack_graph_result.get("nodes", []) or []
+    attack_edges = attack_graph_result.get("edges", []) or []
+
+    asset_info: Dict[str, dict] = {}
+    asset_threat_map: Dict[str, List[dict]] = defaultdict(list)
+
+    for n in attack_nodes:
+        guid = n.get("asset_guid") or n.get("asset_name") or n.get("node_id")
+        if not guid:
+            continue
+        phase = n.get("phase") or ""
+        prev_phase = asset_info.get(guid, {}).get("phase", "")
+        if guid not in asset_info or _phase_priority(phase) > _phase_priority(prev_phase):
+            asset_info[guid] = {
+                "id": guid,
+                "label": n.get("asset_name") or str(guid),
+                "type": _stencil_to_cy_type(n.get("stencil_type") or ""),
+                "phase": phase,
+            }
+        asset_threat_map[guid].append({
+            "threat_id": n.get("threat_id"),
+            "threat_name": n.get("threat_name"),
+            "phase": phase,
+            "tactic": n.get("tactic"),
+        })
+
+    phase_buckets: Dict[str, List[str]] = {"Entry": [], "In": [], "Through": [], "Out": [], "": []}
+    for guid, info in asset_info.items():
+        phase_buckets.setdefault(info.get("phase") or "", []).append(guid)
+
+    x_by_phase = {"Entry": 0, "In": 240, "Through": 520, "Out": 800, "": 1040}
+    cy_nodes = []
+    for phase, guids in phase_buckets.items():
+        for idx, guid in enumerate(guids):
+            info = asset_info[guid]
+            cy_nodes.append({
+                "data": {
+                    "id": guid,
+                    "label": info.get("label") or str(guid),
+                    "type": info.get("type") or "external",
+                    "phase": phase,
+                    "highlighted": "yes" if phase else "no",
+                    "borderColor": _phase_color(phase),
+                    "desc": _build_asset_detail_text(
+                        info.get("label") or str(guid),
+                        asset_threat_map.get(guid, []),
+                    ),
+                },
+                "position": {
+                    "x": x_by_phase.get(phase, 1040),
+                    "y": idx * 115,
+                },
+            })
+
+    node_id_to_asset_guid = {
+        n.get("node_id"): (n.get("asset_guid") or n.get("asset_name") or n.get("node_id"))
+        for n in attack_nodes
+    }
+
+    seen_edges: Set[Tuple[str, str, str]] = set()
+    cy_edges = []
+    for idx, e in enumerate(attack_edges):
+        src = node_id_to_asset_guid.get(e.get("from"))
+        dst = node_id_to_asset_guid.get(e.get("to"))
+        if not src or not dst or src == dst:
+            continue
+        label = e.get("dfd_flow_label") or ""
+        key = (src, dst, label)
+        if key in seen_edges:
+            continue
+        seen_edges.add(key)
+        phase = asset_info.get(src, {}).get("phase") or "Through"
+        cy_edges.append({
+            "data": {
+                "id": f"fallback_edge_{idx}",
+                "source": src,
+                "target": dst,
+                "label": label,
+                "phase": phase,
+                "highlighted": "yes",
+                "borderColor": _phase_color(phase),
+                "desc": json.dumps({
+                    "source": asset_info.get(src, {}).get("label", src),
+                    "target": asset_info.get(dst, {}).get("label", dst),
+                    "label": label,
+                    "phase": phase,
+                }, ensure_ascii=False, indent=2),
+            }
+        })
+
+    return {"nodes": cy_nodes, "edges": cy_edges}
+
+
 def _build_cytoscape_dfd_model(tm7_path: Path, attack_graph_result: dict) -> dict:
     nodes_by_guid, flows, _ = parse_tm7(tm7_path)
 
@@ -509,14 +595,23 @@ def _build_cytoscape_dfd_model(tm7_path: Path, attack_graph_result: dict) -> dic
             },
         })
 
+    valid_node_ids = {str(guid) for guid in nodes_by_guid.keys()}
+
     cy_edges = []
+    skipped_edges = 0
     for f in flows:
+        src = str(f.source_guid or "")
+        dst = str(f.target_guid or "")
+        if src not in valid_node_ids or dst not in valid_node_ids:
+            skipped_edges += 1
+            continue
+
         phase = flow_phase_map.get(f.guid)
         cy_edges.append({
             "data": {
                 "id": f.guid,
-                "source": f.source_guid,
-                "target": f.target_guid,
+                "source": src,
+                "target": dst,
                 "label": f.label or "",
                 "phase": phase or "",
                 "highlighted": "yes" if f.guid in flow_phase_map else "no",
@@ -524,9 +619,10 @@ def _build_cytoscape_dfd_model(tm7_path: Path, attack_graph_result: dict) -> dic
                 "desc": json.dumps({
                     "guid": f.guid,
                     "label": f.label,
-                    "source_guid": f.source_guid,
-                    "target_guid": f.target_guid,
+                    "source_guid": src,
+                    "target_guid": dst,
                     "phase": phase or "-",
+                    "skipped_invalid_tm7_edges": skipped_edges,
                 }, ensure_ascii=False, indent=2),
             }
         })
@@ -534,18 +630,15 @@ def _build_cytoscape_dfd_model(tm7_path: Path, attack_graph_result: dict) -> dic
     return {
         "nodes": cy_nodes,
         "edges": cy_edges,
+        "skipped_invalid_tm7_edges": skipped_edges,
     }
 
 
-def _render_ics_level_review_html(ics_review_data: Optional[dict]) -> str:
-    if not ics_review_data:
-        return "<div class='card'><p style='color:#6b7280'>No ICS-level AI review available. Provide a Gemini API key to enable this section.</p></div>"
+def _render_enterprise_level_review_html(enterprise_review_data: Optional[dict]) -> str:
+    if not enterprise_review_data:
+        return "<div class='card'><p style='color:#6b7280'>No enterprise-level AI review available. Provide an AI analysis JSON to enable this section.</p></div>"
 
-    vr = (
-        ics_review_data.get(ICS_REVIEW_KEY)
-        or ics_review_data.get(LEGACY_REVIEW_KEY)
-        or ics_review_data
-    )
+    vr = enterprise_review_data.get("enterprise_level_review", enterprise_review_data)
     overall_summary = _safe_text(vr.get("overall_summary") or "-")
     overall_validity = _safe_text(vr.get("overall_validity") or "-")
     overall_confidence = _safe_text(vr.get("overall_confidence") or "-")
@@ -693,7 +786,7 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
         risk_level = _calc_risk_level(_max_impact_label([_s_i, _f_i, _o_i, _p_i]), _feas_r)
         feasibility = _safe_text(_feas_r)
         feasibility_score = sc.get("overall_feasibility_score") or 0
-        source_paths = ", ".join(sc.get(ICS_PATH_IDS_KEY) or sc.get(LEGACY_PATH_IDS_KEY) or [])
+        source_paths = ", ".join(sc.get("source_enterprise_path_ids") or [])
         source_threats = ", ".join(sc.get("source_threat_ids") or [])
 
         
@@ -715,52 +808,31 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
         comp = sc.get("component_details_used") or {}
         comp_html = ""
         if comp:
-            # Keep the report content aligned with the frontend detail panel.
-            # Do not silently drop path_components_used, cwe_refs, cve_refs, or asset_kind.
             comp_parts = []
             for k, v in comp.items():
-                if not v or v == "..." or v == [] or v == "[INFERRED]":
+                
+                if k.lower() in ("cves", "cve_list", "cve", "cve_refs", "asset_kind"):
                     continue
-                try:
-                    if isinstance(v, (list, dict)):
-                        v_str = json.dumps(v, ensure_ascii=False)
-                    else:
-                        v_str = str(v)
-                except Exception:
-                    v_str = str(v)
-                if v_str.strip() and v_str.strip() != "...":
-                    comp_parts.append(
-                        f"<div style='font-size:11px;color:#374151;margin:2px 0'><b>{escape(k.title())}:</b> {escape(v_str[:1200])}</div>"
-                    )
+                
+                if k.lower() not in ("hardware", "software", "interfaces"):
+                    continue
+                if v and v != "..." and v != [] and v != "[INFERRED]":
+                    v_str = ", ".join(str(x) for x in v) if isinstance(v, list) else str(v)
+                    if v_str.strip() and v_str.strip() != "...":
+                        comp_parts.append(f"<b>{escape(k.title())}:</b> {escape(v_str[:150])}")
             if comp_parts:
-                comp_html = "<div style='background:#f8fafc;border:1px solid #e5e7eb;border-radius:6px;padding:8px;margin-bottom:8px'><p style='font-size:11px;font-weight:bold;color:#374151;margin:0 0 4px 0'>Component Details</p>" + "".join(comp_parts) + "</div>"
+                comp_html = "<div style='font-size:11px;color:#6b7280;margin-bottom:6px'>" + " &nbsp;|&nbsp; ".join(comp_parts) + "</div>"
 
         
         atree = sc.get("attack_tree") or {}
         atree_html = ""
         if atree.get("root_goal"):
             steps = atree.get("sub_steps") or []
-            def _render_step(_s):
-                _rating = escape(_s.get('feasibility_scores',{}).get('rating',''))
-                _component = escape(str(_s.get('component_name') or ''))
-                _role = escape(str(_s.get('component_role') or ''))
-                _ctype = escape(str(_s.get('component_type') or ''))
-                _cve = escape(str(_s.get('cve_exploited') or ''))
-                _cwe = escape(str(_s.get('cwe_exploited') or ''))
-                _meta = []
-                if _component: _meta.append(f"Component: {_component}")
-                if _role: _meta.append(f"Role: {_role}")
-                if _ctype: _meta.append(f"Type: {_ctype}")
-                if _cve: _meta.append(f"CVE: {_cve}")
-                if _cwe: _meta.append(f"CWE: {_cwe}")
-                if _rating: _meta.append(f"Feasibility: {_rating}")
-                _meta_html = ("<br><span style='color:#6b7280'>" + " | ".join(_meta) + "</span>") if _meta else ""
-                return (
-                    f"<li style='font-size:11px;margin-bottom:4px'>"
-                    f"[{escape(_s.get('logical_operator','OR'))}] {escape(_s.get('description','')[:240])}"
-                    f"{_meta_html}</li>"
-                )
-            steps_html = "".join(_render_step(s) for s in steps[:8])
+            steps_html = "".join(
+                f"<li style='font-size:11px'>[{escape(s.get('logical_operator','OR'))}] {escape(s.get('description','')[:120])} "
+                f"<span style='color:#6b7280'>→ {escape(s.get('feasibility_scores',{}).get('rating',''))}</span></li>"
+                for s in steps[:5]
+            )
             atree_html = f"""<div style='background:#f8fafc;border-radius:6px;padding:8px;margin-bottom:8px'>
                 <p style='font-size:11px;font-weight:bold;color:#374151;margin:0 0 4px 0'>Attack Tree [{escape(atree.get('logical_structure','OR'))}]: {escape(atree.get('root_goal','')[:100])}</p>
                 <ul style='margin:0;padding-left:16px'>{steps_html}</ul>
@@ -775,17 +847,6 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
         mit_html = "".join(f"<li style='font-size:11px'>{escape(str(m))}</li>" for m in mits) if mits else ""
         inf_html = "".join(f"<li style='font-size:11px;color:#d97706'>{escape(str(i))}</li>" for i in inferences) if inferences else ""
         eq_func_html = "".join(f"<li style='font-size:11px'><span style='background:#1e3a8a;color:white;padding:1px 6px;border-radius:3px;font-size:9px;margin-right:4px'>EQ</span>{escape(str(e))}</li>" for e in equipment) if equipment else ""
-        cve_refs = sc.get("cve_refs") or []
-        cve_refs_html = ""
-        if cve_refs:
-            _cve_items = []
-            for _cv in cve_refs:
-                try:
-                    _cv_txt = json.dumps(_cv, ensure_ascii=False) if isinstance(_cv, dict) else str(_cv)
-                except Exception:
-                    _cv_txt = str(_cv)
-                _cve_items.append(f"<li style='font-size:11px'>{escape(_cv_txt[:1000])}</li>")
-            cve_refs_html = "".join(_cve_items)
 
         cs_badge_color = cs_color.get(cs_goal, "#6b7280")
         novel_badge = f"<span style='background:#16a34a;color:white;padding:2px 8px;border-radius:4px;font-size:10px;margin-left:6px'>NOVEL FINDING</span>" if is_novel else ""
@@ -838,7 +899,6 @@ def _render_functional_level_html(functional_data: Optional[dict]) -> str:
                 </div>
                 {f"<div><p style='font-size:11px;font-weight:bold;color:#374151;margin:0 0 4px 0'>Recommended Mitigations</p><ul style='margin:0;padding-left:16px'>{mit_html}</ul></div>" if mit_html else ""}
             </div>
-            {f"<div style='margin-top:6px'><p style='font-size:11px;font-weight:bold;color:#7c3aed;margin:0 0 2px 0'>CVE References</p><ul style='margin:0;padding-left:16px'>{cve_refs_html}</ul></div>" if cve_refs_html else ""}
             {f"<div style='margin-top:6px'><p style='font-size:11px;font-weight:bold;color:#d97706;margin:0 0 2px 0'>Inferences Made</p><ul style='margin:0;padding-left:16px'>{inf_html}</ul></div>" if inf_html else ""}
             {f"<div style='margin-top:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px'><p style='font-size:11px;font-weight:bold;color:#1e40af;margin:0 0 4px 0'>Required Attack Equipment</p><ul style='margin:0;padding-left:16px'>{eq_func_html}</ul></div>" if eq_func_html else ""}
         </div>
@@ -885,7 +945,7 @@ def generate_html_report(
     impact_map_path,
     attack_graph_with_risk_path,
     tm7_path,
-    gemini_ics_review=None,
+    gemini_enterprise_review=None,
     gemini_functional=None,
 ):
 
@@ -920,8 +980,10 @@ def generate_html_report(
     path_with_risk_rows = _build_path_descriptions_for_path_with_risk(data_with_risk)
     try:
         cy_model = _build_cytoscape_dfd_model(Path(tm7_path), data) if tm7_path and Path(str(tm7_path)).exists() else {"nodes": [], "edges": []}
+        if not cy_model.get("nodes"):
+            cy_model = _build_cytoscape_fallback_model(data)
     except Exception:
-        cy_model = {"nodes": [], "edges": []}
+        cy_model = _build_cytoscape_fallback_model(data)
     cy_model_json = json.dumps(cy_model, ensure_ascii=False)
 
     direct_asset_threats = []
@@ -1058,7 +1120,7 @@ def generate_html_report(
     path_rows_html = "".join(
         f"<tr><td class='path-id-col'>P{idx}</td><td>{_format_path_fixed(path['row'])}</td><td style=\"width: 10px;\">{path['risk']}</td></tr>"
         for idx, path in enumerate(path_with_risk_rows, start=1)
-    ) or "<tr><td colspan='2'>No valid attack path identified.</td></tr>"
+    ) or "<tr><td colspan='3'>No valid attack path identified.</td></tr>"
 
     
     attack_graph_img_html = "<p>No attack graph image generated.</p>"
@@ -1079,11 +1141,11 @@ def generate_html_report(
             attack_graph_img_html = f"<p>Could not embed attack graph image: {_ie}</p>" 
 
     
-    ics_review_html = _render_ics_level_review_html(gemini_ics_review)
+    enterprise_review_html = _render_enterprise_level_review_html(gemini_enterprise_review)
     functional_level_html = _render_functional_level_html(gemini_functional)
 
     ai_badge = ""
-    if gemini_ics_review or gemini_functional:
+    if gemini_enterprise_review or gemini_functional:
         ai_badge = "<span style='background:#8b5cf6;color:white;padding:2px 10px;border-radius:4px;font-size:11px;margin-left:8px'>Included AI analysis</span>"
 
     html = f"""
@@ -1130,7 +1192,7 @@ def generate_html_report(
         .diagram-section {{ border: 1px solid #d1d5db; border-radius: 10px; padding: 14px; margin-top: 10px; background: #fff; break-inside: avoid-page; page-break-inside: avoid; }}
         .diagram-layout {{ display: grid; grid-template-columns: 300px 1fr; gap: 12px; height: 640px; }}
         .side-panel {{ border: 1px solid #ddd; border-radius: 10px; padding: 12px; overflow: auto; background: #fafafa; }}
-        .dfd-area {{ border: 1px solid #ddd; border-radius: 10px; overflow: hidden; background: #fff; position: relative; }}
+        .dfd-area {{ border: 1px solid #ddd; border-radius: 10px; overflow: hidden; background: #fff; position: relative; min-height: 620px; }}
         #cy {{ width: 100%; height: 100%; }}
         .detail-pre {{ margin: 10px 0 0 0; padding: 10px; background: #fff; border: 1px solid #eee; border-radius: 8px; overflow: auto; font-size: 12px; white-space: pre-wrap; word-break: break-word; }}
         .screen-only {{ display: block; }}
@@ -1155,7 +1217,7 @@ def generate_html_report(
 <body>
     <div class="container">
     <h1>Threat Analysis and Risk Assessment Report {ai_badge}</h1>
-    <p class=\"note\">This report summarizes the identified attack paths, threat scenarios, impact ratings, and risk treatment decisions for the selected system.</p>
+    <p class=\"note\">This report presents the identified attack paths, generated threat scenarios, and risk analysis results for the selected system.</p>
 
     <div class=\"section\">
     <h2>1. Item Definition</h2>
@@ -1224,7 +1286,7 @@ def generate_html_report(
     <div class=\"section\">
     <h2>6. Attack Path Analysis</h2>
 
-    <h3 style=\"border-left:5px solid #1e40af;padding-left:10px;margin-top:16px\">6-A. ICS-Level Attack Paths <span style=\"font-size:11px;color:#8b5cf6;font-weight:normal\">(AI-Generated)</span></h3>
+    <h3 style=\"border-left:5px solid #1e40af;padding-left:10px;margin-top:16px\">6-A. Enterprise-Level Attack Paths <span style=\"font-size:11px;color:#8b5cf6;font-weight:normal\">(AI-Generated)</span></h3>
     <p class=\"small\" style=\"color:#374151\">AI-generated attack path assessments for each UKC path. Each entry includes an attacker-perspective narrative, phase sequence, key assets, tactics, recommendations and required equipment.</p>
 
     <div class=\"diagram-section\">
@@ -1251,10 +1313,10 @@ def generate_html_report(
         </div>
     </div>
 
-    {ics_review_html}
+    {enterprise_review_html}
 
     <h3 style=\"border-left:5px solid #7c3aed;padding-left:10px;margin-top:28px\">6-B. Functional-Level Threat Scenarios <span style=\"font-size:11px;color:#7c3aed;font-weight:normal\">(AI-Generated)</span></h3>
-    <p class=\"small\" style=\"color:#374151\">Function-level threat scenarios derived from ICS-level paths. Each scenario maps an attack path to a specific ICS function or control process, with feasibility ratings and SFOP impact assessment.</p>
+    <p class=\"small\" style=\"color:#374151\">Function-level threat scenarios derived from enterprise-level paths. Each scenario maps an attack path to a specific enterprise function or asset, with feasibility ratings and SFOP-style impact assessment.</p>
     {functional_level_html}
 
     </div>
@@ -1310,170 +1372,201 @@ def generate_html_report(
 
     if (cyContainer) {{
         const model = {cy_model_json};
-
-        const cy = cytoscape({{
-          container: cyContainer,
-          elements: [...model.nodes, ...model.edges],
-          layout: {{
-            name: 'preset'
-          }},
-          style: [
-            {{
-              selector: 'node',
-              style: {{
-                'label': 'data(label)',
-                'text-valign': 'center',
-                'text-halign': 'center',
-                'font-size': 11,
-                'width': 150,
-                'height': 55,
-                'shape': 'round-rectangle',
-                'border-width': 1.2,
-                'border-color': '#64748b',
-                'background-color': '#ffffff',
-                'color': '#111827',
-                'text-wrap': 'wrap',
-                'text-max-width': 120
-              }}
-            }},
-            {{
-              selector: 'node[type="process"]',
-              style: {{
-                'shape': 'ellipse',
-                'width': 95,
-                'height': 95
-              }}
-            }},
-            {{
-              selector: 'node[type="datastore"]',
-              style: {{
-                'shape': 'round-rectangle',
-                'width': 180,
-                'height': 55
-              }}
-            }},
-            {{
-              selector: 'node[type="external"]',
-              style: {{
-                'shape': 'rectangle',
-                'width': 150,
-                'height': 55
-              }}
-            }},
-            {{
-              selector: 'node[highlighted="yes"]',
-              style: {{
-                'border-width': 4,
-                'border-color': 'data(borderColor)'
-              }}
-            }},
-            {{
-              selector: 'node[phase = "In"]',
-              style: {{
-                'border-color': '#22c55e',
-                'background-color': '#f0fdf4'
-              }}
-            }},
-            {{
-              selector: 'node[phase = "Through"]',
-              style: {{
-                'border-color': '#f59e0b',
-                'background-color': '#fffbeb'
-              }}
-            }},
-            {{
-              selector: 'node[phase = "Out"]',
-              style: {{
-                'border-color': '#ef4444',
-                'background-color': '#fef2f2'
-              }}
-            }},
-            {{
-              selector: 'edge',
-              style: {{
-                'curve-style': 'bezier',
-                'target-arrow-shape': 'triangle',
-                'label': 'data(label)',
-                'font-size': 10,
-                'text-rotation': 'autorotate',
-                'text-margin-y': -8,
-                'arrow-scale': 0.8,
-                'width': 1.8,
-                'line-color': '#94a3b8',
-                'target-arrow-color': '#94a3b8',
-                'color': '#475569'
-              }}
-        }},
-            {{
-              selector: 'edge[phase = "In"]',
-              style: {{
-                'width': 4,
-                'line-color': '#22c55e',
-                'target-arrow-color': '#22c55e'
-              }}
-            }},
-            {{
-              selector: 'edge[phase = "Through"]',
-              style: {{
-                'width': 4,
-                'line-color': '#f59e0b',
-                'target-arrow-color': '#f59e0b'
-              }}
-            }},
-            {{
-              selector: 'edge[phase = "Out"]',
-              style: {{
-                'width': 4,
-                'line-color': '#ef4444',
-                'target-arrow-color': '#ef4444'
-              }}
-            }},
-            {{
-              selector: ':selected',
-              style: {{
-                'overlay-opacity': 0,
-                'border-width': 5
-              }}
-            }}
-          ]
-        }});
-
         const detail = document.getElementById('detail');
 
-        cy.on('tap', 'node, edge', (evt) => {{
-          const d = evt.target.data();
-          if (detail) {{
-            detail.textContent = d.desc || JSON.stringify(d, null, 2);
-          }}
-        }});
+        if (!model.nodes || model.nodes.length === 0) {{
+            cyContainer.innerHTML = '<div style="padding:16px;color:#6b7280;font-size:12px">No Cytoscape graph data available. Check whether the TM7 file and attack graph JSON contain DFD nodes and flows.</div>';
+        }} else if (typeof cytoscape === 'undefined') {{
+            cyContainer.innerHTML = '<div style="padding:16px;color:#b91c1c;font-size:12px">Cytoscape library could not be loaded. Check internet access to unpkg.com or bundle cytoscape.min.js locally.</div>';
+        }} else {{
+            // Runtime guard: even if a malformed edge slips through Python,
+            // remove it before Cytoscape initialisation. Otherwise Cytoscape
+            // can abort rendering and leave the panel blank.
+            const nodeIds = new Set((model.nodes || [])
+                .map(n => n && n.data && n.data.id)
+                .filter(Boolean));
+            const safeEdges = (model.edges || []).filter(e =>
+                e && e.data && nodeIds.has(e.data.source) && nodeIds.has(e.data.target)
+            );
 
-        cy.on('tap', (evt) => {{
-          if (evt.target === cy && detail) {{
-            detail.textContent = '(No element selected)';
-          }}
-        }});
+            const cy = cytoscape({{
+              container: cyContainer,
+              elements: [...(model.nodes || []), ...safeEdges],
+              layout: {{ name: 'preset' }},
+              style: [
+                {{
+                  selector: 'node',
+                  style: {{
+                    'label': 'data(label)',
+                    'text-valign': 'center',
+                    'text-halign': 'center',
+                    'font-size': 11,
+                    'width': 150,
+                    'height': 55,
+                    'shape': 'round-rectangle',
+                    'border-width': 1.2,
+                    'border-color': '#64748b',
+                    'background-color': '#ffffff',
+                    'color': '#111827',
+                    'text-wrap': 'wrap',
+                    'text-max-width': 120
+                  }}
+                }},
+                {{
+                  selector: 'node[type="process"]',
+                  style: {{
+                    'shape': 'ellipse',
+                    'width': 95,
+                    'height': 95
+                  }}
+                }},
+                {{
+                  selector: 'node[type="datastore"]',
+                  style: {{
+                    'shape': 'round-rectangle',
+                    'width': 180,
+                    'height': 55
+                  }}
+                }},
+                {{
+                  selector: 'node[type="external"]',
+                  style: {{
+                    'shape': 'rectangle',
+                    'width': 150,
+                    'height': 55
+                  }}
+                }},
+                {{
+                  selector: 'node[highlighted="yes"]',
+                  style: {{
+                    'border-width': 4,
+                    'border-color': 'data(borderColor)'
+                  }}
+                }},
+                {{
+                  selector: 'node[phase = "In"]',
+                  style: {{
+                    'border-color': '#22c55e',
+                    'background-color': '#f0fdf4'
+                  }}
+                }},
+                {{
+                  selector: 'node[phase = "Through"]',
+                  style: {{
+                    'border-color': '#f59e0b',
+                    'background-color': '#fffbeb'
+                  }}
+                }},
+                {{
+                  selector: 'node[phase = "Out"]',
+                  style: {{
+                    'border-color': '#ef4444',
+                    'background-color': '#fef2f2'
+                  }}
+                }},
+                {{
+                  selector: 'edge',
+                  style: {{
+                    'curve-style': 'bezier',
+                    'target-arrow-shape': 'triangle',
+                    'label': 'data(label)',
+                    'font-size': 10,
+                    'text-rotation': 'autorotate',
+                    'text-margin-y': -8,
+                    'arrow-scale': 0.8,
+                    'width': 1.8,
+                    'line-color': '#94a3b8',
+                    'target-arrow-color': '#94a3b8',
+                    'color': '#475569'
+                  }}
+                }},
+                {{
+                  selector: 'edge[phase = "In"]',
+                  style: {{
+                    'width': 4,
+                    'line-color': '#22c55e',
+                    'target-arrow-color': '#22c55e'
+                  }}
+                }},
+                {{
+                  selector: 'edge[phase = "Through"]',
+                  style: {{
+                    'width': 4,
+                    'line-color': '#f59e0b',
+                    'target-arrow-color': '#f59e0b'
+                  }}
+                }},
+                {{
+                  selector: 'edge[phase = "Out"]',
+                  style: {{
+                    'width': 4,
+                    'line-color': '#ef4444',
+                    'target-arrow-color': '#ef4444'
+                  }}
+                }},
+                {{
+                  selector: ':selected',
+                  style: {{
+                    'overlay-opacity': 0,
+                    'border-width': 5
+                  }}
+                }}
+              ]
+            }});
 
-        function makeTippy(ele) {{
-          const ref = ele.popperRef();
-          const dummy = document.createElement('div');
-          document.body.appendChild(dummy);
-          const tip = tippy(dummy, {{
-            getReferenceClientRect: ref.getBoundingClientRect,
-            content: ele.data('label') || ele.data('desc') || '',
-            trigger: 'manual',
-            placement: 'top',
-            animation: 'scale',
-        }});
-          return tip;
+            function fitGraph() {{
+                cy.resize();
+                cy.fit(undefined, 40);
+                cy.center();
+            }}
+
+            cy.ready(fitGraph);
+            requestAnimationFrame(fitGraph);
+            setTimeout(fitGraph, 150);
+            window.addEventListener('resize', fitGraph);
+
+            cy.on('tap', 'node, edge', (evt) => {{
+              const d = evt.target.data();
+              if (detail) {{
+                detail.textContent = d.desc || JSON.stringify(d, null, 2);
+              }}
+            }});
+
+            cy.on('tap', (evt) => {{
+              if (evt.target === cy && detail) {{
+                detail.textContent = '(No element selected)';
+              }}
+            }});
+
+            // Tooltips are optional. Do not let missing tippy/popper libraries break graph rendering.
+            if (typeof tippy !== 'undefined') {{
+                function makeTippy(ele) {{
+                  if (typeof ele.popperRef !== 'function') return null;
+                  const ref = ele.popperRef();
+                  const dummy = document.createElement('div');
+                  document.body.appendChild(dummy);
+                  return tippy(dummy, {{
+                    getReferenceClientRect: ref.getBoundingClientRect,
+                    content: ele.data('label') || ele.data('desc') || '',
+                    trigger: 'manual',
+                    placement: 'top',
+                    animation: 'scale'
+                  }});
+                }}
+
+                cy.nodes().forEach(n => n.data('tip', makeTippy(n)));
+                cy.edges().forEach(e => e.data('tip', makeTippy(e)));
+
+                cy.on('mouseover', 'node, edge', (evt) => {{
+                    const tip = evt.target.data('tip');
+                    if (tip) tip.show();
+                }});
+                cy.on('mouseout', 'node, edge', (evt) => {{
+                    const tip = evt.target.data('tip');
+                    if (tip) tip.hide();
+                }});
+            }}
         }}
-
-        cy.nodes().forEach(n => n.data('tip', makeTippy(n)));
-        cy.edges().forEach(e => e.data('tip', makeTippy(e)));
-
-        cy.on('mouseover', 'node, edge', (evt) => evt.target.data('tip').show());
-        cy.on('mouseout', 'node, edge', (evt) => evt.target.data('tip').hide());
-
-        cy.fit(undefined, 30);
     }}
 </script>
 
@@ -1560,7 +1653,7 @@ class ThreatInfo:
     threat_id: str
     threat_name: str
     tactic: str
-    phase: str  # In/Through/Out
+    phase: str 
 
 PHASE_ORDER = {"In": 0, "Through": 1, "Out": 2}
 
@@ -1679,22 +1772,43 @@ def norm_tactic(t: str) -> str:
     return " ".join((t or "").strip().split()).lower()
 
 def build_tactic_to_phase(threat_to_tactic_json: dict) -> Dict[str, str]:
-    ukc = threat_to_tactic_json.get("UnifiedKillChain", {})
     tactic_to_phase: Dict[str, str] = {}
-    for phase in ("In", "Through", "Out"):
-        for tactic in ukc.get(phase, []):
+
+    ukc = threat_to_tactic_json.get("UnifiedKillChain", {}) or {}
+    if isinstance(ukc, dict):
+        for phase in ("In", "Through", "Out"):
+            for tactic in ukc.get(phase, []) or []:
+                tactic_to_phase[norm_tactic(tactic)] = phase
+
+    for item in threat_to_tactic_json.get("tactics", []) or []:
+        if not isinstance(item, dict):
+            continue
+        tactic = item.get("tactic") or item.get("name")
+        phase = item.get("ukc_phase") or item.get("phase")
+        if tactic and phase in PHASE_ORDER:
             tactic_to_phase[norm_tactic(tactic)] = phase
+
     return tactic_to_phase
 
 def load_asset_threats(asset_to_threats_path: Path) -> Dict[str, List[dict]]:
     data = json.loads(asset_to_threats_path.read_text(encoding="utf-8"))
     out: Dict[str, List[dict]] = {}
-    for a in data.get("assets", []):
+    for a in data.get("assets", []) if isinstance(data, dict) else []:
         name = a.get("asset_name")
         if not name:
             continue
         out.setdefault(name, [])
-        out[name].extend(a.get("threats", []))
+        out[name].extend(a.get("threats", []) or [])
+    return out
+
+def load_asset_name_id_map(asset_to_threats_path: Path) -> Dict[str, str]:
+    data = json.loads(asset_to_threats_path.read_text(encoding="utf-8"))
+    out: Dict[str, str] = {}
+    for a in data.get("assets", []) if isinstance(data, dict) else []:
+        name = a.get("asset_name")
+        aid = a.get("asset_id")
+        if name and aid:
+            out[str(name)] = str(aid)
     return out
 
 def load_attack_vectors(attack_vector_path: Path) -> Dict[str, Set[str]]:
@@ -1717,6 +1831,11 @@ def load_attack_vectors(attack_vector_path: Path) -> Dict[str, Set[str]]:
             vecset = {vecs.strip().lower()}
         else:
             vecset = {str(v).strip().lower() for v in vecs if v is not None}
+        # Normalize legacy naming.
+        if "network" in vecset:
+            vecset.add("remote")
+        if "remote" in vecset:
+            vecset.add("network")
         if vecset:
             out[str(tid)] = vecset
     return out
@@ -1724,6 +1843,73 @@ def load_attack_vectors(attack_vector_path: Path) -> Dict[str, Set[str]]:
 def load_dependencies(dependency_path: Path) -> List[dict]:
     raw = json.loads(dependency_path.read_text(encoding="utf-8"))
     return raw if isinstance(raw, list) else []
+
+def build_dependency_indexes(dependencies: List[dict]) -> dict:
+    asset_id_to_classes: Dict[str, Set[str]] = {}
+    threat_asset_compat: Dict[str, Set[str]] = {}
+    threat_chain_rules: List[dict] = []
+    promise_chain_source: Dict[str, dict] = {}
+    ukc_tactic_order: Dict[str, List[str]] = {}
+
+    for rule in dependencies or []:
+        if not isinstance(rule, dict):
+            continue
+        rtype = rule.get("type")
+
+        if rtype == "ASSET_CLASS_MAP":
+            for cls, asset_ids in (rule.get("classes") or {}).items():
+                for aid in asset_ids or []:
+                    asset_id_to_classes.setdefault(str(aid), set()).add(str(cls))
+
+        elif rtype == "THREAT_ASSET_COMPAT":
+            for tid, classes in (rule.get("compat") or {}).items():
+                threat_asset_compat[str(tid)] = {str(c) for c in (classes or [])}
+
+        elif rtype == "THREAT_CHAIN":
+            enables = {str(x) for x in (rule.get("enables") or [])}
+            requires = {str(x) for x in (rule.get("requires_one_of") or rule.get("requires") or [])}
+            if enables and requires:
+                threat_chain_rules.append({
+                    "id": rule.get("id") or "threat_chain",
+                    "description": rule.get("description") or "",
+                    "bypass_at_entry": bool(rule.get("bypass_at_entry", False)),
+                    "enables": enables,
+                    "requires_one_of": requires,
+                })
+
+        elif rtype == "PROMISE_CHAIN_SOURCE":
+            techs = rule.get("techniques") or {}
+            if isinstance(techs, dict):
+                promise_chain_source.update({str(k): v for k, v in techs.items() if isinstance(v, dict)})
+
+        elif rtype == "UKC_TACTIC_ORDER":
+            ukc = rule.get("UnifiedKillChain") or {}
+            if isinstance(ukc, dict):
+                ukc_tactic_order = {str(k): list(v or []) for k, v in ukc.items()}
+
+    return {
+        "asset_id_to_classes": asset_id_to_classes,
+        "threat_asset_compat": threat_asset_compat,
+        "threat_chain_rules": threat_chain_rules,
+        "promise_chain_source": promise_chain_source,
+        "ukc_tactic_order": ukc_tactic_order,
+    }
+
+def _classes_for_asset_name(asset_name: str, asset_name_to_id: Dict[str, str], dep_idx: dict) -> Set[str]:
+    aid = asset_name_to_id.get(str(asset_name))
+    if not aid:
+        return set()
+    return set((dep_idx or {}).get("asset_id_to_classes", {}).get(aid, set()))
+
+def _threat_asset_compatible(asset_name: str, tid: str, asset_name_to_id: Dict[str, str], dep_idx: dict) -> bool:
+    compat = (dep_idx or {}).get("threat_asset_compat", {})
+    allowed = compat.get(str(tid))
+    if not allowed:
+        return True
+    classes = _classes_for_asset_name(asset_name, asset_name_to_id, dep_idx)
+    if not classes:
+        return True
+    return bool(classes.intersection(allowed))
 
 
 
@@ -1810,8 +1996,8 @@ def threat_candidates_for_asset(
             if PHASE_ORDER[phase] > max_phase_allowed:
                 continue
             if phase == "In" and need_vec:
-                allowed_vecs = vec_map.get(tid, set())
-                if need_vec not in allowed_vecs:
+                allowed_vecs = vec_map.get(tid)
+                if allowed_vecs and need_vec not in allowed_vecs:
                     continue
             cands.append(ThreatInfo(threat_id=tid, threat_name=tname, tactic=str(tactic), phase=phase))
 
@@ -1876,24 +2062,54 @@ def path_satisfies_dependencies(
     graph_edges: Set[Tuple[str, str, str]],
     dependencies: List[dict],
     target_asset_name: str,
+    asset_name_to_id: Optional[Dict[str, str]] = None,
+    dependency_indexes: Optional[dict] = None,
 ) -> bool:
+    asset_name_to_id = asset_name_to_id or {}
+    dep_idx = dependency_indexes or build_dependency_indexes(dependencies)
+
     asset_threat_pairs: Set[Tuple[str, str]] = set()
     threats_in_path: Set[str] = set()
+    ordered_threats: List[Tuple[int, str, str, str]] = []  
 
-    for nid in path:
+    for idx, nid in enumerate(path):
         node = graph_nodes.get(nid, {})
         asset = node.get("asset_name")
         tid = node.get("threat_id")
+        phase = node.get("phase")
         if asset and tid:
-            asset_threat_pairs.add((str(asset), str(tid)))
-            threats_in_path.add(str(tid))
+            asset_s = str(asset)
+            tid_s = str(tid)
+            asset_threat_pairs.add((asset_s, tid_s))
+            threats_in_path.add(tid_s)
+            ordered_threats.append((idx, asset_s, tid_s, str(phase or "")))
+
+            if not _threat_asset_compatible(asset_s, tid_s, asset_name_to_id, dep_idx):
+                return False
 
     flows_in_path = _build_path_flow_pairs(path, graph_nodes, graph_edges)
+
+    threat_chain_rules = dep_idx.get("threat_chain_rules", []) if isinstance(dep_idx, dict) else []
+    for pos, asset, tid, phase in ordered_threats:
+        earlier_threats = {t for (pidx, _a, t, _ph) in ordered_threats if pidx < pos}
+        for rule in threat_chain_rules:
+            if tid not in rule.get("enables", set()):
+                continue
+            required = set(rule.get("requires_one_of", set()))
+            if not required:
+                continue
+            if rule.get("bypass_at_entry") and not earlier_threats:
+                continue
+            if not earlier_threats.intersection(required):
+                return False
 
     for rule in dependencies:
         if not isinstance(rule, dict):
             continue
         rtype = rule.get("type")
+
+        if rtype in {"ASSET_CLASS_MAP", "THREAT_ASSET_COMPAT", "UKC_TACTIC_ORDER", "THREAT_CHAIN", "PROMISE_CHAIN_SOURCE"}:
+            continue
 
         if rtype == "FLOW_IMPLY_THREATS":
             when = rule.get("when") or {}
@@ -2377,6 +2593,8 @@ def build_attack_graph_remote_adjacent(
     tactic_to_phase = build_tactic_to_phase(threat_to_tactic)
     attack_vectors_by_threat = load_attack_vectors(attack_vector_path)
     dependencies = load_dependencies(dependency_path)
+    asset_name_to_id = load_asset_name_id_map(asset_to_threats_path)
+    dependency_indexes = build_dependency_indexes(dependencies)
 
     rect = find_boundary_rect(boundaries, boundary_name)
     if rect is None:
@@ -2526,6 +2744,8 @@ def build_attack_graph_remote_adjacent(
             graph_edges=graph_edges,
             dependencies=dependencies,
             target_asset_name=target_asset_name,
+            asset_name_to_id=asset_name_to_id,
+            dependency_indexes=dependency_indexes,
         )
     ]
 
@@ -2592,7 +2812,7 @@ def build_attack_graph_remote_adjacent(
         },
         "dependency_policy": {
             "dependency_map": str(dependency_path),
-            "note": "All mandatory dependency rules must be satisfied for each path; otherwise the path is filtered out.",
+            "note": "Enterprise dependency rules are enforced: asset-class compatibility, ordered THREAT_CHAIN rules, and legacy dependency rules when present.",
         },
         "out_phase_policy": "Out phase is allowed only on the target asset in this search.",
         "boundary_policy": {
@@ -2624,6 +2844,8 @@ def build_attack_graph_local_physical(
     tactic_to_phase = build_tactic_to_phase(threat_to_tactic)
     attack_vectors_by_threat = load_attack_vectors(attack_vector_path)
     dependencies = load_dependencies(dependency_path)
+    asset_name_to_id = load_asset_name_id_map(asset_to_threats_path)
+    dependency_indexes = build_dependency_indexes(dependencies)
 
     rect = find_boundary_rect(boundaries, boundary_name)
     if rect is None:
@@ -2750,6 +2972,8 @@ def build_attack_graph_local_physical(
             graph_edges=graph_edges,
             dependencies=dependencies,
             target_asset_name=target_asset_name,
+            asset_name_to_id=asset_name_to_id,
+            dependency_indexes=dependency_indexes,
         )
     ]
 
@@ -2816,7 +3040,7 @@ def build_attack_graph_local_physical(
         },
         "dependency_policy": {
             "dependency_map": str(dependency_path),
-            "note": "All mandatory dependency rules must be satisfied for each path; otherwise the path is filtered out.",
+            "note": "Enterprise dependency rules are enforced: asset-class compatibility, ordered THREAT_CHAIN rules, and legacy dependency rules when present.",
         },
         "out_phase_policy": "Out phase is allowed only on the target asset in this search.",
         "boundary_policy": {
@@ -3105,9 +3329,7 @@ def render_attack_tree_from_attack_graph_json(
     subprocess.run([dot_exe, "-Tpng", str(dot_path), "-o", str(png_path)], check=True)
     print(f"[OK] AttackTree PNG: {png_path}")
 
-# ============================================================
-# Risk score calculation (unchanged from v32)
-# ============================================================
+
 
 def add_risk_to_paths(in_json_path, out_json_path, asset_feasability_json_path, asset_to_threat_json, threat_to_tactic_json, impact_map_json, impact_feasability_map):
     result = _read_json(in_json_path)
@@ -3115,7 +3337,10 @@ def add_risk_to_paths(in_json_path, out_json_path, asset_feasability_json_path, 
     asset_to_threat = _read_json(asset_to_threat_json)
     threat_to_tactic = _read_json(threat_to_tactic_json)
     impact_map = _read_json(impact_map_json)
-    impact_feasability_map = _read_json(impact_feasability_map)
+    if impact_feasability_map and Path(str(impact_feasability_map)).exists():
+        impact_feasability_map = _read_json(impact_feasability_map)
+    else:
+        impact_feasability_map = None
 
     for idx in range(len(result["paths"])):
         p = result["paths"][idx]
@@ -3140,18 +3365,24 @@ def add_risk_to_paths(in_json_path, out_json_path, asset_feasability_json_path, 
                         if node["asset_name"] == im_record["asset_name"]:
                             current_im_score = im_record["score"]
 
-                    for if_record in impact_feasability_map["impact_severity_map_record"]:
-                        if set(phases) == set(if_record["phase"]):
-                            if set(phases) == set(["In"]):
-                                current_severity = if_record["severity"]
-                                break
-                            if current_im_score == if_record["impact"]:
-                                current_severity = if_record["severity"]
-                                break
+                    if impact_feasability_map:
+                        for if_record in impact_feasability_map["impact_severity_map_record"]:
+                            if set(phases) == set(if_record["phase"]):
+                                if set(phases) == set(["In"]):
+                                    current_severity = if_record["severity"]
+                                    break
+                                if current_im_score == if_record["impact"]:
+                                    current_severity = if_record["severity"]
+                                    break
 
-                    for ifm_record in impact_feasability_map["impact_feasability_map_record"]:
-                        if ifm_record["severity"] == current_severity and ifm_record["feasability"] == current_feasability:
-                            risk_per_asset.append(ifm_record["risk"])
+                        for ifm_record in impact_feasability_map["impact_feasability_map_record"]:
+                            if ifm_record["severity"] == current_severity and ifm_record["feasability"] == current_feasability:
+                                risk_per_asset.append(ifm_record["risk"])
+                    else:
+                        impact_label = IMPACT_BY_SCORE.get(max(0, min(4, int(current_im_score or 0))), "Negligible")
+                        feas_label = _normalize_feasibility_label(current_feasability, result.get("mode", "remote"))
+                        level = _calc_risk_level(impact_label, feas_label)
+                        risk_per_asset.append({"Low": 1, "Medium": 2, "High": 3, "Critical": 4}.get(level, 1))
 
         result["paths"][idx] = {"path": result["paths"][idx], "risk": sum(x for x in risk_per_asset if x != "-"), "risk_per_asset": risk_per_asset}
 
@@ -3175,28 +3406,28 @@ def get_tactics_by_asset_name(json_data, asset_name):
 
 
 def get_ukc_phases(tactics, json_data):
-    ukc = json_data["UnifiedKillChain"]
     phases = set()
+    tactic_to_phase = build_tactic_to_phase(json_data if isinstance(json_data, dict) else {})
     for tactic in tactics:
-        for phase, tactic_list in ukc.items():
-            if tactic in tactic_list:
-                phases.add(phase)
+        phase = tactic_to_phase.get(norm_tactic(tactic))
+        if phase:
+            phases.add(phase)
     return list(phases)
 
 
 
 
 def main():
-    ap = argparse.ArgumentParser(description="TM7-based attack graph (JSON) generation")
+    ap = argparse.ArgumentParser(description="Enterprise TM7-based attack graph (JSON) generation")
     ap.add_argument("--tm7", default="")
     ap.add_argument("--type", default="remote", choices=["remote", "adjacent", "local", "physical"])
     ap.add_argument("--target", default="")
     ap.add_argument("--boundary", default="")
-    ap.add_argument("--asset-map", default="asset_to_threats_ver0.3.json")
-    ap.add_argument("--threat-map", default="threat_to_tactic_ver0.1.json")
-    ap.add_argument("--attack-vector-map", default="attack_vector_feasability_ver0.1.json")
-    ap.add_argument("--impact-map", default="impact_map.json")
-    ap.add_argument("--dependency-map", default="dependency.json")
+    ap.add_argument("--asset-map", default="asset_to_threats_enterprise.json")
+    ap.add_argument("--threat-map", default="threat_to_tactic_enterprise.json")
+    ap.add_argument("--attack-vector-map", default="attack_vector_feasibility_enterprise.json")
+    ap.add_argument("--impact-map", default="impact_map_enterprise.json")
+    ap.add_argument("--dependency-map", default="dependency_enterprise.json")
     ap.add_argument("--max-depth", type=int, default=30)
     ap.add_argument("--out", default="attack_graph.json")
     ap.add_argument("--render-merged-graph", action=argparse.BooleanOptionalAction, default=True)
@@ -3234,9 +3465,9 @@ def main():
         try:
             with open(_ga_path, encoding="utf-8") as _f:
                 _gb = json.load(_f)
-            _vr = _gb.get(ICS_REVIEW_KEY) or _gb.get(LEGACY_REVIEW_KEY)
+            _vr = _gb.get("enterprise_level_review")
             _fa = _gb.get("functional_level_analysis")
-            _gemini_ics  = {ICS_REVIEW_KEY: _vr} if _vr else None
+            _gemini_vr   = {"enterprise_level_review": _vr} if _vr else None
             _gemini_func = _fa
             _ga_dir = Path(_ga_path).parent
 
@@ -3267,29 +3498,45 @@ def main():
             _risk_path = str(_ga_dir / "attack_graph_with_risk_temp.json")
             _report_path = Path(_rp)
 
+            def _first_existing_path(*values):
+                for _v in values:
+                    if not _v:
+                        continue
+                    try:
+                        _p = Path(str(_v))
+                        if _p.exists():
+                            return str(_p)
+                    except Exception:
+                        pass
+                return ""
+
+            _tm7_path = _first_existing_path(args.tm7, _gb.get("tm7_path"), _gb.get("tm7"))
+            _asset_map_path = _first_existing_path(args.asset_map, _gb.get("asset_map_path"), _gb.get("asset_map"))
+            _threat_map_path = _first_existing_path(args.threat_map, _gb.get("threat_map_path"), _gb.get("threat_map"))
+            _attack_vector_path = _first_existing_path(args.attack_vector_map, _gb.get("attack_vector_map_path"), _gb.get("attack_vector_map"), _gb.get("av_map"))
+            _impact_map_path = _first_existing_path(args.impact_map, _gb.get("impact_map_path"), _gb.get("impact_map"))
+
             _ag_img = ""
             for _ext in [".png", ".pdf", ".svg"]:
                 for _stem in ["merged_attack_graph", "_ag_graph"]:
                     _c = _ga_dir / f"{_stem}{_ext}"
-                    if _c.exists(): _ag_img = str(_c); break
-                if _ag_img: break
+                    if _c.exists():
+                        _ag_img = str(_c)
+                        break
+                if _ag_img:
+                    break
             if not _ag_img:
-                _imgs = sorted(list(_ga_dir.glob("*.png")) + list(_ga_dir.glob("*.pdf")), key=lambda p: p.stat().st_mtime, reverse=True)
-                if _imgs: _ag_img = str(_imgs[0])
+                _imgs = sorted(
+                    list(_ga_dir.glob("*.png")) + list(_ga_dir.glob("*.pdf")) + list(_ga_dir.glob("*.svg")),
+                    key=lambda p: p.stat().st_mtime,
+                    reverse=True,
+                )
+                if _imgs:
+                    _ag_img = str(_imgs[0])
 
-
-            _tm7_path = _gb.get("tm7_path") or args.tm7 or ""
-            _asset_map_path = _gb.get("asset_map_path") or args.asset_map or ""
-            _threat_map_path = _gb.get("threat_map_path") or args.threat_map or ""
-            _attack_vector_path = _gb.get("attack_vector_map_path") or args.attack_vector_map or ""
-            _impact_map_path = _gb.get("impact_map_path") or args.impact_map or ""
-
-            _risk_candidates = [
-                _gb.get("attack_graph_with_risk_path") or "",
-                str(_ga_dir / "attack_graph_with_risk_temp.json"),
-                str(Path(_out_path).parent / "attack_graph_with_risk_temp.json") if _out_path else "",
-            ]
-            _risk_path = next((str(p) for p in _risk_candidates if p and Path(str(p)).exists()), "")
+            print(f"[INFO] Regenerate report input JSON: {_out_path or '-'}")
+            print(f"[INFO] Regenerate report TM7: {_tm7_path or '-'}")
+            print(f"[INFO] Regenerate report asset map: {_asset_map_path or '-'}")
 
             generate_html_report(
                 report_path=_report_path,
@@ -3301,7 +3548,7 @@ def main():
                 impact_map_path=_impact_map_path,
                 attack_graph_with_risk_path=_risk_path,
                 tm7_path=_tm7_path,
-                gemini_ics_review=_gemini_ics,
+                gemini_enterprise_review=_gemini_vr,
                 gemini_functional=_gemini_func,
             )
             print(f"[OK] Report regenerated: {_report_path}")
@@ -3419,7 +3666,7 @@ def main():
             print(f"[WARN] attack tree rendering failed: {e}", file=sys.stderr)
 
 
-    gemini_ics_review = None
+    gemini_enterprise_review = None
     gemini_functional = None
 
     report_path = Path(args.detection_report)
@@ -3430,7 +3677,7 @@ def main():
     else:
         attack_graph_path = args.merged_graph_out + "." + args.merged_graph_format
 
-    if not gemini_ics_review and not gemini_functional:
+    if not gemini_enterprise_review and not gemini_functional:
         _search_dirs = []
         _search_dirs.append(Path(args.out).parent)
         if args.detection_report:
@@ -3453,11 +3700,11 @@ def main():
                     with open(_gp, encoding="utf-8") as _f:
                         _gb = json.load(_f)
 
-                    _vr = _gb.get(ICS_REVIEW_KEY) or _gb.get(LEGACY_REVIEW_KEY)
+                    _vr = _gb.get("enterprise_level_review")
                     _fa = _gb.get("functional_level_analysis")
 
                     if _vr:
-                        gemini_ics_review = {ICS_REVIEW_KEY: _vr}
+                        gemini_enterprise_review = {"enterprise_level_review": _vr}
                     if _fa:
                         gemini_functional = {"functional_level_analysis": _fa}
 
@@ -3486,7 +3733,7 @@ def main():
                 impact_map_path=str(impact_map),
                 attack_graph_with_risk_path=risk_path,
                 tm7_path=str(tm7_path),
-                gemini_ics_review=gemini_ics_review,
+                gemini_enterprise_review=gemini_enterprise_review,
                 gemini_functional=gemini_functional,
             )
 
