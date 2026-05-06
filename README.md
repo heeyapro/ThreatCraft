@@ -26,6 +26,11 @@
 
 [![ThreatCraft Demo](https://img.youtube.com/vi/Y_zLKnvmh_I/maxresdefault.jpg)](https://youtu.be/Y_zLKnvmh_I?si=wdbQ34fPg2MI5QPw)
 
+<video width="600" controls>
+  <source src="https://youtu.be/Y_zLKnvmh_I?si=wdbQ34fPg2MI5QPw" type="video/mp4">
+</video>
+
+
 </br>
 </div>
 
