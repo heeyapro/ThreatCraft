@@ -313,14 +313,14 @@ The AI analysis is divided into two levels:
 ##### **Vehicle-Level Review**
 For each attack path, the tool assesses its likelihood (confidence level) and provides mitigation recommendations. Furthermore, it performs a comprehensive evaluation across all attack paths to identify and present the highest-risk path.
 
-<img src="asset/20260502_185751.png" alt="analysis_result3" width="100%">
+<img src="asset/20260502_185712.png" alt="analysis_result3" width="100%">
 
 ---
 
 ##### **Functional-Level Review**
 The tool evaluates the most critical vulnerabilities within each asset in the aggregated attack tree from an SFOP (Safety, Financial, Operational, Privacy) perspective, and presents the results for each asset-specific vulnerability accordingly.
 
-<img src="asset/20260502_185712.png" alt="analysis_result4" width="100%">
+<img src="asset/20260502_185751.png" alt="analysis_result4" width="100%">
 
 
 > 📌 Note: You could save its results into JSON, CSV respectively, and also, you can check this whole results displayed in TARA Report(check ```example/_ag_tmp_184849195185.html```)
