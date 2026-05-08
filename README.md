@@ -286,6 +286,11 @@ We assume an attacker attempting to remotely compromise a vehicle door control s
 <img src="asset/20260211_172126.png" alt="DFD" width="100%">
 
 ---
+### **0. Select The Target Domain To Be Analysed**
+
+Select the target domain for the system under analysis. In this tutorial, the attack scenario targets a vehicle, so choose the Automotive Vehicle domain.
+
+<img src="asset/20260508_130606.png" alt="DFD" width="100%">
 
 ### **1. Launch ThreatCraft & Configure Analysis Context**
 
