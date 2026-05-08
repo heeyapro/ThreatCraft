@@ -292,6 +292,8 @@ Select the target domain for the system under analysis. In this tutorial, the at
 
 <img src="asset/20260508_130606.png" alt="DFD" width="100%">
 
+---
+
 ### **1. Launch ThreatCraft & Configure Analysis Context**
 
 After starting the application, the GUI dashboard is displayed.
