@@ -22,13 +22,15 @@
 <br/>
 
 <br>
-## Demo Video
-
-[![ThreatCraft Demo Video](https://img.youtube.com/vi/M13UHlchyhk/0.jpg)](https://youtu.be/M13UHlchyhk?si=nzKn7jv73QvUDe63)
-
-<video width="600" controls>
-  <source src="https://youtu.be/Y_zLKnvmh_I?si=wdbQ34fPg2MI5QPw" type="video/mp4">
-</video>
+<h3 align="center">##Demo Video</h3>
+<p align="center">
+  <a href="https://youtu.be/M13UHlchyhk?si=nzKn7jv73QvUDe63">
+    <img 
+      src="https://img.youtube.com/vi/M13UHlchyhk/maxresdefault.jpg" 
+      alt="ThreatCraft Demo Video" 
+      width="550">
+  </a>
+</p>
 
 
 </br>
