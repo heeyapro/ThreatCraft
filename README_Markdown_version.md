@@ -293,6 +293,7 @@ Configure the analysis environment as follows:
 - 🧠 **LLM Configuration**
     - Select LLM backend (e.g., GPT-based model)
     - Input valid API key
+    - Alternatively, select Ollama to run the LLM locally without an API key
 
 - 🎯 **Target Definition**
     - Select **Target Asset**: `Door`
