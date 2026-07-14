@@ -318,51 +318,6 @@ python tool_attack_paths.py</code></pre>
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
 
-## Smoke Test
-
-A lightweight offline smoke test is provided to verify that the core rule-based analysis pipeline is working correctly before launching the full GUI workflow.
-
-The smoke test does not require a GPT or Gemini API key. It verifies the following components:
-
-* Python and Graphviz availability
-* Required example and threat-library files
-* TM7 input parsing
-* Rule-based attack graph generation
-* Attack-path output validation
-
-Run the test from the root directory of the artifact:
-
-```bash
-python smoke_test.py
-```
-
-Expected output:
-
-```text
-ThreatCraft Smoke Test
-========================================
-[PASS] Python version: 3.10
-[PASS] Graphviz: dot - graphviz version ...
-[PASS] Required input files found
-[PASS] Rule-based backend completed
-[PASS] Output JSON created
-[PASS] Attack graph nodes generated: <number>
-[PASS] Attack paths generated: <number>
-
-SMOKE TEST PASSED
-```
-
-The generated test results are saved in the following directory:
-
-```text
-smoke_output/
-├── attack_graph.json
-└── attack_report.html
-```
-
-After the smoke test passes, users can proceed to the full GUI workflow described below.
-
-
 <!-- OVERVIEW -->
 <h2 id="usage-example"> :rocket: Usage Example</h2>
 
@@ -396,7 +351,6 @@ Configure the analysis environment as follows:
 - 🧠 **LLM Configuration**  
   - Select LLM backend (e.g., GPT-based model)
   - Input valid API key
-  - Alternatively, select Ollama to run the LLM locally without an API key
 
 - 🎯 **Target Definition**
   - Select **Target Asset**: `Door`
