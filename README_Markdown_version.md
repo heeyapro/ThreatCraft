@@ -174,6 +174,17 @@ ThreatCraft/
         ├── Enterprise_DFD.tm7         # Example DFD
         ├── _ag_tmp_184849195185.html  # Output Report in FTML format
         └── _ag_tmp_184849195185.pdf   # Output Report in PDF format
+│
+└── smoke_test.py                      # Smoke test script
+└── smoke_output/                      # Smoke test output directory
+        ├── attack_graph.json          # Generated attack graph
+        ├── attack_report.html         # Generated HTML report
+        └── attack_report.pdf          # Generated PDF report
+│
+└── README_Markdown_version.md         # Markdown-only version of the README
+└── REQUIREMENTS.md                    # System and software requirements
+└── STATUS.md                          # Artifact badges and justification
+└── [Artifact Evaluation] Abstract.pdf # Artifact Evaluation abstract
 ```
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/solar.png)
